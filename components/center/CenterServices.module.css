@@ -1,0 +1,121 @@
+.servicesSection {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sectionTitle {
+    color: #2a3990;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .sectionDescription {
+    color: #666;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+  
+  .servicesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .serviceCard {
+    background-color: #f8f9ff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #eef0f7;
+  }
+  
+  .serviceCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #e93b52;
+  }
+  
+  .serviceIcon {
+    width: 48px;
+    height: 48px;
+    background-color: #e93b52;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: white;
+    font-size: 1.5rem;
+  }
+  
+  .serviceTitle {
+    color: #2a3990;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  
+  .serviceDescription {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .testList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .testItem {
+    color: #2a3990;
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #eef0f7;
+    display: flex;
+    align-items: center;
+  }
+  
+  .testItem:last-child {
+    border-bottom: none;
+  }
+  
+  .testItem:before {
+    content: '•';
+    color: #e93b52;
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+    .servicesSection {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+  
+    .sectionTitle {
+      font-size: 1.5rem;
+    }
+  
+    .servicesGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .serviceCard {
+      padding: 1.25rem;
+    }
+  }
+  
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .servicesGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }

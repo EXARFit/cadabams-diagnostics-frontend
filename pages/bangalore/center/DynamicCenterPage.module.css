@@ -1,0 +1,158 @@
+.container {
+    min-height: 100vh;
+    background-color: #f8fafc;
+  }
+  
+  .wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Loading State Styles */
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+  }
+  
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #2a3990;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Error State Styles */
+  .errorContainer {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .errorTitle {
+    color: #dc2626;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .errorMessage {
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    max-width: 500px;
+  }
+  
+  .errorButton {
+    padding: 0.75rem 1.5rem;
+    background-color: #2a3990;
+    color: white;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .errorButton:hover {
+    background-color: #1e2a6e;
+  }
+  
+  /* Animation for page transitions */
+  .fadeIn {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 1024px) {
+    .wrapper {
+      padding: 0 0.75rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .wrapper {
+      padding: 0;
+    }
+  
+    .loadingContainer {
+      min-height: 40vh;
+    }
+  
+    .spinner {
+      width: 36px;
+      height: 36px;
+    }
+  
+    .errorContainer {
+      padding: 1rem;
+      min-height: 40vh;
+    }
+  
+    .errorTitle {
+      font-size: 1.25rem;
+    }
+  }
+  
+  /* High Contrast and Accessibility */
+  @media (prefers-contrast: high) {
+    .errorButton {
+      border: 2px solid #000;
+    }
+  
+    .errorTitle {
+      color: #000;
+    }
+  
+    .errorMessage {
+      color: #000;
+    }
+  }
+  
+  /* Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    
+  
+    .errorTitle {
+      color: #ef4444;
+    }
+  
+    .errorMessage {
+      color: #9ca3af;
+    }
+  
+    .errorButton {
+      background-color: #3b4999;
+    }
+  
+    .errorButton:hover {
+      background-color: #2a3990;
+    }
+  
+    .spinner {
+      border-color: #374151;
+      border-top-color: #3b4999;
+    }
+  }

@@ -1,0 +1,130 @@
+.footer {
+    background-color: #f8fafc;
+    padding: 3rem 0;
+    color: #1f2937;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .topSection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+  }
+  
+  .logo img {
+    max-width: 200px;
+  }
+  
+  .socialIcons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .icon {
+    color: #1e3a8a;
+    transition: color 0.3s ease;
+  }
+  
+  .icon:hover {
+    color: #ef4444;
+  }
+  
+  .appStores {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .appStores img {
+    height: 40px;
+  }
+  
+  .links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .column h3 {
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .column ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .column ul li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .column ul li a {
+    color: #4b5563;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .column ul li a:hover {
+    color: #ef4444;
+  }
+  
+  .bottomSection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  .copyright {
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+  
+  .terms {
+    font-size: 0.9rem;
+  }
+  
+  .terms a {
+    color: #6b7280;
+    text-decoration: none;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease;
+  }
+  
+  .terms a:hover {
+    color: #ef4444;
+  }
+  
+  @media (max-width: 768px) {
+    .topSection {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .socialIcons, .appStores {
+      margin-top: 1rem;
+    }
+  
+    .links {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  
+    .bottomSection {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }

@@ -1,0 +1,125 @@
+.pageContainer {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+  max-width: 1200px;
+}
+
+.scrollContainer {
+  width: 100%;
+  position: relative;
+  margin: 1rem 0;
+}
+
+.container {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.card {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  align-items: flex-start;
+  background-color: #ffffff;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.iconWrapper {
+  background-color: #e93b52;
+  border-radius: 50%;
+  padding: 0.5rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+}
+
+.content {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.content h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2a3990;
+  margin: 0 0 0.25rem 0;
+}
+
+.content p {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: 0;
+  }
+
+  .scrollContainer {
+    margin: 1rem -1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    padding: 1rem;
+  }
+
+  .scrollContainer::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  .container {
+    flex-wrap: nowrap;
+    width: auto;
+    padding: 0 1rem;
+  }
+
+  .card {
+    margin-right: 0;
+    min-width: 200px; /* Smaller width to fit more cards in view */
+  }
+
+  .card:last-child {
+    margin-right: 1rem;
+  }
+
+  .content {
+    padding-right: 0.25rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .card {
+    max-width: calc(20% - 0.8rem); /* 20% width for 5 cards with gap consideration */
+  }
+}

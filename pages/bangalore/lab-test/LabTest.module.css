@@ -1,0 +1,54 @@
+.page {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .loadingContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+  }
+  
+  .loadingSpinner {
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+  
+  .errorAlert {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fee2e2;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    color: #991b1b;
+  }
+  
+  .testSection {
+    margin: 40px 0;
+  }
+  
+  .testSection:not(:last-child) {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 40px;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .testSection {
+      margin: 20px 0;
+    }
+    
+    .testSection:not(:last-child) {
+      padding-bottom: 20px;
+    }
+  }

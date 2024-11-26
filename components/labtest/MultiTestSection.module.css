@@ -1,0 +1,255 @@
+.multiTestSection {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.sliderWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.cardsContainer {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 1rem;
+}
+
+.cardsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.cardsTrack {
+  display: flex;
+  gap: 2rem;
+}
+
+.cardWrapper {
+  flex: 0 0 auto;
+  width: 320px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #333;
+  scroll-snap-align: start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.testName {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.priceSection {
+  margin-bottom: 1.5rem;
+}
+
+.priceInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  opacity: 0.7;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.discountedPrice {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #0047ab;
+}
+
+.discount {
+  background-color: #e6f0ff;
+  color: #0047ab;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.parameters {
+  margin-bottom: 0.8rem;
+}
+
+.reportTime {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.testType {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.viewButton, .cartButton {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.viewButton {
+  background-color: transparent;
+  border: 1px solid #0047ab;
+  color: #0047ab;
+}
+
+.viewButton:hover {
+  background-color: rgba(0, 71, 171, 0.1);
+}
+
+.cartButton {
+  background-color: #0047ab;
+  color: white;
+}
+
+.cartButton:hover {
+  background-color: #003d91;
+}
+
+.cartButton.added {
+  background-color: #e93b52;
+  cursor: not-allowed;
+}
+
+.checkIcon {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  color: #0047ab;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background-color: #0047ab;
+  color: white;
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.prevButton {
+  left: -20px;
+}
+
+.nextButton {
+  right: -20px;
+}
+
+.paginationDots {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.activeDot {
+  background-color: #0047ab;
+  transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+  .multiTestSection {
+    padding: 3rem 1rem;
+  }
+
+  .cardsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .cardWrapper {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .navButton {
+    display: none;
+  }
+}

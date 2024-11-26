@@ -1,0 +1,176 @@
+.bannerContainer {
+    width: 100%;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  
+  .bannerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+  }
+  
+  .textContent {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2a3990;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  
+  .highlight {
+    display: block;
+    color: #e93b52;
+    font-size: 2rem;
+    margin-top: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 2rem;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #ffffff;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .iconWrapper {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e93b52;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    color: #ffffff;
+  }
+  
+  .featureText {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .imageWrapper {
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+  }
+  
+  .bannerImage {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .bannerImage:hover {
+    transform: scale(1.02);
+  }
+  
+  @media (max-width: 1024px) {
+    .bannerContent {
+      padding: 2rem 1.5rem;
+    }
+  
+    .title {
+      font-size: 2rem;
+    }
+  
+    .highlight {
+      font-size: 1.75rem;
+    }
+  
+    .subtitle {
+      font-size: 1.1rem;
+    }
+  
+    .features {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .bannerContainer {
+      border-radius: 0;
+      margin-bottom: 1rem;
+    }
+  
+    .bannerContent {
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      gap: 1.5rem;
+    }
+  
+    .textContent {
+      text-align: center;
+    }
+  
+    .title {
+      font-size: 1.75rem;
+    }
+  
+    .highlight {
+      font-size: 1.5rem;
+    }
+  
+    .features {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  
+    .feature {
+      padding: 0.625rem 1rem;
+    }
+  
+    .imageWrapper {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  
+    .bannerImage:hover {
+      transform: none;
+    }
+  }

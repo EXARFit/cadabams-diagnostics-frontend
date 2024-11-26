@@ -1,0 +1,164 @@
+.infoSection {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sectionTitle {
+    color: #2a3990;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .infoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .addressCard,
+  .contactCard,
+  .timingsCard {
+    background-color: #f8f9ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .addressCard:hover,
+  .contactCard:hover,
+  .timingsCard:hover {
+    transform: translateY(-4px);
+  }
+  
+  .iconWrapper {
+    width: 48px;
+    height: 48px;
+    background-color: #e93b52;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: white;
+    font-size: 1.5rem;
+  }
+  
+  .infoGrid h3 {
+    color: #2a3990;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .infoGrid p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+  
+  .directionsButton,
+  .callButton {
+    background-color: #2a3990;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .directionsButton:hover,
+  .callButton:hover {
+    background-color: #e93b52;
+  }
+  
+  .timingGrid {
+    display: grid;
+    gap: 0.5rem;
+  }
+  
+  .dayLabel {
+    font-weight: 600;
+    color: #2a3990;
+  }
+  
+  .featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .featureCard {
+    text-align: center;
+    padding: 1.25rem;
+    background-color: #f8f9ff;
+    border-radius: 8px;
+  }
+  
+  .featureIcon {
+    font-size: 2rem;
+    color: #e93b52;
+    margin-bottom: 1rem;
+  }
+  
+  .featureCard h4 {
+    color: #2a3990;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .featureCard p {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .mapContainer {
+    margin-top: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .map {
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+  }
+  
+  @media (max-width: 768px) {
+    .infoSection {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+  
+    .sectionTitle {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    .infoGrid,
+    .featuresGrid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  
+    .addressCard,
+    .contactCard,
+    .timingsCard {
+      padding: 1.25rem;
+    }
+  
+    .iconWrapper {
+      width: 40px;
+      height: 40px;
+      font-size: 1.25rem;
+    }
+  }

@@ -1,0 +1,30 @@
+.managementSection {
+    padding: 4rem 2rem;
+    background-color: #f8f9fa;
+  }
+  
+  .teamGrid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .memberCard {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .role {
+    color: #991b1b;
+    font-weight: 500;
+    margin: 0.5rem 0;
+  }
+  
+  .description {
+    color: #4b5563;
+    line-height: 1.6;
+  }

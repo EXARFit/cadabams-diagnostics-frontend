@@ -1,0 +1,476 @@
+/* Navbar.module.css */
+.navbar {
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  height: 72px; /* Fixed height for consistency */
+}
+
+.navbarContent {
+  max-width: 1440px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* Left Section */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  padding-right: 1.5rem;
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.locationDropdownWrapper {
+  position: relative;
+  width: 160px;
+}
+
+.locationDropdown {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.locationIcon {
+  color: #e93b52;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.locationSelect {
+  appearance: none;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  width: 100%;
+  padding-right: 1.5rem;
+}
+
+/* Center Section - Search */
+.centerSection {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 1rem;
+}
+
+.searchForm {
+  width: 100%;
+}
+
+.searchInputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.searchInput {
+  width: 100%;
+  height: 44px;
+  padding: 0 2.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f5f5f5;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #e93b52;
+  box-shadow: 0 0 0 3px rgba(233, 59, 82, 0.1);
+  background-color: white;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  font-size: 1rem;
+}
+
+.searchDropdownContainer {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 1001;
+}
+
+.searchDropdown {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+}
+
+.searchResult {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.searchResult:last-child {
+  border-bottom: none;
+}
+
+.searchResult:hover {
+  background-color: rgba(233, 59, 82, 0.05);
+}
+
+.resultContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.resultName {
+  font-size: 0.95rem;
+  color: #333;
+  flex: 1;
+}
+
+.resultPrice {
+  font-weight: 500;
+  color: #e93b52;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+/* Right Section - Navigation */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: #333;
+  text-decoration: none;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  position: relative;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.navLink:hover {
+  color: #e93b52;
+  background-color: rgba(233, 59, 82, 0.05);
+}
+
+.navLink.active {
+  color: #e93b52;
+  background-color: rgba(233, 59, 82, 0.1);
+}
+
+.cartWrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.cartCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e93b52;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdownContainer {
+  position: relative;
+}
+
+.dropdownContent {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.dropdownContent.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdownItem {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.dropdownItem:hover {
+  background-color: rgba(233, 59, 82, 0.05);
+  border-left-color: #e93b52;
+  color: #e93b52;
+}
+
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+@media (max-width: 1023px) {
+  /* Keep existing mobile styles */
+  .navbarContent {
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem;
+    gap: 1rem;
+  }
+
+  .logoAndLocation {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .navLinks {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .navLinks.open {
+    display: flex;
+  }
+
+  /* Update these styles for better alignment */
+  .navLink {
+    width: 100%;
+    padding: 1rem;
+    justify-content: flex-start !important; /* Force left alignment */
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  .dropdownContainer {
+    width: 100%;
+  }
+
+  .dropdownContainer button.navLink {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start !important; /* Force left alignment */
+    padding: 1rem;
+  }
+
+  .dropdownContainer button.navLink span {
+    margin-right: auto; /* Push the dropdown arrow to the right */
+  }
+
+  .dropdownContent {
+    position: static;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    margin: 0;
+    border-radius: 0;
+    background-color: #f8f8f8;
+  }
+
+  .dropdownContent.visible {
+    max-height: none;
+  }
+
+  .dropdownItem {
+    padding: 1rem 1rem 1rem 3rem;
+    text-align: left;
+    justify-content: flex-start;
+    border-bottom: 1px solid #eee;
+  }
+
+  /* Fix icon and text alignment */
+  .navLink svg {
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Adjust dropdown arrow position */
+  .dropdownArrow {
+    margin-left: auto !important; /* Force to the right */
+    margin-right: 0;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 1023px) {
+  .navbar {
+    height: auto;
+  }
+
+  .navbarContent {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .leftSection {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .locationDropdownWrapper {
+    width: 140px;
+  }
+
+  .centerSection {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    order: 2;
+  }
+
+  .mobileMenuButton {
+    display: block;
+  }
+
+  .rightSection {
+    width: 100%;
+    order: 3;
+  }
+
+  .navLinks {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+  }
+
+  .navLinks.open {
+    display: flex;
+  }
+
+  .navLink {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .dropdownContent {
+    position: static;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .dropdownContent.visible {
+    max-height: 400px;
+  }
+
+  .dropdownItem {
+    padding-left: 2rem;
+    background-color: #f9f9f9;
+  }
+
+  .searchDropdownContainer {
+    position: fixed;
+    top: auto;
+    left: 1rem;
+    right: 1rem;
+    max-height: 60vh;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .navbarContent {
+    padding: 0 2rem;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1280px) {
+  .navbarContent {
+    padding: 0 3rem;
+  }
+}
+
+/* Safari Fixes */
+@supports (-webkit-touch-callout: none) {
+  .locationSelect {
+    padding-right: 2rem;
+  }
+}

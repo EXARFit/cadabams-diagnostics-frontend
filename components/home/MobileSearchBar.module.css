@@ -1,0 +1,80 @@
+.mobileSearchContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  
+  .mobileSearchContainer.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .searchForm {
+    margin-bottom: 0.5rem;
+  }
+  
+  .searchInputWrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .searchInput {
+    width: 100%;
+    padding: 0.75rem 2.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    background-color: #f5f5f5;
+    -webkit-appearance: none;
+  }
+  
+  .searchIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+  }
+  
+  .discountBanner {
+    background: #0047ab;
+    color: white;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+  
+  .highlight {
+    font-weight: bold;
+    color: #ffa500;
+  }
+  
+  @media (max-width: 768px) {
+    .mobileSearchContainer {
+      display: block;
+    }
+    
+    .searchInput:focus {
+      outline: none;
+      border-color: #145843;
+      box-shadow: 0 0 0 2px rgba(20, 88, 67, 0.2);
+    }
+  }
+  
+  /* Performance optimizations */
+  @media (prefers-reduced-motion: reduce) {
+    .mobileSearchContainer {
+      transition: none;
+    }
+  }

@@ -1,0 +1,181 @@
+.pageContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.content {
+  margin-top: 1rem;
+}
+
+.section {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1rem; /* Reduced from 2rem */
+}
+
+.sectionTitle {
+  color: #2a3990;
+  font-size: 20px; /* Reduced from 24px */
+  font-weight: 700;
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
+  border-bottom: 2px solid #e93b52;
+  padding-bottom: 0.375rem; /* Reduced from 0.5rem */
+}
+
+.sectionText {
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
+  font-size: 0.95rem;
+}
+
+.parameterList,
+.preparationList,
+.benefitList {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 0.5rem;
+}
+
+.parameterItem,
+.preparationItem {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 0.75rem; /* Reduced from 1rem */
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
+}
+
+.parameterTitle,
+.preparationTitle,
+.measuresTitle,
+.oftenTakeTitle,
+.risksLimitationsTitle,
+.whoNeedTestTitle,
+.benefitTitle,
+.diseasesDiagnosedTitle,
+.interpretationTitle {
+  color: #2a3990;
+  font-size: 16px; /* Reduced from 18px */
+  font-weight: 600;
+  margin-bottom: 0.375rem; /* Reduced from 0.5rem */
+  margin-top: 1rem; /* Added to create space between sections */
+}
+
+.pointList {
+  list-style-type: disc;
+  padding-left: 1.25rem; /* Reduced from 1.5rem */
+}
+
+.pointItem,
+.benefitItem {
+  color: #333;
+  margin-bottom: 0.375rem; /* Reduced from 0.5rem */
+}
+
+.preparationDesc {
+  color: #333;
+  line-height: 1.4;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.interpretationTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.75rem; /* Reduced from 1rem */
+}
+
+.interpretationTable th,
+.interpretationTable td {
+  border: 1px solid #ddd;
+  padding: 10px; /* Reduced from 12px */
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.interpretationTable th {
+  background-color: #2a3990;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.interpretationTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.interpretationTable tr:hover {
+  background-color: #f0f0f0;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Reduced from 1rem */
+}
+
+.faqItem {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 0.75rem; /* Reduced from 1rem */
+  margin-bottom: 0.75rem;
+}
+
+.faqQuestion {
+  color: #2a3990;
+  font-size: 16px; /* Reduced from 18px */
+  font-weight: 600;
+  margin-bottom: 0.375rem; /* Reduced from 0.5rem */
+}
+
+.faqAnswer {
+  color: #333;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: 0.75rem;
+  }
+
+  .section {
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+    margin-bottom: 0.625rem;
+  }
+
+  .parameterTitle,
+  .preparationTitle,
+  .faqQuestion,
+  .measuresTitle,
+  .oftenTakeTitle,
+  .risksLimitationsTitle,
+  .whoNeedTestTitle,
+  .benefitTitle,
+  .diseasesDiagnosedTitle,
+  .interpretationTitle {
+    font-size: 15px;
+  }
+
+  .sectionText,
+  .faqAnswer {
+    font-size: 0.9rem;
+  }
+
+  .interpretationTable th,
+  .interpretationTable td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+}

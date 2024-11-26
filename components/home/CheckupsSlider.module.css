@@ -1,0 +1,232 @@
+.checkupsSection {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+}
+
+.checkupsSection h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.sliderContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.cardsContainer {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 1rem;
+}
+
+.cardsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: 320px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #333;
+  scroll-snap-align: start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.priceContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  opacity: 0.7;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.discountedPrice {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #0047ab;
+}
+
+.discount {
+  background-color: #e6f0ff;
+  color: #0047ab;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cardBody {
+  margin-bottom: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  color: #0047ab;
+}
+
+.cardFooter {
+  display: flex;
+  gap: 1rem;
+}
+
+.viewDetailsBtn, .addToCartBtn {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.viewDetailsBtn {
+  background-color: transparent;
+  border: 1px solid #0047ab;
+  color: #0047ab;
+}
+
+.addToCartBtn {
+  background-color: #0047ab;
+  color: white;
+}
+
+.viewDetailsBtn:hover {
+  background-color: rgba(0, 71, 171, 0.1);
+}
+
+.addToCartBtn:hover {
+  background-color: #003d91;
+}
+
+.addToCartBtn.added {
+  background-color: #e93b52;
+  cursor: not-allowed;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  color: #0047ab;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background-color: #0047ab;
+  color: white;
+}
+
+.prevButton {
+  left: -20px;
+}
+
+.nextButton {
+  right: -20px;
+}
+
+.pagination {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.activeDot {
+  background-color: #0047ab;
+  transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+  .checkupsSection {
+    padding: 3rem 1rem;
+  }
+
+  .cardsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .navButton {
+    display: none;
+  }
+}

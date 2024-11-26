@@ -1,0 +1,81 @@
+/* TestPage.module.css */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  
+  .breadcrumb {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .breadcrumbContainer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .breadcrumbLink {
+    color: #0047ab;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .breadcrumbLink:hover {
+    color: #e93b52;
+  }
+  
+  .breadcrumbSeparator {
+    color: #666;
+    margin: 0 0.25rem;
+  }
+  
+  .breadcrumbCurrent {
+    color: #666;
+    font-weight: 500;
+  }
+  
+  .loadingContainer,
+  .errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .retryButton {
+    margin-top: 1rem;
+    padding: 0.8rem 1.5rem;
+    background: #0047ab;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .retryButton:hover {
+    background: #003380;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1rem;
+    }
+  
+    .breadcrumb {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 0.5rem;
+    }
+  }

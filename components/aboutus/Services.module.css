@@ -1,0 +1,47 @@
+.servicesSection {
+    padding: 4rem 2rem;
+    background-color: #f8f9fa;
+  }
+  
+  .servicesGrid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .serviceCard {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .serviceCard h3 {
+    color: #1e3a8a;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #991b1b;
+  }
+  
+  .serviceCard ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .serviceCard li {
+    color: #4b5563;
+    padding: 0.5rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  
+  .serviceCard li:before {
+    content: "→";
+    color: #991b1b;
+    position: absolute;
+    left: 0;
+  }

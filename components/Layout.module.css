@@ -1,0 +1,46 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+}
+
+.footer {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  text-align: center;
+  color: #666;
+}
+
+/* Z-index management */
+.zIndexBase {
+  z-index: 40;
+}
+
+.zIndexSearch {
+  z-index: 50;
+}
+
+.zIndexCart {
+  z-index: 30;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0rem;
+  }
+
+  .main {
+    /* Accommodate fixed search bar */
+    padding-bottom: 80px; /* Space for bottom cart */
+  }
+
+  .footer {
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 1;
+  }
+}

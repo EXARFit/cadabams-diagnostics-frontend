@@ -1,0 +1,343 @@
+.pageContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+.content {
+  margin-top: 2rem;
+}
+
+.section {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.sectionContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  width: 100%;
+}
+
+.sectionText {
+  flex: 1;
+  min-width: 0;
+}
+
+.sectionText h3 {
+  color: #2a3990;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.sectionImage {
+  width: 40%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.sectionTitle {
+  color: #2a3990;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e93b52;
+  padding-bottom: 0.5rem;
+  width: 100%;
+}
+
+.sectionText p {
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-size: 16px;
+}
+
+.descriptionTitle,
+.risksLimitationsTitle,
+.parameterTitle,
+.whoNeedTestTitle,
+.benefitTitle,
+.diseasesDiagnosedTitle,
+.preparationTitle,
+.interpretationTitle {
+  color: #2a3990;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+.interpretationTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  min-width: 600px;
+}
+
+.interpretationTable th,
+.interpretationTable td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.interpretationTable th {
+  background-color: #2a3990;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.interpretationTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.interpretationTable tr:hover {
+  background-color: #f0f0f0;
+}
+
+.faqItem {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.faqQuestion {
+  color: #2a3990;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.faqAnswer {
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Large screens */
+@media (min-width: 1024px) {
+  .sectionContent[style*="row-reverse"] {
+    flex-direction: row-reverse !important;
+  }
+}
+
+/* Tablet and smaller screens */
+@media (max-width: 1023px) {
+  .pageContainer {
+    padding: 1.5rem;
+  }
+
+  .section {
+    padding: 1.5rem;
+  }
+
+  .sectionContent {
+    flex-direction: column !important;
+    gap: 1.5rem;
+  }
+
+  .sectionImage {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 300px;
+    margin: 0 auto;
+  }
+
+  .sectionTitle {
+    font-size: 22px;
+  }
+
+  .sectionText h3 {
+    font-size: 18px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 767px) {
+  .pageContainer {
+    padding: 1rem;
+  }
+
+  .section {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sectionContent {
+    gap: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+
+  .sectionText h3 {
+    font-size: 16px;
+  }
+
+  .sectionText p {
+    font-size: 14px;
+  }
+
+  .descriptionTitle,
+  .risksLimitationsTitle,
+  .parameterTitle,
+  .whoNeedTestTitle,
+  .benefitTitle,
+  .diseasesDiagnosedTitle,
+  .preparationTitle,
+  .interpretationTitle {
+    font-size: 18px;
+  }
+
+  .faqQuestion {
+    font-size: 16px;
+  }
+
+  .faqAnswer {
+    font-size: 14px;
+  }
+
+  .interpretationTable th,
+  .interpretationTable td {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 0.75rem;
+  }
+
+  .section {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+  }
+
+  .sectionText h3 {
+    font-size: 15px;
+  }
+
+  .sectionText p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .tableWrapper {
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .interpretationTable th,
+  .interpretationTable td {
+    padding: 6px;
+    font-size: 13px;
+  }
+}
+
+/* Fix for reversed sections */
+@media (max-width: 1023px) {
+  .sectionContent[style*="row-reverse"],
+  .sectionContent[style*="row"] {
+    flex-direction: column !important;
+  }
+}
+
+/* Style for lists within section text */
+.sectionText ul,
+.sectionText ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  padding-left: 0;
+}
+
+.sectionText li {
+  margin-bottom: 0.5rem;
+  font-size: inherit;
+}
+
+/* Blockquote styles */
+.sectionText blockquote {
+  border-left: 4px solid #e93b52;
+  padding-left: 1rem;
+  margin-left: 0;
+  font-style: italic;
+  color: #555;
+}
+
+/* Additional spacing fixes */
+.section > *:last-child {
+  margin-bottom: 0;
+}
+
+.faqItem:last-child {
+  margin-bottom: 0;
+}
+
+/* Image optimizations */
+.img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Table scroll indicator */
+.tableWrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .sectionContent {
+    gap: 1rem;
+  }
+  
+  .faqItem {
+    padding: 0.875rem;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .pageContainer {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}

@@ -1,0 +1,36 @@
+.paymentContainer {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .orderSummary {
+    margin-bottom: 20px;
+  }
+  
+  .orderItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .orderTotal {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .paymentButton {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }

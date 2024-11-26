@@ -1,0 +1,389 @@
+/* BlogPost.module.css */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.breadcrumb {
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.breadcrumbLink {
+  color: #0047ab;
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  color: #e93b52;
+}
+
+.breadcrumbSeparator {
+  margin: 0 0.5rem;
+  color: #666;
+}
+
+.breadcrumbCurrent {
+  color: #666;
+}
+
+.blogPostContainer {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.mainContent {
+  flex: 2;
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.mainImage {
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.blogTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0047ab;
+  margin: 1rem 0;
+  line-height: 1.2;
+}
+
+.blogAuthor {
+  font-size: 1rem;
+  color: #e93b52;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.blogContent {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+.blogContent h2 {
+  font-size: 2rem;
+  color: #0047ab;
+  margin: 2rem 0 1rem;
+  font-weight: 700;
+}
+
+.blogContent h3 {
+  font-size: 1.5rem;
+  color: #0047ab;
+  margin: 1.5rem 0 1rem;
+  font-weight: 600;
+}
+
+.blogContent p {
+  margin-bottom: 1.5rem;
+}
+
+.blogContent ul,
+.blogContent ol {
+  margin: 1.5rem 0 1.5rem 2rem;
+}
+
+.blogContent li {
+  margin-bottom: 0.8rem;
+}
+
+.blogContent img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 2rem 0;
+}
+
+.blogContent a {
+  color: #0047ab;
+  text-decoration: underline;
+}
+
+.blogContent a:hover {
+  color: #e93b52;
+}
+
+/* Sidebar Components */
+.recentBlogs,
+.categoryCard,
+.contactForm {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.recentBlogs h3,
+.categoryCard h3,
+.contactForm h3 {
+  font-size: 1.5rem;
+  color: #0047ab;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.recentBlogCard {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.recentBlogCard:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.recentBlogCard h4 {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.recentBlogCard p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.categoryCard ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.categoryCard li {
+  font-size: 0.9rem;
+  color: #fff;
+  background-color: #e93b52;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categoryCard li:hover {
+  background-color: #0047ab;
+  transform: scale(1.05);
+}
+
+/* Contact Form */
+.contactForm input,
+.contactForm textarea {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background-color: white;
+  color: black;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus {
+  outline: none;
+  border-color: #0047ab;
+}
+
+.contactForm textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+.contactForm button {
+  background: #0047ab;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.contactForm button:hover {
+  background: #003380;
+  transform: translateY(-2px);
+}
+
+/* FAQ Section */
+.faqSection {
+  margin-top: 3rem;
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.faqSection h2 {
+  font-size: 2rem;
+  color: #0047ab;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.faqContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.faqItem {
+  border: 1px solid rgba(0, 71, 171, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.faqQuestion {
+  width: 100%;
+  text-align: left;
+  padding: 1.2rem;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.faqQuestion:hover {
+  color: #0047ab;
+}
+
+.questionText {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.toggleIcon {
+  font-size: 1.5rem;
+  color: #e93b52;
+  transition: transform 0.3s ease;
+}
+
+.toggleIcon.active {
+  transform: rotate(45deg);
+}
+
+.faqAnswer {
+  padding: 0 1.2rem 1.2rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Loading and Error States */
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.errorContainer button {
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: #0047ab;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.errorContainer button:hover {
+  background: #003380;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .blogPostContainer {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .blogPostContainer {
+    flex-direction: column;
+  }
+
+  .mainContent,
+  .sidebar {
+    flex: none;
+    width: 100%;
+  }
+
+  .blogTitle {
+    font-size: 2rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  .mainContent {
+    padding: 1rem;
+  }
+
+  .blogTitle {
+    font-size: 1.75rem;
+  }
+
+  .blogContent {
+    font-size: 1rem;
+  }
+
+  .faqSection {
+    padding: 1rem;
+  }
+
+  .faqQuestion {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}

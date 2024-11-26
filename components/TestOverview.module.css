@@ -1,0 +1,201 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.animatedBall {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e93b52, #2a3990);
+  opacity: 0.1;
+  z-index: -1;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.content {
+  display: flex;
+  gap: 40px;
+}
+
+.leftContent {
+  flex: 1;
+}
+
+.rightContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #2a3990;
+  margin: 0 0 10px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #666;
+  margin: 0 0 20px;
+}
+
+.pricing {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.discountedPrice {
+  font-size: 28px;
+  font-weight: bold;
+  color: #e93b52;
+}
+
+.originalPrice {
+  font-size: 20px;
+  text-decoration: line-through;
+  color: #999;
+}
+
+.discount {
+  background-color: #e93b52;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bookings {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.icon {
+  color: #2a3990;
+}
+
+.addToCartButton {
+  background-color: #2a3990;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-bottom: 30px;
+}
+
+.addToCartButton:hover {
+  background-color: #1e2a6e;
+  transform: scale(1.05);
+}
+
+.buttonIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.offers {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.offer {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: transform 0.3s ease;
+}
+
+.offer:hover {
+  transform: translateX(5px);
+}
+
+.offerIcon {
+  font-size: 28px;
+}
+
+.offer h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #2a3990;
+}
+
+.offer p {
+  margin: 5px 0 0;
+  font-size: 16px;
+  color: #666;
+}
+
+.infoIcon {
+  color: #2a3990;
+  cursor: pointer;
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.image:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .card {
+    padding: 30px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .pricing {
+    flex-wrap: wrap;
+  }
+
+  .addToCartButton {
+    width: 100%;
+  }
+}

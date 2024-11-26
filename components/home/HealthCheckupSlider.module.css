@@ -1,0 +1,489 @@
+.healthCheckupSlider {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.sliderSection {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.checkupCard {
+  width: 100%;
+}
+
+.card {
+  background: linear-gradient(135deg, #0047ab, #4169e1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: white;
+  height: 100%;
+}
+
+.cardHeader {
+  margin-bottom: 1.5rem;
+}
+
+.checkupLabel {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+
+.cardHeader h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.priceContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  opacity: 0.7;
+  font-size: 0.875rem;
+}
+
+.discountedPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.discount {
+  background-color: #e93b52;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cardBody {
+  margin-bottom: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.icon {
+  font-size: 1.125rem;
+}
+
+.cardFooter {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.viewDetailsBtn,
+.addToCartBtn {
+  padding: 0.875rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.viewDetailsBtn {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
+
+.addToCartBtn {
+  background-color: #e93b52;
+  border: none;
+  color: white;
+}
+
+.addToCartBtn.added {
+  background-color: #16a34a;
+  cursor: default;
+}
+
+.description {
+  padding: 1rem;
+  color: #333;
+}
+
+.description h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  color: black;
+}
+
+.description p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.trustedBy {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #666;
+}
+
+.trustIcon {
+  color: #0047ab;
+  font-size: 1.25rem;
+}
+
+.imageContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.navButton {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 2;
+  color: #0047ab;
+  transition: all 0.3s ease;
+  align-items: center;
+  justify-content: center;
+}
+
+.prevButton {
+  left: 0;
+}
+
+.nextButton {
+  right: 0;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.activeDot {
+  background-color: #0047ab;
+  transform: scale(1.2);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #0047ab;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) {
+  .healthCheckupSlider {
+    padding: 2rem;
+  }
+
+  .content {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .checkupCard {
+    width: 33.333%;
+  }
+
+  .description {
+    width: 33.333%;
+    padding: 2rem;
+  }
+
+  .imageContainer {
+    width: 33.333%;
+  }
+
+  .cardFooter {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .navButton {
+    display: flex;
+  }
+
+  .card {
+    margin: 0 1rem;
+  }
+
+  .description h2 {
+    font-size: 2.25rem;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .healthCheckupSlider {
+    padding: 3rem;
+  }
+
+  .content {
+    gap: 3rem;
+  }
+
+  .card {
+    padding: 2rem;
+  }
+
+  .cardHeader h3 {
+    font-size: 1.5rem;
+  }
+
+  .discountedPrice {
+    font-size: 1.75rem;
+  }
+
+  .description h2 {
+    font-size: 2.5rem;
+    color: black;
+  }
+
+  .description p {
+    font-size: 1.125rem;
+  }
+
+  .navButton {
+    width: 48px;
+    height: 48px;
+  }
+
+  .image {
+    max-width: 500px;
+  }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1280px) {
+  .healthCheckupSlider {
+    padding: 4rem;
+  }
+
+  .content {
+    gap: 4rem;
+  }
+
+  .description h2 {
+    font-size: 3rem;
+  }
+}
+
+/* Hover Effects */
+@media (hover: hover) {
+  .viewDetailsBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .addToCartBtn:hover:not(.added) {
+    background-color: #d62e44;
+    transform: translateY(-2px);
+  }
+
+  .navButton:hover {
+    background-color: #0047ab;
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .dot:hover:not(.activeDot) {
+    background-color: #94a3b8;
+    transform: scale(1.1);
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .healthCheckupSlider {
+    background-color: #ffffff;
+  }
+
+  .description {
+    color: #f3f4f6;
+  }
+
+  .description p {
+    color: black;
+  }
+
+  .trustedBy {
+    color: black;
+  }
+
+  .navButton {
+    background-color: #374151;
+    color: #60a5fa;
+  }
+
+  .navButton:hover {
+    background-color: #60a5fa;
+    color: #1f2937;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .viewDetailsBtn,
+  .addToCartBtn,
+  .navButton {
+    transition: none;
+  }
+
+  .loadingSpinner {
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .healthCheckupSlider {
+    padding: 0;
+    background: none;
+  }
+
+  .navButton,
+  .dots,
+  .addToCartBtn {
+    display: none;
+  }
+
+  .content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .card {
+    break-inside: avoid;
+    background: none;
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  .checkupLabel,
+  .viewDetailsBtn {
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  .description,
+  .description p {
+    color: #000;
+  }
+}
+
+/* High Contrast Mode */
+@media (forced-colors: active) {
+  .card {
+    border: 2px solid ButtonText;
+  }
+
+  .viewDetailsBtn,
+  .addToCartBtn {
+    border: 2px solid ButtonText;
+  }
+
+  .dot {
+    border: 1px solid ButtonText;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+  .navButton {
+    display: none;
+  }
+
+  .card {
+    margin: 0;
+  }
+
+  .content {
+    gap: 1.5rem;
+  }
+
+  .viewDetailsBtn,
+  .addToCartBtn {
+    padding: 1rem;
+  }
+}

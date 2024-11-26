@@ -1,0 +1,28 @@
+.discountBanner {
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #e93b52 0%, #ff6b81 100%);
+    color: white;
+  }
+  
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .code {
+    display: inline-block;
+    background-color: white;
+    color: #e93b52;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }

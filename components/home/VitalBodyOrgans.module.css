@@ -1,0 +1,116 @@
+.vitalOrgans {
+  padding: 60px 20px;
+  background: #ffffff;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.content h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.content p {
+  font-size: 16px;
+  color: #666;
+  max-width: 800px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+
+.viewAllBtn {
+  padding: 12px 32px;
+  background: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewAllBtn:hover {
+  background: #0051cc;
+}
+
+.organsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.iconWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 12px;
+}
+
+.iconWrapper:hover {
+  background: rgba(0, 112, 243, 0.05);
+}
+
+.iconBackground {
+  width: 80px;
+  height: 80px;
+  background: #f0f7ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconWrapper:hover .iconBackground {
+  background: #e1efff;
+}
+
+.icon {
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.iconWrapper span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .vitalOrgans {
+    padding: 40px 16px;
+  }
+
+  .content h2 {
+    font-size: 24px;
+  }
+
+  .organsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+  }
+
+  .iconBackground {
+    width: 60px;
+    height: 60px;
+  }
+
+  .iconWrapper span {
+    font-size: 12px;
+  }
+}

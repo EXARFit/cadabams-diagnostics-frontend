@@ -1,0 +1,32 @@
+.container {
+    margin: 1rem 0;
+  }
+  
+  .tabList {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+  }
+  
+  .tabButton {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s;
+  }
+  
+  .tabButton:hover {
+    color: #2c5847;
+  }
+  
+  .tabButton.active {
+    color: #2c5847;
+    border-bottom: 2px solid #2c5847;
+  }
+  
+  .tabContent {
+    padding: 1rem 0;
+  }

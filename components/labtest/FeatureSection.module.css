@@ -1,0 +1,47 @@
+/* FeatureSection.module.css */
+.features {
+    padding: 4rem 1rem;
+    background-color: #f8fafc;
+  }
+  
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  .featureGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+  
+  .featureCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+  }
+  
+  .featureCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    color: #e93b52;
+  }
+  
+  .featureTitle {
+    color: #0047ab;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
