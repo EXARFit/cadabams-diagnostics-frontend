@@ -1,8 +1,31 @@
-import React, { useState, useEffect } from 'react';
+// components/labtest/LabtestHero.js
+import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import styles from './LabtestHero.module.css';
+
+const getLocationFromPath = (path) => {
+  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  
+  // Split path into segments
+  const parts = path.split('/').filter(Boolean);
+  
+  // Check if it's a location-specific path
+  if (parts[0] === 'bangalore' && parts.length > 2) {
+    // If it's a route like /bangalore/banashankari/lab-test
+    if (parts[1] && parts[1] !== 'lab-test') {
+      const locationName = parts[1]
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      return { name: locationName, value: parts[1] };
+    }
+  }
+  
+  // Default to Bangalore for /bangalore/lab-test
+  return { name: 'Bangalore', value: 'bangalore' };
+};
 
 export default function LabtestHero({ heroData = {} }) {
   const router = useRouter();
@@ -10,6 +33,14 @@ export default function LabtestHero({ heroData = {} }) {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const currentLocation = getLocationFromPath(router.asPath);
+
+  const locationAwareContent = useMemo(() => {
+    const title = `Lab Test Services in ${currentLocation.name}`;
+    const subtitle = `ACCURATE LAB RESULTS YOU CAN RELY ON. CERTIFIED CENTRES IN ${currentLocation.name.toUpperCase()}`;
+
+    return { title, subtitle };
+  }, [currentLocation]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -55,18 +86,15 @@ export default function LabtestHero({ heroData = {} }) {
   };
 
   const handleResultClick = (result) => {
-    const baseUrl = '/bangalore';
+    // Maintain the current location in the URL if it exists
+    const locationPath = currentLocation.value !== 'bangalore' 
+      ? `/${currentLocation.value}` 
+      : '';
     const routePrefix = result.isLabTest ? 'lab-test' : 'xray-scan';
-    const fullRoute = `${baseUrl}/${routePrefix}${result.route}`;
+    const fullRoute = `/bangalore${locationPath}/${routePrefix}${result.route}`;
     router.push(fullRoute);
     setSearchTerm('');
     setShowResults(false);
-  };
-
-  const handleButtonClick = (href) => {
-    if (href) {
-      router.push(href);
-    }
   };
 
   return (
@@ -86,10 +114,10 @@ export default function LabtestHero({ heroData = {} }) {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <h1 className={styles.title}>
-                <span className={styles.highlight}>{heroData?.title || "Need a Blood test?"}</span>
+                <span className={styles.primaryTitle}>{locationAwareContent.title}</span>
               </h1>
               <h2 className={styles.subtitle}>
-                {heroData?.subtitle || "FIND THE CLOSEST LAB AND GET THE FASTEST RESULTS!"}
+                {locationAwareContent.subtitle}
               </h2>
               <div className={styles.searchContainer}>
                 <div className={styles.searchWrapper}>
@@ -100,20 +128,6 @@ export default function LabtestHero({ heroData = {} }) {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <svg
-                    className={styles.searchIcon}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
                   
                   {showResults && (
                     <div className={styles.searchDropdownContainer}>
@@ -140,19 +154,6 @@ export default function LabtestHero({ heroData = {} }) {
                   )}
                 </div>
               </div>
-              <div className={styles.buttonContainer}>
-                {heroData?.buttons?.map((button) => (
-                  <motion.button
-                    key={button._id}
-                    className={`${styles.button} ${styles.labTests}`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleButtonClick(button.href)}
-                  >
-                    {button.text}
-                  </motion.button>
-                ))}
-              </div>
             </motion.div>
             <motion.div 
               className={styles.imageContainer}
@@ -161,7 +162,7 @@ export default function LabtestHero({ heroData = {} }) {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Image
-                src={heroData?.imageSrc || "/default-lab-image.jpg"}
+                src={heroData?.imageSrc || "/images/doctor.png"}
                 alt="Lab Test"
                 width={500}
                 height={500}
@@ -174,68 +175,7 @@ export default function LabtestHero({ heroData = {} }) {
               </div>
             </motion.div>
           </div>
-          <motion.div 
-            className={styles.features}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            {heroData?.features?.map((feature, index) => (
-              <div key={feature._id} className={styles.featureItem}>
-                <img 
-                  src={feature.icon} 
-                  alt={feature.title} 
-                  className={styles.featureIcon}
-                />
-                <div>
-                  <p className={styles.featureTitle}>{feature.title}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
         </motion.div>
-      </div>
-      
-      <div className={styles.floatingBalls}>
-        <motion.div
-          className={`${styles.ball} ${styles.ball1}`}
-          animate={{
-            y: [0, -30, 0],
-            x: [0, 20, 0],
-            rotate: [0, 10, 0]
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className={`${styles.ball} ${styles.ball2}`}
-          animate={{
-            y: [0, 40, 0],
-            x: [0, -30, 0],
-            rotate: [0, -15, 0]
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className={`${styles.ball} ${styles.ball3}`}
-          animate={{
-            y: [0, -20, 0],
-            x: [0, -10, 0],
-            rotate: [0, 5, 0]
-          }}
-          transition={{
-            duration: 9,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
       </div>
     </header>
   );

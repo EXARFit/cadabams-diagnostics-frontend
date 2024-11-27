@@ -39,10 +39,11 @@
 .title {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1f2937;
+ 
   margin-bottom: 0.5rem;
   line-height: 1.2;
   text-align: center;
+  color: #e93b52;
 }
 
 .highlight {
@@ -68,7 +69,7 @@
   color: #0047ab;
   margin-bottom: 1.5rem;
   line-height: 1.1;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   text-align: center;
 }
 
@@ -307,10 +308,10 @@
   .title {
     font-size: 2rem;
   }
-
+/* 
   .subtitle {
     font-size: 2.5rem;
-  }
+  } */
 
   .buttonContainer {
     flex-direction: row;
@@ -407,9 +408,9 @@
     font-size: 2.5rem;
   }
 
-  .subtitle {
+  /* .subtitle {
     font-size: 3rem;
-  }
+  } */
 
   .imageContainer {
     max-width: 400px;
@@ -468,9 +469,9 @@
     font-size: 3rem;
   }
 
-  .subtitle {
+  /* .subtitle {
     font-size: 3.5rem;
-  }
+  } */
 
   .searchInput {
     padding: 1rem 1.5rem;
