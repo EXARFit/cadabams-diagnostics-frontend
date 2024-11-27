@@ -1,9 +1,28 @@
-import React, { useState, useContext, useEffect } from 'react';
+// components/labtest/MultiTestSection.js
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CartContext } from '@/contexts/CartContext';
 import styles from './MultiTestSection.module.css';
+
+const getLocationFromPath = (path) => {
+  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  
+  const parts = path.split('/').filter(Boolean);
+  
+  if (parts[0] === 'bangalore' && parts.length > 2) {
+    if (parts[1] && parts[1] !== 'lab-test') {
+      const locationName = parts[1]
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      return { name: locationName, value: parts[1] };
+    }
+  }
+  
+  return { name: 'Bangalore', value: 'bangalore' };
+};
 
 const TestCard = ({ test, onViewDetails }) => {
   const router = useRouter();
@@ -94,6 +113,21 @@ const TestSection = ({ section }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const cardsPerSlide = 3;
   const totalSlides = Math.ceil(section.tests.length / cardsPerSlide);
+  const currentLocation = getLocationFromPath(router.asPath);
+
+  const locationAwareTitle = useMemo(() => {
+    // Replace any instances of "Bangalore" or add location if not present
+    let title = section.title;
+    if (title.includes('in Bangalore')) {
+      title = title.replace('in Bangalore', `in ${currentLocation.name}`);
+    } else if (title.includes('Bangalore')) {
+      title = title.replace('Bangalore', currentLocation.name);
+    } else {
+      // If location isn't in the title, add it
+      title = `${title} in ${currentLocation.name}`;
+    }
+    return title;
+  }, [section.title, currentLocation]);
 
   const handleNext = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -111,7 +145,7 @@ const TestSection = ({ section }) => {
 
       let targetRoute;
       if (specificLocation && specificLocation !== 'lab-test') {
-        targetRoute = `/bangalore/lab-test${route}`;
+        targetRoute = `/bangalore/${specificLocation}/lab-test${route}`;
       } else {
         targetRoute = `/bangalore/lab-test${route}`;
       }
@@ -127,7 +161,7 @@ const TestSection = ({ section }) => {
 
   return (
     <div className={styles.section}>
-      <h2 className={styles.sectionTitle}>{section.title}</h2>
+      <h2 className={styles.sectionTitle}>{locationAwareTitle}</h2>
       <div className={styles.sliderWrapper}>
         <motion.button
           className={`${styles.navButton} ${styles.prevButton}`}

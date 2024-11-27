@@ -1,4 +1,6 @@
-import React from 'react';
+// components/NonLabTestPage1.js
+import React, { useMemo } from 'react';
+import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
 import TestOverview from './TestOverview';
 import TestDetails from './TestDetails';
@@ -7,7 +9,42 @@ import LabStats from './LabStats';
 import ScrollSpyNavigation from './ScrollSpyNavigation';
 import styles from './NonLabTestPage.module.css';
 
+const getLocationFromPath = (path) => {
+  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  
+  const parts = path.split('/').filter(Boolean);
+  
+  if (parts[0] === 'bangalore' && parts.length > 2) {
+    if (parts[1] && !['lab-test', 'center'].includes(parts[1])) {
+      const locationName = parts[1]
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      return { name: locationName, value: parts[1] };
+    }
+  }
+  
+  return { name: 'Bangalore', value: 'bangalore' };
+};
+
+const getCategoryFromPath = (path) => {
+  const parts = path.split('/');
+  const categoryPart = parts[parts.length - 1];
+  const categoryMap = {
+    'mri-scan': 'MRI',
+    'ct-scan': 'CT',
+    'xray-scan': 'X-ray',
+    'ultrasound-scan': 'Ultrasound',
+    'msk-scan': 'MSK'
+  };
+  return categoryMap[categoryPart] || '';
+};
+
 export default function NonLabTestPage1({ testInfo }) {
+  const router = useRouter();
+  const currentLocation = getLocationFromPath(router.asPath);
+  const category = getCategoryFromPath(router.asPath);
+
   if (!testInfo) {
     return <div>Error: Invalid test data</div>;
   }
@@ -42,15 +79,69 @@ export default function NonLabTestPage1({ testInfo }) {
     return { __html: DOMPurify.sanitize(html) };
   };
 
-  const SectionWithImage = ({ title, content, image, imageAlt, isReversed = false }) => (
-    <div className={styles.section}>
-      <h2 className={styles.sectionTitle}>{title}</h2>
-      <div className={styles.sectionContent} style={{ flexDirection: isReversed ? 'row-reverse' : 'row' }}>
-        <div className={styles.sectionText} dangerouslySetInnerHTML={sanitizeHTML(content)} />
-        {image && <img src={image} alt={imageAlt} className={styles.sectionImage} />}
+  const getSectionTitle = (content, sectionType) => {
+    switch (sectionType) {
+      case 'types':
+        return `Types of ${category} Tests in ${currentLocation.name}`;
+      case 'parameters':
+        return `List of Parameters Considered During the ${category} Scan in ${currentLocation.name}`;
+      case 'benefits':
+        return `Benefits of Taking the ${category} Tests in ${currentLocation.name}`;
+      case 'preparing':
+        return `Preparing for ${category} Scan in ${currentLocation.name}`;
+      case 'risks':
+        return `Risks & Limitations of the ${category} Test in ${currentLocation.name}`;
+      default:
+        return content;
+    }
+  };
+
+  const getLocationAwareContent = (content, sectionType) => {
+    if (!content) return '';
+    
+    let modifiedContent = content;
+    const h3Match = content.match(/<h3>(.*?)<\/h3>/);
+    const newTitle = getSectionTitle('', sectionType);
+    
+    if (h3Match) {
+      modifiedContent = content.replace(h3Match[0], `<h3>${newTitle}</h3>`);
+    } else {
+      modifiedContent = `<h3>${newTitle}</h3>${content}`;
+    }
+    
+    return modifiedContent;
+  };
+
+  const SectionWithImage = ({ title, content, image, imageAlt, isReversed = false, sectionType = '' }) => {
+    const unchangedTitles = [
+      'About The Test',
+      'Types of Tests',
+      'List of Parameters',
+      'Why This Test',
+      'Benefits',
+      'Risks & Limitations',
+      'Diseases Diagnosed',
+      'Preparing for test',
+      'Test Results'
+    ];
+
+    return (
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        <div className={styles.sectionContent} style={{ flexDirection: isReversed ? 'row-reverse' : 'row' }}>
+          <div 
+            className={styles.sectionText} 
+            dangerouslySetInnerHTML={sanitizeHTML(
+              unchangedTitles.includes(title)
+                ? getLocationAwareContent(content, sectionType)
+                : content
+            )} 
+          />
+          {image && <img src={image} alt={imageAlt} className={styles.sectionImage} />}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -65,23 +156,24 @@ export default function NonLabTestPage1({ testInfo }) {
             imageAlt="About the test"
           />
           
-          {/* Types of Tests Section */}
           {typeOfTest && (typeOfTest.title || typeOfTest.desc) && (
             <SectionWithImage
               title="Types of Tests"
-              content={`<h3>${typeOfTest.title || ''}</h3>${typeOfTest.desc || ''}`}
+              content={`${typeOfTest.desc || ''}`}
               image={typeOfTest.imageSrc}
               imageAlt="Types of tests"
               isReversed
+              sectionType="types"
             />
           )}
 
           <SectionWithImage
             title="List of Parameters"
-            content={`<h3>${parameters.title || ''}</h3>${parameters.desc || ''}`}
+            content={`${parameters.desc || ''}`}
             image={parameters.imageSrc}
             imageAlt="Test parameters"
             isReversed
+            sectionType="parameters"
           />
 
           <SectionWithImage
@@ -93,21 +185,21 @@ export default function NonLabTestPage1({ testInfo }) {
 
           <SectionWithImage
             title="Benefits"
-            content={`<h3>${benefits.title || ''}</h3>${benefits.desc || ''}`}
+            content={`${benefits.desc || ''}`}
             image={benefits.imageSrc}
             imageAlt="Benefits of the test"
             isReversed
+            sectionType="benefits"
           />
 
-          {/* Risks & Limitations Section */}
           <SectionWithImage
             title="Risks & Limitations"
-            content={`<h3>${risks.title || ''}</h3>${risks.desc || ''}`}
+            content={`${risks.desc || ''}`}
             image={risks.imageSrc}
             imageAlt="Risks and limitations"
+            sectionType="risks"
           />
 
-          {/* Diseases Diagnosed Section */}
           <SectionWithImage
             title="Diseases Diagnosed"
             content={`<h3>${diseases.title || ''}</h3>${diseases.desc || ''}`}
@@ -118,9 +210,10 @@ export default function NonLabTestPage1({ testInfo }) {
 
           <SectionWithImage
             title="Preparing for test"
-            content={`<h3>${preparation.title || ''}</h3>${preparation.desc || ''}`}
+            content={`${preparation.desc || ''}`}
             image={preparation.imageSrc}
             imageAlt="Test preparation"
+            sectionType="preparing"
           />
 
           <div className={styles.section}>
@@ -153,13 +246,15 @@ export default function NonLabTestPage1({ testInfo }) {
           </div>
 
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>FAQs</h2>
+            <h2 className={styles.sectionTitle}>FAQ's</h2>
             {faqs.map((item, index) => (
               <div key={`faq-${index}`} className={styles.faqItem}>
-                <h3 className={styles.faqQuestion}>{item.question}</h3>
+                <h3 className={styles.faqQuestion}>{item.question.replace(/Bangalore/g, currentLocation.name)}</h3>
                 <div
                   className={styles.faqAnswer}
-                  dangerouslySetInnerHTML={sanitizeHTML(item.answer)}
+                  dangerouslySetInnerHTML={sanitizeHTML(
+                    item.answer.replace(/Bangalore/g, currentLocation.name)
+                  )}
                 />
               </div>
             ))}

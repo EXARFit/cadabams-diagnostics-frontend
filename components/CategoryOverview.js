@@ -1,5 +1,6 @@
-// CategoryOverview.js
-import React from 'react';
+// components/CategoryOverview.js
+import React, { useMemo } from 'react';
+import { useRouter } from 'next/router';
 import styles from './CategoryOverview.module.css';
 
 const CATEGORY_IMAGES = {
@@ -12,8 +13,44 @@ const CATEGORY_IMAGES = {
 
 const DEFAULT_IMAGE = "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png";
 
+const getLocationFromPath = (path) => {
+  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  
+  const parts = path.split('/').filter(Boolean);
+  
+  if (parts[0] === 'bangalore' && parts.length > 2) {
+    if (parts[1] && !['lab-test', 'center'].includes(parts[1])) {
+      const locationName = parts[1]
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      return { name: locationName, value: parts[1] };
+    }
+  }
+  
+  return { name: 'Bangalore', value: 'bangalore' };
+};
+
+const formatCategoryName = (name, categoryType) => {
+  // Convert categoryType to a display name (e.g., 'mri-scan' -> 'MRI')
+  const typeMap = {
+    'ct-scan': 'CT',
+    'mri-scan': 'MRI',
+    'msk-scan': 'MSK',
+    'ultrasound-scan': 'Ultrasound',
+    'xray-scan': 'X-Ray'
+  };
+
+  // Get the base category name
+  const baseType = typeMap[categoryType.toLowerCase()] || name;
+  return `${baseType} Scans`;
+};
+
 const CategoryOverview = ({ category }) => {
   if (!category) return null;
+
+  const router = useRouter();
+  const currentLocation = getLocationFromPath(router.asPath);
 
   const {
     name = '',
@@ -22,42 +59,36 @@ const CategoryOverview = ({ category }) => {
     categoryType = ''
   } = category;
 
-  // Determine which image to display
+  const locationAwareTitle = useMemo(() => {
+    const formattedName = formatCategoryName(name, categoryType);
+    return `${formattedName} in ${currentLocation.name}`;
+  }, [name, categoryType, currentLocation]);
+
   const getDisplayImage = () => {
-    // For debugging
-    console.log('Category Type:', categoryType);
-    
-    // If it's a pregnancy scan, use the image from the API
     if (image && categoryType.toLowerCase().includes('pregnancy')) {
       return image;
     }
-    
-    // For other categories, use the exact mapping
+
     const categoryKey = categoryType.toLowerCase();
-    console.log('Looking for category key:', categoryKey);
-    console.log('Available categories:', Object.keys(CATEGORY_IMAGES));
-    
     const selectedImage = CATEGORY_IMAGES[categoryKey];
-    console.log('Selected Image:', selectedImage);
     
     return selectedImage || DEFAULT_IMAGE;
   };
 
   const displayImage = getDisplayImage();
-  console.log('Final Display Image:', displayImage);
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.leftContent}>
-          <h1 className={styles.title}>{name}</h1>
+          <h1 className={styles.title}>{locationAwareTitle}</h1>
           <p className={styles.subtitle}>Category Overview</p>
           <p className={styles.description}>{description}</p>
         </div>
         <div className={styles.rightContent}>
           <img
             src={displayImage}
-            alt={name || "Lab Test"}
+            alt={locationAwareTitle || "Lab Test"}
             className={styles.image}
             onError={(e) => {
               console.error('Image failed to load:', e.target.src);
