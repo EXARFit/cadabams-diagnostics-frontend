@@ -22,12 +22,14 @@
 .cardsContainer {
   display: flex;
   gap: 2rem;
-  overflow-x: auto;
+  overflow-x: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 1rem;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .cardsContainer::-webkit-scrollbar {
@@ -116,7 +118,8 @@
   gap: 1rem;
 }
 
-.viewDetailsBtn, .addToCartBtn {
+.viewDetailsBtn,
+.addToCartBtn {
   flex: 1;
   padding: 0.6rem;
   border: none;
@@ -136,6 +139,10 @@
 .addToCartBtn {
   background-color: #0047ab;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .viewDetailsBtn:hover {
@@ -203,30 +210,124 @@
   border-radius: 50%;
   background-color: #ccc;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .activeDot {
   background-color: #0047ab;
   transform: scale(1.2);
 }
-
 @media (max-width: 768px) {
-  .checkupsSection {
-    padding: 3rem 1rem;
+    .checkupsSection {
+      padding: 2rem 1rem;
+    }
+
+    .cardsContainer {
+      gap: 1rem;
+      padding: 0.5rem;
+    }
+
+    .card {
+      width: 100%;
+      min-width: 280px;
+      max-width: 320px;
+    }
+
+    .navButton {
+      display: none;
+    }
+
+    .cardHeader h3 {
+      font-size: 1.1rem;
+    }
+
+    .checkupsSection h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .discountedPrice {
+      font-size: 1.2rem;
+    }
+
+    .originalPrice {
+      font-size: 0.8rem;
+    }
+
+    .cardBody {
+      margin-bottom: 1rem;
+    }
+
+    .infoItem {
+      font-size: 0.85rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .viewDetailsBtn,
+    .addToCartBtn {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .dots {
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .checkupsSection {
+      padding: 1.5rem 0.75rem;
+    }
+
+    .card {
+      min-width: 260px;
+      padding: 1rem;
+    }
+
+    .cardFooter {
+      gap: 0.5rem;
+    }
+
+    .viewDetailsBtn,
+    .addToCartBtn {
+      padding: 0.5rem 0.25rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (hover: none) {
+    .card:hover {
+      transform: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .viewDetailsBtn:hover {
+      background-color: transparent;
+    }
+
+    .addToCartBtn:hover {
+      background-color: #0047ab;
+    }
+  }
+
+  .checkIcon {
+    margin-right: 4px;
+  }
+
+  .testType {
+    background-color: #f0f7ff;
+    color: #0047ab;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
   }
 
   .cardsContainer {
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
+    transition: transform 0.3s ease-out;
   }
-
-  .card {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .navButton {
-    display: none;
-  }
-}

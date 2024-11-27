@@ -1,4 +1,4 @@
-// components/home/LocationPopup.js
+
 import React from 'react';
 import styles from './LocationPopup.module.css';
 import { BANGALORE_LOCATIONS } from '@/config/locations';
@@ -30,7 +30,7 @@ export default function LocationPopup({ onSelect }) {
               <span className={styles.icon}>
                 {location.value === 'bangalore' ? '🏙️' : '📍'}
               </span>
-              {location.name}
+              <span className={styles.locationName}>{location.name}</span>
             </button>
           ))}
           <button
@@ -38,10 +38,11 @@ export default function LocationPopup({ onSelect }) {
             onClick={handleSkip}
           >
             <span className={styles.icon}>⏭️</span>
-            Skip for now
+            <span className={styles.locationName}>Skip for now</span>
           </button>
         </div>
       </div>
     </div>
   );
 }
+

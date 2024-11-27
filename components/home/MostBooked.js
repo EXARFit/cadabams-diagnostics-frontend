@@ -111,7 +111,7 @@ export default function MostBooked({ mostBookedData }) {
   };
 
   const handleViewAllClick = () => {
-    router.push('/non-labtest');
+    router.push('/bangalore/xray-scan');
   };
 
   return (

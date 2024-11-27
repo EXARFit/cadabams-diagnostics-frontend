@@ -2,6 +2,7 @@
   width: 100%;
   padding: 20px 0;
   background: #f8f9fa;
+  overflow: hidden;
 }
 
 .carouselContainer {
@@ -10,26 +11,33 @@
   max-width: 1200px;
   margin: 0 auto;
   overflow: hidden;
+  background: #f8f9fa;
 }
 
 .sliderWrapper {
   display: flex;
   transition: transform 0.5s ease-in-out;
   width: 100%;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  background: #f8f9fa;
 }
 
 .slide {
   position: relative;
   min-width: 100%;
-  height: 100%;
+  height: 400px;
   overflow: hidden;
   border-radius: 12px;
+  background: #f8f9fa;
 }
 
 .slideImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  background: #f8f9fa;
+  display: block;
 }
 
 .overlay {
@@ -39,9 +47,10 @@
   right: 0;
   padding: 20px;
   display: flex;
-  justify-content: flex-start; /* Changed from flex-end to flex-start */
+  justify-content: flex-start;
   align-items: center;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent); /* Added gradient for better button visibility */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+  z-index: 2;
 }
 
 .bookButton {
@@ -54,7 +63,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
-  margin-left: 20px; /* Added margin from the left edge */
+  margin-left: 20px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .bookButton:hover {
@@ -69,7 +79,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9); /* Made slightly transparent */
+  background: rgba(255, 255, 255, 0.9);
   border: none;
   cursor: pointer;
   display: flex;
@@ -105,7 +115,10 @@
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  z-index: 2;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 10px;
+  border-radius: 15px;
 }
 
 .dot {
@@ -114,7 +127,7 @@
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .activeDot {
@@ -122,23 +135,120 @@
   transform: scale(1.2);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .carouselContainer {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
   .slide {
-    height: 300px;
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 10px 0;
+  }
+
+  .carouselContainer {
+    padding: 0 10px;
+  }
+
+  .slide {
+    height: auto;
+    aspect-ratio: 16/9;
+    min-height: 200px;
+    max-height: 300px;
+    border-radius: 8px;
+  }
+
+  .slideImage {
+    object-fit: contain;
+    padding: 10px;
   }
 
   .navButton {
-    width: 32px;
-    height: 32px;
-  }
-
-  .navIcon {
-    width: 20px;
-    height: 20px;
+    display: none;
   }
 
   .bookButton {
-    padding: 10px 24px;
+    padding: 8px 16px;
     font-size: 14px;
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+
+  .overlay {
+    padding: 15px 10px;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.3) 50%,
+      transparent 100%
+    );
+  }
+
+  .pagination {
+    bottom: 10px;
+    padding: 4px 8px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    margin: 0 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 5px 0;
+  }
+
+  .carouselContainer {
+    padding: 0 5px;
+  }
+
+  .slide {
+    max-height: 250px;
+    border-radius: 6px;
+  }
+
+  .slideImage {
+    padding: 5px;
+  }
+
+  .bookButton {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+
+  .overlay {
+    padding: 12px 8px;
+  }
+
+  .pagination {
+    bottom: 8px;
+  }
+}
+
+/* Fix for Safari/iOS */
+@supports (-webkit-touch-callout: none) {
+  .slide {
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+}
+
+/* Optimize touch interactions */
+@media (hover: none) {
+  .bookButton:hover {
+    transform: none;
+    background-color: #0070f3;
+  }
+
+  .bookButton:active {
+    background-color: #0051cc;
   }
 }

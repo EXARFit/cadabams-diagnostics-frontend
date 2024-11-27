@@ -1,3 +1,4 @@
+// CheckupsSlider.js
 import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -71,10 +72,6 @@ const CheckupCard = ({ test }) => {
       </div>
       <div className={styles.cardBody}>
         <div className={styles.infoItem}>
-          {/* <FaFlask className={styles.icon} /> */}
-          {/* <span>91 parameters included</span> */}
-        </div>
-        <div className={styles.infoItem}>
           <FaClock className={styles.icon} />
           <span>Reports {basicInfo?.reportsWithin}</span>
         </div>
@@ -116,9 +113,22 @@ const CheckupCard = ({ test }) => {
 
 export default function CheckupsSection({ test_card }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   const tests = test_card?.tests || [];
-  const cardsPerSlide = 3;
+  const cardsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(tests.length / cardsPerSlide);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -126,6 +136,32 @@ export default function CheckupsSection({ test_card }) {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (Math.abs(distance) < minSwipeDistance) return;
+
+    if (distance > 0 && currentSlide < totalSlides - 1) {
+      nextSlide();
+    } else if (distance < 0 && currentSlide > 0) {
+      prevSlide();
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
   };
 
   const visibleTests = tests.slice(
@@ -143,17 +179,24 @@ export default function CheckupsSection({ test_card }) {
         {test_card?.title || 'Vital Health Tests'}
       </motion.h2>
       <div className={styles.sliderContainer}>
-        <motion.button
-          className={`${styles.navButton} ${styles.prevButton}`}
-          onClick={prevSlide}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={currentSlide === 0}
-        >
-          <FaChevronLeft />
-        </motion.button>
+        {!isMobile && (
+          <motion.button
+            className={`${styles.navButton} ${styles.prevButton}`}
+            onClick={prevSlide}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={currentSlide === 0}
+          >
+            <FaChevronLeft />
+          </motion.button>
+        )}
 
-        <div className={styles.cardsContainer}>
+        <div 
+          className={styles.cardsContainer}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence mode="wait">
             {visibleTests.map((test) => (
               <CheckupCard key={test._id} test={test} />
@@ -161,15 +204,17 @@ export default function CheckupsSection({ test_card }) {
           </AnimatePresence>
         </div>
 
-        <motion.button
-          className={`${styles.navButton} ${styles.nextButton}`}
-          onClick={nextSlide}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={currentSlide === totalSlides - 1}
-        >
-          <FaChevronRight />
-        </motion.button>
+        {!isMobile && (
+          <motion.button
+            className={`${styles.navButton} ${styles.nextButton}`}
+            onClick={nextSlide}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={currentSlide === totalSlides - 1}
+          >
+            <FaChevronRight />
+          </motion.button>
+        )}
       </div>
 
       <div className={styles.pagination}>
@@ -186,6 +231,7 @@ export default function CheckupsSection({ test_card }) {
               backgroundColor: index === currentSlide ? '#2563EB' : '#E5E7EB'
             }}
             transition={{ duration: 0.3 }}
+            onClick={() => setCurrentSlide(index)}
           />
         ))}
       </div>

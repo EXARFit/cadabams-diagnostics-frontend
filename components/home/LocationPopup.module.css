@@ -1,4 +1,3 @@
-/* components/home/LocationPopup.module.css */
 .overlay {
   position: fixed;
   top: 0;
@@ -10,6 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 1rem;
 }
 
 .popup {
@@ -19,6 +19,9 @@
   width: 90%;
   max-width: 500px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .title {
@@ -47,6 +50,16 @@
   gap: 0.5rem;
   font-size: 1rem;
   color: #4a5568;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.locationName {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .areaButton:hover {
@@ -67,6 +80,7 @@
 
 .icon {
   font-size: 1.25rem;
+  flex-shrink: 0;
 }
 
 .skipButton {
@@ -78,4 +92,69 @@
 
 .skipButton:hover {
   background: #edf2f7;
+}
+
+@media (max-width: 768px) {
+  .popup {
+    padding: 1.5rem;
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .areaGrid {
+    gap: 0.75rem;
+  }
+
+  .areaButton {
+    padding: 0.875rem;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 0.5rem;
+  }
+
+  .popup {
+    padding: 1.25rem;
+    border-radius: 10px;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  .areaGrid {
+    grid-template-columns: 1fr;
+    gap: 0.625rem;
+  }
+
+  .areaButton {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .icon {
+    font-size: 1.125rem;
+  }
+  
+  .allAreas, 
+  .skipButton {
+    grid-column: auto;
+  }
+}
+
+/* iOS Safari fixes */
+@supports (-webkit-touch-callout: none) {
+  .popup {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
 }

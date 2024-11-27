@@ -55,14 +55,14 @@ const TestCard = ({ test, onViewDetails }) => {
   };
 
   return (
-    <div className={styles.cardWrapper}>
-      <motion.div
-        className={styles.card}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.3 }}
-      >
+    <motion.div
+      className={styles.cardWrapper}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className={styles.card}>
         <h3 className={styles.testName}>{basicInfo?.name}</h3>
         <div className={styles.priceSection}>
           <div className={styles.priceInfo}>
@@ -103,8 +103,8 @@ const TestCard = ({ test, onViewDetails }) => {
             ) : 'Add to Cart'}
           </motion.button>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -116,14 +116,12 @@ const TestSection = ({ section }) => {
   const currentLocation = getLocationFromPath(router.asPath);
 
   const locationAwareTitle = useMemo(() => {
-    // Replace any instances of "Bangalore" or add location if not present
     let title = section.title;
     if (title.includes('in Bangalore')) {
       title = title.replace('in Bangalore', `in ${currentLocation.name}`);
     } else if (title.includes('Bangalore')) {
       title = title.replace('Bangalore', currentLocation.name);
     } else {
-      // If location isn't in the title, add it
       title = `${title} in ${currentLocation.name}`;
     }
     return title;
@@ -163,15 +161,17 @@ const TestSection = ({ section }) => {
     <div className={styles.section}>
       <h2 className={styles.sectionTitle}>{locationAwareTitle}</h2>
       <div className={styles.sliderWrapper}>
-        <motion.button
-          className={`${styles.navButton} ${styles.prevButton}`}
-          onClick={handlePrev}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={currentSlide === 0}
-        >
-          <ChevronLeft className={styles.icon} />
-        </motion.button>
+        {totalSlides > 1 && (
+          <motion.button
+            className={`${styles.navButton} ${styles.prevButton}`}
+            onClick={handlePrev}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={currentSlide === 0}
+          >
+            <ChevronLeft className={styles.icon} />
+          </motion.button>
+        )}
 
         <div className={styles.cardsContainer}>
           <AnimatePresence mode="wait">
@@ -182,6 +182,11 @@ const TestSection = ({ section }) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
+              style={{
+                '--current-slide': currentSlide,
+                '--total-slides': totalSlides,
+                '--cards-per-slide': cardsPerSlide
+              }}
             >
               {visibleTests.map((test) => (
                 <TestCard
@@ -194,31 +199,36 @@ const TestSection = ({ section }) => {
           </AnimatePresence>
         </div>
 
-        <motion.button
-          className={`${styles.navButton} ${styles.nextButton}`}
-          onClick={handleNext}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={currentSlide === totalSlides - 1}
-        >
-          <ChevronRight className={styles.icon} />
-        </motion.button>
+        {totalSlides > 1 && (
+          <motion.button
+            className={`${styles.navButton} ${styles.nextButton}`}
+            onClick={handleNext}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={currentSlide === totalSlides - 1}
+          >
+            <ChevronRight className={styles.icon} />
+          </motion.button>
+        )}
       </div>
 
-      <div className={styles.paginationDots}>
-        {[...Array(totalSlides)].map((_, idx) => (
-          <motion.span
-            key={idx}
-            className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ''}`}
-            initial={{ scale: 1 }}
-            animate={{
-              scale: currentSlide === idx ? 1.2 : 1,
-              backgroundColor: currentSlide === idx ? '#0047ab' : '#E5E7EB'
-            }}
-            transition={{ duration: 0.3 }}
-          />
-        ))}
-      </div>
+      {totalSlides > 1 && (
+        <div className={styles.paginationDots}>
+          {[...Array(totalSlides)].map((_, idx) => (
+            <motion.button
+              key={idx}
+              className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ''}`}
+              onClick={() => setCurrentSlide(idx)}
+              initial={{ scale: 1 }}
+              animate={{
+                scale: currentSlide === idx ? 1.2 : 1,
+                backgroundColor: currentSlide === idx ? '#0047ab' : '#E5E7EB'
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
