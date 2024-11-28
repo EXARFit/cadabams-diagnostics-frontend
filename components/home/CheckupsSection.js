@@ -62,50 +62,52 @@ const CheckupCard = ({ test }) => {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <div className={styles.cardHeader}>
-        <h3>{basicInfo?.name}</h3>
-        <div className={styles.priceContainer}>
-          <span className={styles.originalPrice}>₹{basicInfo?.price}</span>
-          <span className={styles.discountedPrice}>₹{basicInfo?.discountedPrice}</span>
+      <div className={styles.cardContent}>
+        <div className={styles.cardHeader}>
+          <h3>{basicInfo?.name}</h3>
+          <div className={styles.priceContainer}>
+            <span className={styles.originalPrice}>₹{basicInfo?.price}</span>
+            <span className={styles.discountedPrice}>₹{basicInfo?.discountedPrice}</span>
+          </div>
+          <span className={styles.discount}>{basicInfo?.discount}% Off</span>
         </div>
-        <span className={styles.discount}>{basicInfo?.discount}% Off</span>
-      </div>
-      <div className={styles.cardBody}>
-        <div className={styles.infoItem}>
-          <FaClock className={styles.icon} />
-          <span>Reports {basicInfo?.reportsWithin}</span>
+        <div className={styles.cardBody}>
+          <div className={styles.infoItem}>
+            <FaClock className={styles.icon} />
+            <span>Reports {basicInfo?.reportsWithin}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.testType}>
+              {test.templateName === 'non-labtest' ? 'Center Visit Only' : 'Lab Test'}
+            </span>
+          </div>
         </div>
-        <div className={styles.infoItem}>
-          <span className={styles.testType}>
-            {test.templateName === 'non-labtest' ? 'Center Visit Only' : 'Lab Test'}
-          </span>
+        <div className={styles.cardFooter}>
+          <motion.button
+            className={styles.viewDetailsBtn}
+            onClick={handleViewDetails}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            View Details
+          </motion.button>
+          <motion.button 
+            className={`${styles.addToCartBtn} ${isAdded ? styles.added : ''}`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleAddToCart}
+            disabled={isAdded}
+          >
+            {isAdded ? (
+              <>
+                <FaCheck className={styles.checkIcon} />
+                Added
+              </>
+            ) : (
+              'Add to Cart'
+            )}
+          </motion.button>
         </div>
-      </div>
-      <div className={styles.cardFooter}>
-        <motion.button
-          className={styles.viewDetailsBtn}
-          onClick={handleViewDetails}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          View Details
-        </motion.button>
-        <motion.button 
-          className={`${styles.addToCartBtn} ${isAdded ? styles.added : ''}`}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleAddToCart}
-          disabled={isAdded}
-        >
-          {isAdded ? (
-            <>
-              <FaCheck className={styles.checkIcon} />
-              Added
-            </>
-          ) : (
-            'Add to Cart'
-          )}
-        </motion.button>
       </div>
     </motion.div>
   );
