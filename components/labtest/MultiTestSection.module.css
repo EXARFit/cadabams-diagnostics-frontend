@@ -36,7 +36,7 @@
   margin: 0 auto;
   position: relative;
   width: 100%;
-  touch-action: pan-y pinch-zoom;
+  touch-action: pan-x pan-y;
 }
 
 .cardsTrack {
@@ -249,33 +249,41 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    width: 100%;
   }
 
   .cardsTrack {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 12px;
+    padding: 0;
+    width: 100%;
     transform: translateX(calc(-100% * var(--current-slide)));
   }
 
   .cardWrapper {
     width: 100%;
-    max-width: 320px;
     margin: 0 auto;
   }
 
   .card {
     width: 100%;
-    margin: 0 auto;
+    margin: 0;
+    padding: 1rem;
   }
 
   .navButton {
-    width: 32px;
-    height: 32px;
+    display: none;
   }
 
   .paginationDots {
     margin-top: 1rem;
+  }
+
+  .sliderWrapper {
+    padding: 0;
+    overflow: hidden;
+    touch-action: pan-x;
   }
 }
 
@@ -287,10 +295,6 @@
   .sectionTitle {
     font-size: 1.25rem;
     margin-bottom: 1.5rem;
-  }
-
-  .sliderWrapper {
-    padding: 0 16px;
   }
 
   .cardWrapper {
@@ -319,29 +323,16 @@
     width: 100%;
     padding: 0.625rem;
   }
-
-  .navButton {
-    width: 28px;
-    height: 28px;
-  }
 }
 
 /* Touch device optimizations */
 @media (hover: none) {
-  .navButton {
-    display: none;
-  }
-
-  .sliderWrapper {
-    padding: 0;
-  }
-
   .cardsContainer {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    touch-action: pan-x;
   }
 
   .cardsContainer::-webkit-scrollbar {

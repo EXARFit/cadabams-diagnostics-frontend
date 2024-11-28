@@ -111,7 +111,21 @@ const TestCard = ({ test, onViewDetails }) => {
 const TestSection = ({ section }) => {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const cardsPerSlide = 3;
+  const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const cardsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(section.tests.length / cardsPerSlide);
   const currentLocation = getLocationFromPath(router.asPath);
 
@@ -133,6 +147,32 @@ const TestSection = ({ section }) => {
 
   const handlePrev = () => {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (Math.abs(distance) < minSwipeDistance) return;
+
+    if (distance > 0 && currentSlide < totalSlides - 1) {
+      handleNext();
+    } else if (distance < 0 && currentSlide > 0) {
+      handlePrev();
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
   const handleViewDetails = (route) => {
@@ -161,7 +201,7 @@ const TestSection = ({ section }) => {
     <div className={styles.section}>
       <h2 className={styles.sectionTitle}>{locationAwareTitle}</h2>
       <div className={styles.sliderWrapper}>
-        {totalSlides > 1 && (
+        {totalSlides > 1 && !isMobile && (
           <motion.button
             className={`${styles.navButton} ${styles.prevButton}`}
             onClick={handlePrev}
@@ -173,7 +213,12 @@ const TestSection = ({ section }) => {
           </motion.button>
         )}
 
-        <div className={styles.cardsContainer}>
+        <div 
+          className={styles.cardsContainer}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -199,7 +244,7 @@ const TestSection = ({ section }) => {
           </AnimatePresence>
         </div>
 
-        {totalSlides > 1 && (
+        {totalSlides > 1 && !isMobile && (
           <motion.button
             className={`${styles.navButton} ${styles.nextButton}`}
             onClick={handleNext}
