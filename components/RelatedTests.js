@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
 import { CartContext } from '../contexts/CartContext';
@@ -6,16 +6,19 @@ import { FaFlask, FaClock, FaCheck } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './RelatedTests.module.css';
 
-const TestCard = ({ test, currentCategory }) => {  // Added currentCategory prop here
+const TestCard = ({ test, currentCategory }) => {
   const router = useRouter();
-  const { addToCart, cart } = useContext(CartContext);
+  const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
   
   const basicInfo = test.alldata?.[0]?.basic_info || {};
   const aboutTest = test.alldata?.find(item => item.about_test)?.about_test || {};
 
-  // Check if item is already in cart
-  const isInCart = cart?.some(item => item.id === test._id);
+  // Check if item is in cart based on route
+  useEffect(() => {
+    const isInCart = cart?.some(item => item.route === basicInfo?.route);
+    setIsAdded(isInCart);
+  }, [cart, basicInfo?.route]);
 
   const getDiscountedPrice = (price, discount) => {
     if (!price || !discount) return price;
@@ -30,12 +33,16 @@ const TestCard = ({ test, currentCategory }) => {  // Added currentCategory prop
   const handleAddToCart = (e) => {
     e.stopPropagation();
     const cartItem = {
-      id: test._id,
+      route: basicInfo?.route,
       title: basicInfo?.name,
       discountedPrice: basicInfo?.discountedPrice || getDiscountedPrice(basicInfo?.price, basicInfo?.discount),
       price: basicInfo?.price,
       quantity: 1,
-      templateName: test.templateName || 'non-labtest'
+      templateName: test.templateName || 'non-labtest',
+      basicInfo: {
+        ...basicInfo,
+        route: basicInfo?.route
+      }
     };
     addToCart(cartItem);
     setIsAdded(true);
@@ -117,13 +124,13 @@ const TestCard = ({ test, currentCategory }) => {  // Added currentCategory prop
             View Details
           </motion.button>
           <motion.button
-            className={`${styles.cartButton} ${(isAdded || isInCart) ? styles.added : ''}`}
+            className={`${styles.cartButton} ${isAdded ? styles.added : ''}`}
             onClick={handleAddToCart}
-            disabled={isAdded || isInCart}
+            disabled={isAdded}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {(isAdded || isInCart) ? (
+            {isAdded ? (
               <>
                 <FaCheck className={styles.checkIcon} />
                 Added
@@ -157,7 +164,7 @@ const RelatedTests = ({ tests, currentCategory }) => {
             <TestCard 
               key={test._id} 
               test={test}
-              currentCategory={currentCategory}  // Passing the prop here
+              currentCategory={currentCategory}
             />
           ))}
         </AnimatePresence>

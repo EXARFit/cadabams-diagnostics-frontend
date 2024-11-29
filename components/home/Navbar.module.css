@@ -65,11 +65,11 @@
   appearance: none;
   background: transparent;
   border: none;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #333;
   cursor: pointer;
   width: 100%;
-  padding-right: 1.5rem;
+ 
 }
 
 /* Center Section - Search */

@@ -6,11 +6,14 @@ import styles from './TestOverview.module.css';
 const TestOverview = ({ basicInfo, templateName }) => {
   const leftBallRef = useRef(null);
   const rightBallRef = useRef(null);
-  const { addToCart, cartItems } = useContext(CartContext);
+  const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
 
-  // Check if item is already in cart
-  const isInCart = cartItems?.some(item => item.id === basicInfo.id);
+  // Check if item is in cart based on route
+  useEffect(() => {
+    const isInCart = cart?.some(item => item.route === basicInfo.route);
+    setIsAdded(isInCart);
+  }, [cart, basicInfo.route]);
 
   useEffect(() => {
     const animateBall = (ballRef, direction) => {
@@ -32,12 +35,13 @@ const TestOverview = ({ basicInfo, templateName }) => {
 
   const handleAddToCart = () => {
     const cartItem = {
-      id: basicInfo.id,
+      route: basicInfo.route,
       title: basicInfo.name,
       discountedPrice: basicInfo.discountedPrice,
       price: basicInfo.price,
       quantity: 1,
-      templateName: templateName || 'non-labtest' // Add template name with default
+      templateName: templateName || 'non-labtest',
+      basicInfo // Store complete basicInfo for future reference
     };
     addToCart(cartItem);
     setIsAdded(true);
@@ -67,11 +71,11 @@ const TestOverview = ({ basicInfo, templateName }) => {
               <span>1K+ people booked this test</span>
             </div>
             <button 
-              className={`${styles.addToCartButton} ${(isAdded || isInCart) ? styles.added : ''}`}
+              className={`${styles.addToCartButton} ${isAdded ? styles.added : ''}`}
               onClick={handleAddToCart}
-              disabled={isAdded || isInCart}
+              disabled={isAdded}
             >
-              {(isAdded || isInCart) ? (
+              {isAdded ? (
                 <>
                   <Check className={styles.buttonIcon} />
                   Added to Cart
