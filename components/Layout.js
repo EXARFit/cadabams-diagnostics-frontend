@@ -10,8 +10,8 @@ export default function Layout({ children, title }) {
   return (
     <div className={styles.container}>
       <Head>
-        <title>{title} | Cadabams Health Labs</title>
-        <meta name="description" content="Cadabams Health Labs - Fast and Reliable Health Checkups" />
+        <title>{title} | Cadabam's Diagnostics Labs</title>
+        <meta name="description" content="Cadabam's Diagnostics Labs - Fast and Reliable Health Checkups" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -23,7 +23,7 @@ export default function Layout({ children, title }) {
       <CommonSections />
       <Footer />
       <footer className={styles.footer}>
-        <p>&copy; 2023 Cadabams Health Labs. All rights reserved.</p>
+        <p>&copy; 2023 Cadabam's Diagnostics Labs. All rights reserved.</p>
       </footer>
 
       <MobileCartSummary />

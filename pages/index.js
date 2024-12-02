@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import Head from 'next/head';
 import { AuthProvider } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import Hero from '@/components/home/Hero';
@@ -172,10 +173,74 @@ export default function BangalorePage() {
     </>
   );
 
+  const pageTitle = `Cadabam's Diagnostics${params.length > 0 ? ` - ${params.join(' / ')}` : ''} | Best Diagnostic Center in Bangalore`;
+  const pageDescription = "Cadabam's Diagnostics offers comprehensive diagnostic services including blood tests, scans, and health checkups. Book your diagnostic tests online or get home sample collection in Bangalore.";
+
   if (loading) {
     return (
       <AuthProvider>
         <Layout>
+          <Head>
+            <title>{pageTitle}</title>
+            <meta name="description" content={pageDescription} />
+            <meta name="robots" content="index, follow" />
+            
+            {/* Canonical Tag */}
+            <link rel="canonical" href={`https://diagnostics.cadabams.com${router.asPath}`} />
+            
+            {/* Open Graph Tags */}
+            <meta property="og:title" content={pageTitle} />
+            <meta property="og:description" content={pageDescription} />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={`https://diagnostics.cadabams.com${router.asPath}`} />
+            <meta property="og:image" content="https://diagnostics.cadabams.com/images/og-image.jpg" />
+            <meta property="og:site_name" content="Cadabam's Diagnostics" />
+            
+            {/* Schema.org markup */}
+            <script type="application/ld+json">
+              {JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "MedicalBusiness",
+                "name": "Cadabam's Diagnostics",
+                "image": "https://diagnostics.cadabams.com/images/logo.png",
+                "description": pageDescription,
+                "@id": `https://diagnostics.cadabams.com${router.asPath}`,
+                "url": `https://diagnostics.cadabams.com${router.asPath}`,
+                "telephone": "+91-XXX-XXX-XXXX",
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "Your Street Address",
+                  "addressLocality": "Bangalore",
+                  "postalCode": "Your Postal Code",
+                  "addressCountry": "IN"
+                },
+                "geo": {
+                  "@type": "GeoCoordinates",
+                  "latitude": 12.9141,
+                  "longitude": 77.6332
+                },
+                "openingHoursSpecification": {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
+                  ],
+                  "opens": "00:00",
+                  "closes": "23:59"
+                },
+                "sameAs": [
+                  "https://www.facebook.com/CadabamsDiagnostics",
+                  "https://twitter.com/CadabamsDiag",
+                  "https://www.instagram.com/cadabamsdiagnostics"
+                ]
+              })}
+            </script>
+          </Head>
           <div>Loading...</div>
         </Layout>
       </AuthProvider>
@@ -184,7 +249,68 @@ export default function BangalorePage() {
 
   return (
     <AuthProvider>
-      <Layout title={`Cadabams - Bangalore ${params.length > 0 ? `- ${params.join(' / ')}` : ''}`}>
+      <Layout>
+        <Head>
+          <title>{pageTitle}</title>
+          <meta name="description" content={pageDescription} />
+          <meta name="robots" content="index, follow" />
+          
+          {/* Canonical Tag */}
+          <link rel="canonical" href={`https://diagnostics.cadabams.com${router.asPath}`} />
+          
+          {/* Open Graph Tags */}
+          <meta property="og:title" content={pageTitle} />
+          <meta property="og:description" content={pageDescription} />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content={`https://diagnostics.cadabams.com${router.asPath}`} />
+          <meta property="og:image" content="https://diagnostics.cadabams.com/images/og-image.jpg" />
+          <meta property="og:site_name" content="Cadabam's Diagnostics" />
+          
+          {/* Schema.org markup */}
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "MedicalBusiness",
+              "name": "Cadabam's Diagnostics",
+              "image": "https://diagnostics.cadabams.com/images/logo.png",
+              "description": pageDescription,
+              "@id": `https://diagnostics.cadabams.com${router.asPath}`,
+              "url": `https://diagnostics.cadabams.com${router.asPath}`,
+              "telephone": "+91-XXX-XXX-XXXX",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Your Street Address",
+                "addressLocality": "Bangalore",
+                "postalCode": "Your Postal Code",
+                "addressCountry": "IN"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 12.9141,
+                "longitude": 77.6332
+              },
+              "openingHoursSpecification": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday"
+                ],
+                "opens": "00:00",
+                "closes": "23:59"
+              },
+              "sameAs": [
+                "https://www.facebook.com/CadabamsDiagnostics",
+                "https://twitter.com/CadabamsDiag",
+                "https://www.instagram.com/cadabamsdiagnostics"
+              ]
+            })}
+          </script>
+        </Head>
         {showLocationPopup && <LocationPopup onSelect={handleLocationSelect} />}
         {params.length === 0 ? (
           <MainContent />
