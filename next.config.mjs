@@ -23,6 +23,35 @@ const nextConfig = {
         source: '/',
         destination: '/bangalore',
       },
+      // Base routes without bangalore prefix
+      {
+        source: '/xray-scan',
+        destination: '/bangalore/xray-scan',
+      },
+      {
+        source: '/mri-scan',
+        destination: '/bangalore/mri-scan',
+      },
+      {
+        source: '/ct-scan',
+        destination: '/bangalore/ct-scan',
+      },
+      {
+        source: '/ultrasound-scan',
+        destination: '/bangalore/ultrasound-scan',
+      },
+      {
+        source: '/msk-scan',
+        destination: '/bangalore/msk-scan',
+      },
+      {
+        source: '/pregnancy-scan',
+        destination: '/bangalore/pregnancy-scan',
+      },
+      {
+        source: '/lab-test',
+        destination: '/bangalore/lab-test',
+      },
       // Individual lab test routes (must be before the general lab-test routes)
       {
         source: '/bangalore/lab-test/:testSlug',
