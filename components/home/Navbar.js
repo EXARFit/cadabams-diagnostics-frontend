@@ -42,6 +42,11 @@ export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const { cart } = useContext(CartContext);
 
+  // Filter centers to only include specific locations
+  const centerLocations = BANGALORE_LOCATIONS.filter(location => 
+    ['indiranagar', 'banashankari', 'jayanagar'].includes(location.value)
+  );
+
   useEffect(() => {
     const handleRouteChange = () => {
       setIsMobileMenuOpen(false);
@@ -285,7 +290,7 @@ export default function Navbar() {
               </button>
               
               <div className={`${styles.dropdownContent} ${isCentersDropdownOpen ? styles.visible : ''}`}>
-                {BANGALORE_LOCATIONS.slice(1).map((location) => (
+                {centerLocations.map((location) => (
                   <Link
                     key={location.path}
                     href={`/bangalore/center/${location.value}`}
