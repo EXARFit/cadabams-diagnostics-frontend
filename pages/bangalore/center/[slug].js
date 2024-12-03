@@ -60,7 +60,7 @@ const CenterDetailPage = () => {
       title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
       description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
       keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${address.area || 'bangalore'}, diagnostic services`,
-      url: `https://diagnostics.cadabams.com/center/${slug}`,
+      url: `https://cadabams-diagnostics.vercel.app/center/${slug}`,
       imageUrl: center.image || 'https://diagnostics.cadabams.com/images/center-default.jpg'
     };
   };
@@ -96,7 +96,7 @@ const CenterDetailPage = () => {
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
-        <link rel="canonical" href={seoData.url} />
+        <link rel="canonical" href={`https://cadabams-diagnostics.vercel.app/center/${slug}`} />
         
         {/* Open Graph Tags */}
         <meta property="og:title" content={seoData.title} />
@@ -113,58 +113,137 @@ const CenterDetailPage = () => {
         <meta name="twitter:description" content={seoData.description} />
         <meta name="twitter:image" content={seoData.imageUrl} />
         
-        {/* Schema.org markup */}
+        {/* FAQ Schema */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "MedicalBusiness",
+            "@type": "FAQPage",
+            "mainEntity": [{
+              "@type": "Question",
+              "name": "What services does Cadabam's Diagnostics offer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": `${basic_info.center_name} offers comprehensive diagnostic services including ${centerData.services?.map(s => s.name).join(', ')}.`
+              }
+            }, {
+              "@type": "Question",
+              "name": "What are the working hours of the diagnostic center?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": `Our center is open from ${basic_info.opening_time || '00:00'} to ${basic_info.closing_time || '23:59'} every day.`
+              }
+            }, {
+              "@type": "Question",
+              "name": "Where is the diagnostic center located?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": `${basic_info.center_name} is located at ${address.street}, ${address.area}, ${address.pincode}.`
+              }
+            }]
+          })}
+        </script>
+
+        {/* Organization Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
             "name": basic_info.center_name,
-            "image": seoData.imageUrl,
-            "description": seoData.description,
-            "@id": seoData.url,
             "url": seoData.url,
-            "telephone": basic_info.phone || "+91-80-2323-2323",
+            "sameAs": [
+              "https://www.instagram.com/cadabamsdiagnostics",
+              "https://www.facebook.com/CadabamsDiagnostics",
+              "https://www.youtube.com/CadabamsDiagnostics",
+              "https://www.linkedin.com/company/cadabams-diagnostics",
+              "https://cadabams-diagnostics.vercel.app",
+              `https://www.google.com/maps?cid=${address.gmb_cid || ''}`
+            ],
             "address": {
               "@type": "PostalAddress",
               "streetAddress": address.street || "",
               "addressLocality": address.area || "Bangalore",
               "addressRegion": "Karnataka",
-              "postalCode": address.pincode || "560102",
+              "postalCode": address.pincode || "",
               "addressCountry": "IN"
             },
-            "geo": {
-              "@type": "GeoCoordinates",
-              "latitude": address.latitude || 12.9141,
-              "longitude": address.longitude || 77.6332
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": basic_info.phone || "",
+              "contactType": "Customer Service",
+              "areaServed": "IN",
+              "availableLanguage": "en"
             },
-            "openingHoursSpecification": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday"
-              ],
-              "opens": basic_info.opening_time || "00:00",
-              "closes": basic_info.closing_time || "23:59"
-            },
-            "medicalSpecialty": centerData.services?.map(service => service.name) || [],
-            "availableTest": centerData.services?.flatMap(service => service.tests || []) || [],
-            "department": centerData.services?.map(service => ({
-              "@type": "MedicalSpecialty",
-              "name": service.name,
-              "availableTest": service.tests || []
-            })) || [],
-            "sameAs": [
-              "https://www.facebook.com/CadabamsDiagnostics",
-              "https://twitter.com/CadabamsDiag",
-              "https://www.instagram.com/cadabamsdiagnostics"
-            ]
+            "logo": basic_info.logo || "/images/logo.png"
           })}
         </script>
+
+        {/* Medical WebPage Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "MedicalWebPage",
+            "name": seoData.title,
+            "description": seoData.description,
+            "url": seoData.url,
+            "image": seoData.imageUrl,
+            "citation": "https://cadabams-diagnostics.vercel.app",
+            "hasMap": `https://www.google.com/maps?cid=${address.gmb_cid || ''}`,
+            "audience": {
+              "@type": "MedicalAudience",
+              "audienceType": "Patients",
+              "healthCondition": {
+                "@type": "MedicalCondition",
+                "name": "Various Medical Conditions"
+              }
+            },
+            "reviewedBy": {
+              "@type": "Person",
+              "name": basic_info.doctor_name || "Medical Professional",
+              "jobTitle": basic_info.doctor_designation || "Medical Director",
+              "url": `${seoData.url}/team`,
+              "sameAs": [
+                basic_info.doctor_linkedin || "",
+                basic_info.doctor_profile || ""
+              ],
+              "hasOccupation": {
+                "@type": "Occupation",
+                "name": basic_info.doctor_designation || "Medical Director",
+                "educationRequirements": basic_info.doctor_qualification || "MBBS, MD"
+              }
+            },
+            "specialty": centerData.services?.map(s => s.name).join(', '),
+            "about": {
+              "@type": "MedicalCondition",
+              "name": "Diagnostic Services"
+            },
+            "dateCreated": basic_info.created_at || new Date().toISOString(),
+            "dateModified": basic_info.updated_at || new Date().toISOString(),
+            "copyrightHolder": {
+              "@type": "Organization",
+              "name": "Cadabam's Diagnostics"
+            },
+            "keywords": seoData.keywords
+          })}
+        </script>
+
+        {/* Video Schema (if video exists) */}
+        {basic_info.video_url && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "VideoObject",
+              "name": `${basic_info.center_name} - Virtual Tour`,
+              "description": `Take a virtual tour of ${basic_info.center_name} and explore our state-of-the-art diagnostic facilities`,
+              "thumbnailUrl": [
+                basic_info.video_thumbnail || seoData.imageUrl
+              ],
+              "uploadDate": basic_info.video_upload_date || new Date().toISOString(),
+              "duration": basic_info.video_duration || "PT1M54S",
+              "contentUrl": basic_info.video_url,
+              "embedUrl": basic_info.video_embed_url
+            })}
+          </script>
+        )}
       </Head>
 
       <div className={styles.container}>
