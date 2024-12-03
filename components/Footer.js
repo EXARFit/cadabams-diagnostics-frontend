@@ -21,7 +21,13 @@ export default function Footer() {
             <h3>Company</h3>
             <ul>
               <li>
-                <Link href="/aboutus">About Us</Link>
+                <Link href="/about-us">About Us</Link>
+              </li>
+              <li>
+                <Link href="/management-team">Management Team</Link>
+              </li>
+              <li>
+                <Link href="/clinical-team">Clinical Team</Link>
               </li>
               <li>
                 <Link href="/careers">Careers</Link>
@@ -46,28 +52,28 @@ export default function Footer() {
             <h3>Services</h3>
             <ul>
               <li>
-                <Link href="/lab-tests">Lab Tests</Link>
+                <Link href="/lab-test">Lab Tests</Link>
               </li>
               <li>
-                <Link href="/xray-scans">XRay Scans</Link>
+                <Link href="/xray-scan">XRay Scans</Link>
               </li>
               <li>
-                <Link href="/mri-scans">MRI Scans</Link>
+                <Link href="/mri-scan">MRI Scans</Link>
               </li>
               <li>
-                <Link href="/ultrasound-scans">Ultrasound Scans</Link>
+                <Link href="/ultrasound-scan">Ultrasound Scans</Link>
               </li>
               <li>
-                <Link href="/pregnancy-scans">Pregnancy Scans</Link>
+                <Link href="/pregnancy-scan">Pregnancy Scans</Link>
               </li>
               <li>
-                <Link href="/msk-scans">MSK Scans</Link>
+                <Link href="/msk-scan">MSK Scans</Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/preventative-health-checkups">
                   Preventative Health Checkups
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
