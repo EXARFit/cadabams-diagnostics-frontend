@@ -12,7 +12,86 @@ import VitalBodyOrgans from '@/components/home/VitalBodyOrgans';
 import LocationPopup from '@/components/home/LocationPopup';
 import BannerCarousel from '@/components/home/BannerCarousel';
 import CustomContactForm from '@/components/home/CustomContactForm';
+
 const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
+
+// Head Component with proper schema structure
+const PageHead = ({ pageTitle, pageDescription, currentUrl, faqData }) => {
+  // Structured JSON-LD data
+  const schemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqData.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Cadabam's Diagnostics",
+      "alternateName": "Cadabams Diagnostic Center",
+      "url": currentUrl,
+      "email": "info@cadabamsdiagnostics.com",
+      "foundingDate": "2020",
+      "description": pageDescription,
+      "logo": "https://cadabams-diagnostics.vercel.app/images/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-80-2545-7777",
+        "contactType": "Sales",
+        "contactOption": "Customer Service",
+        "areaServed": "IN",
+        "availableLanguage": "en"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "1250"
+      },
+      "sameAs": [
+        "https://www.instagram.com/cadabamsdiagnostics",
+        "https://www.facebook.com/CadabamsDiagnostics",
+        "https://www.youtube.com/c/CadabamsDiagnostics",
+        "https://www.linkedin.com/company/cadabams-diagnostics",
+        "https://cadabams-diagnostics.vercel.app"
+      ]
+    }
+  ];
+
+  return (
+    <Head>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <link rel="canonical" href={currentUrl} />
+      
+      {/* Open Graph Tags */}
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={currentUrl} />
+      <meta property="og:image" content="https://cadabams-diagnostics.vercel.app/images/og-image.jpg" />
+      <meta property="og:site_name" content="Cadabam's Diagnostics" />
+
+      {/* Schema.org structured data */}
+      {schemas.map((schema, index) => (
+        <script 
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(schema, null, 0)
+          }}
+        />
+      ))}
+    </Head>
+  );
+};
 
 // FAQ Item Component
 const FAQItem = ({ question, answer }) => {
@@ -70,6 +149,7 @@ const FAQItem = ({ question, answer }) => {
   );
 };
 
+// Main Component
 export default function BangalorePage() {
   const [showLocationPopup, setShowLocationPopup] = useState(false);
   const [pageData, setPageData] = useState(null);
@@ -177,111 +257,33 @@ export default function BangalorePage() {
   const pageDescription = "Cadabam's Diagnostics offers comprehensive diagnostic services including blood tests, scans, and health checkups. Book your diagnostic tests online or get home sample collection in Bangalore.";
   const currentUrl = `https://cadabams-diagnostics.vercel.app${router.asPath}`;
 
-  const jsonLdData = {
-    faqSchema: {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": faqData.map(faq => ({
-        "@type": "Question",
-        "name": faq.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.answer
-        }
-      }))
-    },
-    organizationSchema: {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Cadabam's Diagnostics",
-      "alternateName": "Cadabams Diagnostic Center",
-      "url": currentUrl,
-      "email": "info@cadabamsdiagnostics.com",
-      "foundingDate": "2020",
-      "description": pageDescription,
-      "logo": "https://cadabams-diagnostics.vercel.app/images/logo.png",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+91-80-2545-7777",
-        "contactType": "Sales",
-        "contactOption": "Customer Service",
-        "areaServed": "IN",
-        "availableLanguage": "en"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "reviewCount": "1250"
-      },
-      "sameAs": [
-        "https://www.instagram.com/cadabamsdiagnostics",
-        "https://www.facebook.com/CadabamsDiagnostics",
-        "https://www.youtube.com/c/CadabamsDiagnostics",
-        "https://www.linkedin.com/company/cadabams-diagnostics",
-        "https://cadabams-diagnostics.vercel.app"
-      ]
-    }
-  };
-
-  if (loading) {
-    return (
-      <AuthProvider>
-        <Layout>
-          <Head>
-            <title>{pageTitle}</title>
-            <meta name="description" content={pageDescription} />
-            <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-            <link rel="canonical" href={currentUrl} />
-            <meta property="og:title" content={pageTitle} />
-            <meta property="og:description" content={pageDescription} />
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content={currentUrl} />
-            <meta property="og:image" content="https://cadabams-diagnostics.vercel.app/images/og-image.jpg" />
-            <meta property="og:site_name" content="Cadabam's Diagnostics" />
-            <script type="application/ld+json">
-              {JSON.stringify(jsonLdData.faqSchema)}
-            </script>
-            <script type="application/ld+json">
-              {JSON.stringify(jsonLdData.organizationSchema)}
-            </script>
-          </Head>
-          <div>Loading...</div>
-        </Layout>
-      </AuthProvider>
-    );
-  }
-
-  return (
+  const pageContent = (
     <AuthProvider>
       <Layout>
-        <Head>
-          <title>{pageTitle}</title>
-          <meta name="description" content={pageDescription} />
-          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-          <link rel="canonical" href={currentUrl} />
-          <meta property="og:title" content={pageTitle} />
-          <meta property="og:description" content={pageDescription} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={currentUrl} />
-          <meta property="og:image" content="https://cadabams-diagnostics.vercel.app/images/og-image.jpg" />
-          <meta property="og:site_name" content="Cadabam's Diagnostics" />
-          <script type="application/ld+json">
-            {JSON.stringify(jsonLdData.faqSchema)}
-          </script>
-          <script type="application/ld+json">
-            {JSON.stringify(jsonLdData.organizationSchema)}
-          </script>
-        </Head>
+        <PageHead
+          pageTitle={pageTitle}
+          pageDescription={pageDescription}
+          currentUrl={currentUrl}
+          faqData={faqData}
+        />
         {showLocationPopup && <LocationPopup onSelect={handleLocationSelect} />}
-        {params.length === 0 ? (
-          <MainContent />
+        {loading ? (
+          <div>Loading...</div>
         ) : (
-          <div>
-            <MainContent />
-          </div>
+          <>
+            {params.length === 0 ? (
+              <MainContent />
+            ) : (
+              <div>
+                <MainContent />
+              </div>
+            )}
+          </>
         )}
         <CustomContactForm/>
       </Layout>
     </AuthProvider>
   );
+
+  return pageContent;
 }
