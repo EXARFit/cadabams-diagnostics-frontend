@@ -16,7 +16,7 @@ const OtherCenters = ({ centers = [] }) => {
 
   const generateUrl = (city, area) => {
     if (!city || !area) return '#';
-    return `/${city.toLowerCase()}/${area.toLowerCase()}`;
+    return `/${city.toLowerCase()}/center/${area.toLowerCase()}`;
   };
 
   if (!centers || centers.length === 0) {
