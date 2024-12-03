@@ -174,75 +174,89 @@ export default function BangalorePage() {
   const pageDescription = "Cadabam's Diagnostics Bangalore offers comprehensive diagnostic services including blood tests, scans, and health checkups. Book your diagnostic tests online or get home sample collection in Bangalore. Trusted by thousands for accurate and timely results.";
   const currentUrl = `https://cadabams-diagnostics.vercel.app${router.asPath}`;
 
+  // Structured JSON-LD data
+  const jsonLdData = {
+    faqSchema: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqData.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    },
+    organizationSchema: {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Cadabam's Diagnostics",
+      "alternateName": "Cadabams Diagnostic Center Bangalore",
+      "url": currentUrl,
+      "email": "info@cadabamsdiagnostics.com",
+      "foundingDate": "2020",
+      "description": pageDescription,
+      "logo": "https://cadabams-diagnostics.vercel.app/images/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-80-2323-2323",
+        "contactType": "Sales",
+        "contactOption": "Customer Service",
+        "areaServed": "IN",
+        "availableLanguage": "en"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "1250"
+      },
+      "sameAs": [
+        "https://www.instagram.com/cadabamsdiagnostics",
+        "https://www.facebook.com/CadabamsDiagnostics",
+        "https://www.youtube.com/c/CadabamsDiagnostics",
+        "https://www.linkedin.com/company/cadabams-diagnostics",
+        "https://cadabams-diagnostics.vercel.app"
+      ]
+    }
+  };
+
+  // Common Head content
+  const HeadContent = () => (
+    <Head>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <link rel="canonical" href={currentUrl} />
+      
+      {/* Open Graph Tags */}
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={currentUrl} />
+      <meta property="og:image" content="https://cadabams-diagnostics.vercel.app/images/og-image.jpg" />
+      <meta property="og:site_name" content="Cadabam's Diagnostics" />
+      
+      {/* Additional Meta Tags */}
+      <meta name="keywords" content="diagnostic center bangalore, medical tests bangalore, blood tests, health checkup packages, home sample collection, medical scans, pathology lab, radiology center" />
+      <meta name="author" content="Cadabam's Diagnostics" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+      {/* JSON-LD Schemas */}
+      <script type="application/ld+json">
+        {JSON.stringify(jsonLdData.faqSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(jsonLdData.organizationSchema)}
+      </script>
+    </Head>
+  );
+
   if (loading) {
     return (
       <AuthProvider>
         <Layout>
-          <Head>
-            <title>{pageTitle}</title>
-            <meta name="description" content={pageDescription} />
-            <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-            <link rel="canonical" href={currentUrl} />
-            
-            {/* Open Graph Tags */}
-            <meta property="og:title" content={pageTitle} />
-            <meta property="og:description" content={pageDescription} />
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content={currentUrl} />
-            <meta property="og:image" content="https://cadabams-diagnostics.vercel.app/images/og-image.jpg" />
-            <meta property="og:site_name" content="Cadabam's Diagnostics" />
-
-            {/* FAQ Schema */}
-            <script type="application/ld+json">
-              {JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                "mainEntity": faqData.map(faq => ({
-                  "@type": "Question",
-                  "name": faq.question,
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": faq.answer
-                  }
-                }))
-              })}
-            </script>
-
-            {/* Organization Schema */}
-            <script type="application/ld+json">
-              {JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                "name": "Cadabam's Diagnostics",
-                "alternateName": "Cadabams Diagnostic Center Bangalore",
-                "url": currentUrl,
-                "email": "info@cadabamsdiagnostics.com",
-                "foundingDate": "2020",
-                "description": pageDescription,
-                "logo": "https://cadabams-diagnostics.vercel.app/images/logo.png",
-                "contactPoint": {
-                  "@type": "ContactPoint",
-                  "telephone": "+91-80-2323-2323",
-                  "contactType": "Sales",
-                  "contactOption": "Customer Service",
-                  "areaServed": "IN",
-                  "availableLanguage": "en"
-                },
-                "aggregateRating": {
-                  "@type": "AggregateRating",
-                  "ratingValue": "4.8",
-                  "reviewCount": "1250"
-                },
-                "sameAs": [
-                  "https://www.instagram.com/cadabamsdiagnostics",
-                  "https://www.facebook.com/CadabamsDiagnostics",
-                  "https://www.youtube.com/c/CadabamsDiagnostics",
-                  "https://www.linkedin.com/company/cadabams-diagnostics",
-                  "https://cadabams-diagnostics.vercel.app"
-                ]
-              })}
-            </script>
-          </Head>
+          <HeadContent />
           <div>Loading...</div>
         </Layout>
       </AuthProvider>
@@ -252,76 +266,7 @@ export default function BangalorePage() {
   return (
     <AuthProvider>
       <Layout>
-        <Head>
-          <title>{pageTitle}</title>
-          <meta name="description" content={pageDescription} />
-          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-          <link rel="canonical" href={currentUrl} />
-          
-          {/* Open Graph Tags */}
-          <meta property="og:title" content={pageTitle} />
-          <meta property="og:description" content={pageDescription} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={currentUrl} />
-          <meta property="og:image" content="https://cadabams-diagnostics.vercel.app/images/og-image.jpg" />
-          <meta property="og:site_name" content="Cadabam's Diagnostics" />
-          
-          {/* Additional Meta Tags */}
-          <meta name="keywords" content="diagnostic center bangalore, medical tests bangalore, blood tests, health checkup packages, home sample collection, medical scans, pathology lab, radiology center" />
-          <meta name="author" content="Cadabam's Diagnostics" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-          {/* FAQ Schema */}
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": faqData.map(faq => ({
-                "@type": "Question",
-                "name": faq.question,
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": faq.answer
-                }
-              }))
-            })}
-          </script>
-
-          {/* Organization Schema */}
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "Cadabam's Diagnostics",
-              "alternateName": "Cadabams Diagnostic Center Bangalore",
-              "url": currentUrl,
-              "email": "info@cadabamsdiagnostics.com",
-              "foundingDate": "2020",
-              "description": pageDescription,
-              "logo": "https://cadabams-diagnostics.vercel.app/images/logo.png",
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+91-80-2323-2323",
-                "contactType": "Sales",
-                "contactOption": "Customer Service",
-                "areaServed": "IN",
-                "availableLanguage": "en"
-              },
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "4.8",
-                "reviewCount": "1250"
-              },
-              "sameAs": [
-                "https://www.instagram.com/cadabamsdiagnostics",
-                "https://www.facebook.com/CadabamsDiagnostics",
-                "https://www.youtube.com/c/CadabamsDiagnostics",
-                "https://www.linkedin.com/company/cadabams-diagnostics",
-                "https://cadabams-diagnostics.vercel.app"
-              ]
-            })}
-          </script>
-        </Head>
+        <HeadContent />
         {showLocationPopup && <LocationPopup onSelect={handleLocationSelect} />}
         {params.length === 0 ? (
           <MainContent />
