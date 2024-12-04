@@ -26,13 +26,16 @@ const CustomContactForm = () => {
 
     try {
       const freshsalesData = new FormData();
-      freshsalesData.append('first_name', formData.firstName);
-      freshsalesData.append('last_name', formData.lastName);
-      freshsalesData.append('mobile', formData.mobile);
-      freshsalesData.append('email', formData.email);
-      freshsalesData.append('address', formData.address);
+      freshsalesData.append('file_attachments_present', false);
+      freshsalesData.append('contact[first_name]', formData.firstName);
+      freshsalesData.append('contact[last_name]', formData.lastName);
+      freshsalesData.append('contact[mobile_number]', formData.mobile);
+      freshsalesData.append('contact[email]', formData.email);
+      freshsalesData.append('contact[address]', formData.address);
+      freshsalesData.append('entity_type', 2);
+      freshsalesData.append('asset_key', 'bb88c16791f1cb14ef2689824060cde9861d5bfdd5e32975167f8cdb57f7b0b6');
 
-      await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/web_forms/bb88c16791f1cb14ef2689824060cde9861d5bfdd5e32975167f8cdb57f7b0b6/form.js', {
+      await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/smart_form/create_entity?file_attachments_present=false', {
         method: 'POST',
         body: freshsalesData
       });
@@ -139,8 +142,6 @@ const CustomContactForm = () => {
             {loading ? 'Submitting...' : 'Submit'}
           </button>
         </form>
-
-        
       </div>
     </section>
   );
