@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { AuthProvider } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
-import CustomContactForm from '@/components/home/CustomContactForm';
+import CustomContactForm1 from '@/components/home/CustomContactForm1';
 import styles from './Contact.module.css';
 
 export default function ContactPage() {
@@ -90,7 +90,7 @@ export default function ContactPage() {
             </div>
 
             <div className={styles.contactForm}>
-              <CustomContactForm onSuccess={handleFormSuccess} />
+              <CustomContactForm1 onSuccess={handleFormSuccess} />
             </div>
           </div>
 

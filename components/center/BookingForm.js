@@ -25,8 +25,6 @@ const BookingForm = ({ centerInfo }) => {
     }
     if (!formData.mobile.trim()) {
       newErrors.mobile = 'Mobile number is required';
-    } else if (!/^[0-9]{10}$/.test(formData.mobile)) {
-      newErrors.mobile = 'Invalid mobile number';
     }
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -45,14 +43,19 @@ const BookingForm = ({ centerInfo }) => {
       try {
         // Create FormData for Freshsales
         const freshsalesData = new FormData();
-        freshsalesData.append('first_name', formData.firstName);
-        freshsalesData.append('last_name', formData.lastName);
-        freshsalesData.append('mobile', formData.mobile);
-        freshsalesData.append('email', formData.email);
-        freshsalesData.append('address', formData.address);
+        freshsalesData.append('file_attachments_present', false);
+        freshsalesData.append('contact[first_name]', formData.firstName);
+        freshsalesData.append('contact[last_name]', formData.lastName);
+        // Add zero prefix to mobile number
+        const mobileNumber = formData.mobile.startsWith('0') ? formData.mobile : `0${formData.mobile}`;
+        freshsalesData.append('contact[mobile_number]', mobileNumber);
+        freshsalesData.append('contact[email]', formData.email);
+        freshsalesData.append('contact[address]', formData.address);
+        freshsalesData.append('entity_type', 2);
+        freshsalesData.append('asset_key', '6a14c4677d7b5a7b65a1efa0931c9e51512881d05d5977ec34419e50d8c0fe05');
 
         // Submit to Freshsales
-        await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/web_forms/6a14c4677d7b5a7b65a1efa0931c9e51512881d05d5977ec34419e50d8c0fe05/form.html', {
+        await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/smart_form/create_entity?file_attachments_present=false', {
           method: 'POST',
           body: freshsalesData
         });
@@ -84,6 +87,7 @@ const BookingForm = ({ centerInfo }) => {
       ...prev,
       [name]: value
     }));
+    
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styles from './CustomContactForm.module.css';
 
-const CustomContactForm = () => {
+const CustomContactForm1 = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -156,4 +156,4 @@ const CustomContactForm = () => {
   );
 };
 
-export default CustomContactForm;
+export default CustomContactForm1;
