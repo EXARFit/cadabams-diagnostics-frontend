@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import styles from './CustomContactForm.module.css';
 
 const CustomContactForm = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -35,10 +37,14 @@ const CustomContactForm = () => {
       freshsalesData.append('entity_type', 2);
       freshsalesData.append('asset_key', 'bb88c16791f1cb14ef2689824060cde9861d5bfdd5e32975167f8cdb57f7b0b6');
 
-      await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/smart_form/create_entity?file_attachments_present=false', {
+      const response = await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/smart_form/create_entity?file_attachments_present=false', {
         method: 'POST',
         body: freshsalesData
       });
+
+      if (!response.ok) {
+        throw new Error('Form submission failed');
+      }
 
       setFormData({
         firstName: '',
@@ -47,6 +53,10 @@ const CustomContactForm = () => {
         email: '',
         address: ''
       });
+
+      // Redirect to thank-you page after successful submission
+      router.push('/thank-you');
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
