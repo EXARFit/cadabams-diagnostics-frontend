@@ -7,7 +7,7 @@ import NonLabTestPage from '@/components/NonLabTestPage';
 import { fetchTestData } from '@/utils/api';
 import styles from '../../../styles/TestPage.module.css';
 
-// Helper function to get test type from route
+// Helper function to determine test category from the route
 const getTestType = (test = '') => {
   if (test.includes('x-ray') || test.includes('xray')) return 'xray-scan';
   if (test.includes('msk')) return 'msk-scan';
@@ -17,7 +17,7 @@ const getTestType = (test = '') => {
   return 'diagnostic-scan';
 };
 
-// Helper function to format test type for display
+// Helper function to format test type for display in UI
 const formatTestType = (testType) => {
   return testType
     .split('-')
@@ -186,6 +186,16 @@ export default function TestDetailPage() {
     }
   }, [test]);
 
+  // Helper function to construct proper URLs for related tests
+  const getRelatedTestUrl = (testRoute) => {
+    // Remove leading slash if present
+    const cleanRoute = testRoute.startsWith('/') ? testRoute.slice(1) : testRoute;
+    // Get the category type using the same logic as the main test
+    const category = getTestType(cleanRoute);
+    // Return the properly formatted URL
+    return `/bangalore/${category}/${cleanRoute}`;
+  };
+
   if (isLoading) {
     return (
       <Layout title="Loading Test...">
@@ -224,6 +234,7 @@ export default function TestDetailPage() {
 
   const testType = getTestType(test);
   const currentUrl = `${baseUrl}/bangalore/${testType}/${test}`;
+  const relatedTests = testData?.alldata?.[13]?.relative_test?.tests || [];
 
   return (
     <Layout title={testData.testName || 'Test Page'}>
@@ -296,6 +307,31 @@ export default function TestDetailPage() {
       <div className={styles.container}>
         <Breadcrumb title={testData.testName} testType={testType} />
         <NonLabTestPage testData={testData} />
+
+        {/* Related Tests Section */}
+        {relatedTests.length > 0 && (
+          <section className={styles.relatedTestsSection}>
+            <div className={styles.sectionContainer}>
+              <div className={styles.sectionTitle}>
+                <h2>Related Tests</h2>
+              </div>
+              <div className={styles.relatedTestsGrid}>
+                {relatedTests.map((relatedTest) => (
+                  <Link
+                    key={relatedTest._id}
+                    href={getRelatedTestUrl(relatedTest.route)}
+                    className={styles.relatedTestCard}
+                  >
+                    <div className={styles.testName}>
+                      {relatedTest.testName}
+                    </div>
+                    <div className={styles.arrowIcon}>→</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </Layout>
   );
