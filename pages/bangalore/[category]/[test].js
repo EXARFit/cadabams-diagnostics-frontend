@@ -1,20 +1,64 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import NonLabTestPage from '@/components/NonLabTestPage';
 import { fetchTestData } from '@/utils/api';
+import styles from '../../../styles/TestPage.module.css';
+
+// Helper function to get test type from route
+const getTestType = (test = '') => {
+  if (test.includes('x-ray') || test.includes('xray')) return 'xray-scan';
+  if (test.includes('msk')) return 'msk-scan';
+  if (test.includes('mri')) return 'mri-scan';
+  if (test.includes('ct')) return 'ct-scan';
+  if (test.includes('ultrasound')) return 'ultrasound-scan';
+  return 'diagnostic-scan';
+};
+
+// Helper function to format test type for display
+const formatTestType = (testType) => {
+  return testType
+    .split('-')
+    .map(word => {
+      if (word.toLowerCase() === 'ct' || word.toLowerCase() === 'mri') {
+        return word.toUpperCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+};
+
+// Breadcrumb Component
+const Breadcrumb = ({ title, testType }) => (
+  <nav className={styles.breadcrumb} aria-label="breadcrumb">
+    <div className={styles.breadcrumbContainer}>
+      <Link href="/" className={styles.breadcrumbLink}>
+        Home
+      </Link>
+      <span className={styles.breadcrumbSeparator}>/</span>
+      <Link href={`/bangalore/${testType}`} className={styles.breadcrumbLink}>
+        {formatTestType(testType)}
+      </Link>
+      <span className={styles.breadcrumbSeparator}>/</span>
+      <span className={styles.breadcrumbCurrent}>{title}</span>
+    </div>
+  </nav>
+);
 
 // Schema Generator Function
 const generateSchemas = (data, baseUrl, test) => {
+  const testType = getTestType(test);
+  
   // Medical Webpage Schema
   const medicalWebpageSchema = {
     '@context': 'https://schema.org',
     '@type': 'MedicalWebPage',
     name: data.seo?.title || `${data.testName} at Cadabams`,
     description: data.seo?.description || `Learn about ${data.testName} at Cadabams`,
-    url: `${baseUrl}/diagnostic-tests/${test}`,
-    image: data.imageUrl || `${baseUrl}/default-test-image.jpg`,
+    url: `${baseUrl}/bangalore/${testType}/${test}`,
+    image: data.imageUrl || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
     citation: 'https://',
     audio: {
       '@type': 'AudioObject',
@@ -35,15 +79,19 @@ const generateSchemas = (data, baseUrl, test) => {
     },
     reviewedBy: {
       '@type': 'Person',
-      name: 'Dr. John Doe',
-      jobTitle: 'Medical Director',
-      url: `${baseUrl}/doctors/john-doe`,
+      name: 'Dr. Shreyas Cadabam',
+      jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
+      url: 'https://cadabams-diagnostics.vercel.app/clinical-team',
       sameAs: [
-        'https://www.linkedin.com/company/cadabams-hospitals'
+        'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
+        'https://www.instagram.com/cadabams_diagnostics/',
+        'https://www.facebook.com/cadabamsdiagnostics',
+        'https://twitter.com/CadabamsDX',
+        'https://www.linkedin.com/company/cadabam\'s-group/'
       ],
       hasOccupation: {
         '@type': 'Occupation',
-        name: 'Medical Director',
+        name: 'Radiologist',
         educationRequirements: 'MD in Radiology'
       }
     },
@@ -95,14 +143,14 @@ const generateSchemas = (data, baseUrl, test) => {
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Diagnostic Tests',
-        item: `${baseUrl}/diagnostic-tests`
+        name: formatTestType(testType),
+        item: `${baseUrl}/bangalore/${testType}`
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: data.testName,
-        item: `${baseUrl}/diagnostic-tests/${test}`
+        item: `${baseUrl}/bangalore/${testType}/${test}`
       }
     ]
   };
@@ -138,21 +186,54 @@ export default function TestDetailPage() {
     }
   }, [test]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!testData) return <div>Test not found</div>;
+  if (isLoading) {
+    return (
+      <Layout title="Loading Test...">
+        <div className={styles.loadingContainer}>
+          <h2>Loading...</h2>
+        </div>
+      </Layout>
+    );
+  }
 
-  const currentUrl = `${baseUrl}/diagnostic-tests/${test}`;
+  if (error) {
+    return (
+      <Layout title="Error">
+        <div className={styles.errorContainer}>
+          <h2>Error: {error}</h2>
+          <button 
+            onClick={() => router.reload()}
+            className={styles.retryButton}
+          >
+            Try Again
+          </button>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!testData) {
+    return (
+      <Layout title="Not Found">
+        <div className={styles.notFoundContainer}>
+          <h2>Test not found</h2>
+        </div>
+      </Layout>
+    );
+  }
+
+  const testType = getTestType(test);
+  const currentUrl = `${baseUrl}/bangalore/${testType}/${test}`;
 
   return (
     <Layout title={testData.testName || 'Test Page'}>
       <Head>
         {/* Basic Meta Tags */}
-        <title>{testData.seo?.title || `${testData.testName} | Cadabams Diagnostics`}</title>
+        <title>{testData.seo?.title}</title>
         <meta name="description" content={testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
         <meta 
           name="keywords" 
-          content={testData.seo?.keywords || `diagnostic test, medical test, ${testData.testName}, Cadabams healthcare`} 
+          content={testData.seo?.keywords || `diagnostic test, medical test, ${testData.testName}, Cadabams Diagnostics`} 
         />
         
         {/* Robots Meta Tags */}
@@ -164,9 +245,9 @@ export default function TestDetailPage() {
         
         {/* Enhanced Open Graph Tags */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={testData.seo?.ogTitle || testData.seo?.title || `${testData.testName} | Cadabams Diagnostics`} />
-        <meta property="og:description" content={testData.seo?.ogDescription || testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
-        <meta property="og:image" content={testData.seo?.ogImage || `${baseUrl}/default-test-image.jpg`} />
+        <meta property="og:title" content={testData.seo?.title} />
+        <meta property="og:description" content={testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
+        <meta property="og:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta property="og:url" content={currentUrl} />
         <meta property="og:site_name" content="Cadabams Diagnostics" />
         <meta property="og:locale" content="en_IN" />
@@ -174,8 +255,8 @@ export default function TestDetailPage() {
         <meta property="og:price:amount" content={testData.alldata[0]?.basic_info?.price || ''} />
         <meta property="og:availability" content="in stock" />
         <meta property="og:brand" content="Cadabams Diagnostics" />
-        <meta property="og:email" content="info@cadabams.com" />
-        <meta property="og:phone_number" content="+91-XXX-XXX-XXXX" />
+        <meta property="og:email" content="info@cadabamsdiagnostics.com" />
+        <meta property="og:phone_number" content="+918050381444" />
         <meta property="og:street-address" content="Bangalore" />
         <meta property="og:locality" content="Bangalore" />
         <meta property="og:region" content="Karnataka" />
@@ -184,11 +265,11 @@ export default function TestDetailPage() {
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@CadabamsGroup" />
-        <meta name="twitter:creator" content="@CadabamsGroup" />
-        <meta name="twitter:title" content={testData.seo?.title || `${testData.testName} | Cadabams Diagnostics`} />
+        <meta name="twitter:site" content="@CadabamsDX" />
+        <meta name="twitter:creator" content="@CadabamsDX" />
+        <meta name="twitter:title" content={testData.seo?.title} />
         <meta name="twitter:description" content={testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
-        <meta name="twitter:image" content={testData.seo?.ogImage || `${baseUrl}/default-test-image.jpg`} />
+        <meta name="twitter:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta name="twitter:image:alt" content={`${testData.testName} at Cadabams Diagnostics`} />
         <meta name="twitter:label1" content="Price" />
         <meta name="twitter:data1" content={`₹${testData.alldata[0]?.basic_info?.price || ''}`} />
@@ -212,7 +293,10 @@ export default function TestDetailPage() {
         />
       </Head>
 
-      <NonLabTestPage testData={testData} />
+      <div className={styles.container}>
+        <Breadcrumb title={testData.testName} testType={testType} />
+        <NonLabTestPage testData={testData} />
+      </div>
     </Layout>
   );
 }
