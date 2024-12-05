@@ -17,7 +17,7 @@ const generateSchemas = (data, baseUrl, slug) => {
     name: data.seo?.title || `${data.testName} Test at Cadabams`,
     description: data.seo?.description || `Learn about ${data.testName} test at Cadabams`,
     url: `${baseUrl}/bangalore/lab-test/${slug}`,
-    image: data.imageUrl || `${baseUrl}/default-test-image.jpg`,
+    image: data.imageUrl || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
     citation: 'https://',
     audio: {
       '@type': 'AudioObject',
@@ -38,16 +38,20 @@ const generateSchemas = (data, baseUrl, slug) => {
     },
     reviewedBy: {
       '@type': 'Person',
-      name: 'Dr. John Doe',
-      jobTitle: 'Medical Director',
-      url: `${baseUrl}/doctors/john-doe`,
+      name: 'Dr. Shreyas Cadabam',
+      jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
+      url: 'https://cadabams-diagnostics.vercel.app/clinical-team',
       sameAs: [
-        'https://www.linkedin.com/company/cadabams-hospitals'
+        'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
+        'https://www.instagram.com/cadabams_diagnostics/',
+        'https://www.facebook.com/cadabamsdiagnostics',
+        'https://twitter.com/CadabamsDX',
+        'https://www.linkedin.com/company/cadabam\'s-group/'
       ],
       hasOccupation: {
         '@type': 'Occupation',
-        name: 'Medical Director',
-        educationRequirements: 'MD in Laboratory Medicine'
+        name: 'Radiologist',
+        educationRequirements: 'MD in Radiology'
       }
     },
     specialty: 'Medical Diagnostics',
@@ -210,8 +214,8 @@ export default function SlugPage() {
   }
 
   const pageTitle = location 
-    ? `Lab Test Services in ${locationName} | Cadabams Health Labs`
-    : 'Lab Test Services in Bangalore | Cadabams Health Labs';
+    ? `Lab Test Services in ${locationName} | Cadabams Diagnostics`
+    : 'Lab Test Services in Bangalore | Cadabams Diagnostics';
     
   const pageDescription = location
     ? `Accurate lab results you can rely on. Certified centres in ${locationName}.`
@@ -223,11 +227,11 @@ export default function SlugPage() {
     <Layout title={testData.testName || 'Test Page'}>
       <Head>
         {/* Basic Meta Tags */}
-        <title>{testData.seo?.title || pageTitle}</title>
+        <title>{testData.seo?.title}</title>
         <meta name="description" content={testData.seo?.description || pageDescription} />
         <meta 
           name="keywords" 
-          content={testData.seo?.keywords || `lab test, medical test, diagnostic test, Cadabams healthcare, medical diagnosis, ${locationName}`} 
+          content={testData.seo?.keywords || `lab test, medical test, diagnostic test, Cadabams Diagnostics, medical diagnosis, ${locationName}`} 
         />
         
         {/* Robots Meta Tags */}
@@ -239,18 +243,18 @@ export default function SlugPage() {
         
         {/* Enhanced Open Graph Tags */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={testData.seo?.ogTitle || pageTitle} />
-        <meta property="og:description" content={testData.seo?.ogDescription || pageDescription} />
-        <meta property="og:image" content={testData.seo?.ogImage || `${baseUrl}/default-test-image.jpg`} />
+        <meta property="og:title" content={testData.seo?.title} />
+        <meta property="og:description" content={testData.seo?.description || pageDescription} />
+        <meta property="og:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta property="og:url" content={currentUrl} />
-        <meta property="og:site_name" content="Cadabams Health Labs" />
+        <meta property="og:site_name" content="Cadabams Diagnostics" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:price:currency" content="INR" />
         <meta property="og:price:amount" content={testData.alldata[0]?.basic_info?.price || ''} />
         <meta property="og:availability" content="in stock" />
         <meta property="og:brand" content="Cadabams Diagnostics" />
-        <meta property="og:email" content="info@cadabams.com" />
-        <meta property="og:phone_number" content="+91-XXX-XXX-XXXX" />
+        <meta property="og:email" content="info@cadabamsdiagnostics.com" />
+        <meta property="og:phone_number" content="+918050381444" />
         <meta property="og:street-address" content="Bangalore" />
         <meta property="og:locality" content={locationName} />
         <meta property="og:region" content="Karnataka" />
@@ -263,7 +267,7 @@ export default function SlugPage() {
         <meta name="twitter:creator" content="@CadabamsGroup" />
         <meta name="twitter:title" content={testData.seo?.title || pageTitle} />
         <meta name="twitter:description" content={testData.seo?.description || pageDescription} />
-        <meta name="twitter:image" content={testData.seo?.ogImage || `${baseUrl}/default-test-image.jpg`} />
+        <meta name="twitter:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta name="twitter:image:alt" content={`${testData.testName} at Cadabams Diagnostics`} />
         <meta name="twitter:label1" content="Price" />
         <meta name="twitter:data1" content={`₹${testData.alldata[0]?.basic_info?.price || ''}`} />
