@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import Head from 'next/head';
+import Link from 'next/link';
 import { AuthProvider } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import LabtestHero from '@/components/labtest/LabtestHero';
@@ -15,10 +17,53 @@ import HealthCheckupSlider from '@/components/home/HeathcheckupSlider';
 
 const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/labtest-home/671dcc88de80dea24f266179';
 
+// Helper function to capitalize location names
+const capitalizeLocation = (loc) => {
+  if (!loc) return 'Bangalore';
+  return loc.split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+// Breadcrumb Component
+// const Breadcrumb = ({ location }) => {
+//   const locationName = capitalizeLocation(location);
+
+//   return (
+//     <nav className={styles.breadcrumb} aria-label="breadcrumb">
+//       <div className={styles.breadcrumbContainer}>
+//         <Link href="/" className={styles.breadcrumbLink}>
+//           Home
+//         </Link>
+//         <span className={styles.breadcrumbSeparator}>/</span>
+//         <Link href="/bangalore" className={styles.breadcrumbLink}>
+//           Bangalore
+//         </Link>
+//         {location && (
+//           <>
+//             <span className={styles.breadcrumbSeparator}>/</span>
+//             <Link 
+//               href={`/bangalore/${location}`} 
+//               className={styles.breadcrumbLink}
+//             >
+//               {locationName}
+//             </Link>
+//           </>
+//         )}
+//         <span className={styles.breadcrumbSeparator}>/</span>
+//         <span className={styles.breadcrumbCurrent}>Lab Tests</span>
+//       </div>
+//     </nav>
+//   );
+// };
+
 export default function LabtestPage() {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { location } = router.query;
+  const baseUrl = 'https://cadabams-diagnostics.vercel.app';
+  const locationName = capitalizeLocation(location);
 
   useEffect(() => {
     const fetchPageData = async () => {
@@ -37,6 +82,115 @@ export default function LabtestPage() {
     fetchPageData();
   }, []);
 
+  // Generate schemas for the page
+  const generateSchemas = () => {
+    const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`;
+    const pageTitle = location 
+      ? `Reliable Lab Tests in ${locationName} | Cadabams Diagnostics`
+      : 'Reliable Lab Tests in Bangalore | Cadabams Diagnostics';
+    const pageDescription = location
+      ? `Get accurate and reliable lab test services in ${locationName} at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!`
+      : 'Get accurate and reliable lab test services in Bangalore at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!';
+
+    // Medical Webpage Schema
+    const medicalWebpageSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'MedicalWebPage',
+      name: pageTitle,
+      description: pageDescription,
+      url: currentUrl,
+      image: `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
+      citation: 'https://',
+      audio: {
+        '@type': 'AudioObject',
+        contentUrl: '',
+        description: '',
+        duration: 'T0M15S',
+        encodingFormat: 'audio/mpeg',
+        name: ''
+      },
+      hasMap: 'https://www.google.com/maps',
+      audience: {
+        '@type': 'MedicalAudience',
+        audienceType: 'Patients',
+        healthCondition: {
+          '@type': 'MedicalCondition',
+          name: 'Medical Testing'
+        }
+      },
+      reviewedBy: {
+        '@type': 'Person',
+        name: 'Dr. Shreyas Cadabam',
+        jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
+        url: 'https://cadabams-diagnostics.vercel.app/clinical-team',
+        sameAs: [
+          'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
+          'https://www.instagram.com/cadabams_diagnostics/',
+          'https://www.facebook.com/cadabamsdiagnostics',
+          'https://twitter.com/CadabamsDX',
+          'https://www.linkedin.com/company/cadabam\'s-group/'
+        ],
+        hasOccupation: {
+          '@type': 'Occupation',
+          name: 'Radiologist',
+          educationRequirements: 'MD in Radiology'
+        }
+      },
+      specialty: 'Medical Diagnostics',
+      about: {
+        '@type': 'MedicalCondition',
+        name: 'Laboratory Testing'
+      },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.5',
+        reviewCount: '100'
+      },
+      alternativeHeadline: `Comprehensive Lab Tests in ${locationName}`,
+      dateCreated: new Date().toISOString(),
+      dateModified: new Date().toISOString(),
+      copyrightHolder: {
+        '@type': 'Organization',
+        name: 'Cadabams Healthcare'
+      },
+      keywords: `lab tests, medical tests, diagnostic tests, blood tests, pathology lab, ${locationName}, healthcare`
+    };
+
+    // Breadcrumb Schema
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: baseUrl
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Bangalore',
+          item: `${baseUrl}/bangalore`
+        },
+        ...(location ? [{
+          '@type': 'ListItem',
+          position: 3,
+          name: locationName,
+          item: `${baseUrl}/bangalore/${location}`
+        }] : []),
+        {
+          '@type': 'ListItem',
+          position: location ? 4 : 3,
+          name: 'Lab Tests',
+          item: currentUrl
+        }
+      ]
+    };
+
+    return [medicalWebpageSchema, breadcrumbSchema];
+  };
+
   if (loading) {
     return (
       <AuthProvider>
@@ -47,9 +201,78 @@ export default function LabtestPage() {
     );
   }
 
+  const schemas = generateSchemas();
+  const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`;
+  const pageTitle = location 
+    ? `Reliable Lab Tests in ${locationName} | Cadabams Diagnostics`
+    : 'Reliable Lab Tests in Bangalore | Cadabams Diagnostics';
+  const pageDescription = location
+    ? `Get accurate and reliable lab test services in ${locationName} at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!`
+    : 'Get accurate and reliable lab test services in Bangalore at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!';
+
   return (
     <AuthProvider>
-      <Layout title="Lab Tests - Cadabams Diagnostics">
+      <Layout title={pageTitle}>
+        <Head>
+          {/* Basic Meta Tags */}
+          <title>{pageTitle}</title>
+          <meta name="description" content={pageDescription} />
+          <meta 
+            name="keywords" 
+            content={`lab tests, medical tests, diagnostic tests, blood tests, pathology lab, ${locationName}, healthcare`}
+          />
+          <meta name="robots" content="index, follow" />
+          
+          {/* Canonical Tag */}
+          <link rel="canonical" href={currentUrl} />
+          
+          {/* Open Graph Tags */}
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={pageTitle} />
+          <meta property="og:description" content={pageDescription} />
+          <meta property="og:image" content="https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png" />
+          <meta property="og:url" content={currentUrl} />
+          <meta property="og:site_name" content="Cadabams Diagnostics" />
+          <meta property="og:locale" content="en_IN" />
+          <meta property="og:brand" content="Cadabams Diagnostics" />
+          <meta property="og:email" content="info@cadabamsdiagnostics.com" />
+          <meta property="og:phone_number" content="+918050381444" />
+          <meta property="og:street-address" content="Bangalore" />
+          <meta property="og:locality" content={locationName} />
+          <meta property="og:region" content="Karnataka" />
+          <meta property="og:postal-code" content="560001" />
+          <meta property="og:country-name" content="India" />
+          
+          {/* Twitter Card Tags */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:site" content="@CadabamsDX" />
+          <meta name="twitter:creator" content="@CadabamsDX" />
+          <meta name="twitter:title" content={pageTitle} />
+          <meta name="twitter:description" content={pageDescription} />
+          <meta name="twitter:image" content="https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png" />
+          <meta name="twitter:image:alt" content="Cadabams Diagnostics Lab Tests" />
+
+          {/* Additional Meta Tags */}
+          <meta name="format-detection" content="telephone=no" />
+          <meta name="theme-color" content="#0047AB" />
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <meta name="apple-mobile-web-app-title" content="Cadabams Diagnostics" />
+
+          {/* Schema.org JSON-LD */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(schemas)
+            }}
+          />
+        </Head>
+
+        {/* Breadcrumb Navigation */}
+        {/* <Breadcrumb location={location} /> */}
+
+        {/* Main Content */}
         <LabtestHero heroData={pageData?.hero} />
         <FeatureSection features={pageData?.features} />
         <MultiTestSection testData={pageData?.test_card} />
