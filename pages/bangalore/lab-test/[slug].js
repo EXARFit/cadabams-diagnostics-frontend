@@ -10,26 +10,78 @@ import styles from '../../../styles/TestPage.module.css';
 
 // Schema Generator Function
 const generateSchemas = (data, baseUrl, slug) => {
-  // Main Schema
-  const testSchema = {
+  // Medical Webpage Schema
+  const medicalWebpageSchema = {
     '@context': 'https://schema.org',
-    '@type': 'MedicalTest',
-    name: data.testName,
-    description: data.metaDescription || `Learn about ${data.testName} test at Cadabams`,
-    image: data.imageUrl ? [data.imageUrl] : [],
-    provider: {
-      '@type': 'MedicalOrganization',
-      name: 'Cadabams Healthcare',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${baseUrl}/logo.png`
+    '@type': 'MedicalWebPage',
+    name: data.seo?.title || `${data.testName} Test at Cadabams`,
+    description: data.seo?.description || `Learn about ${data.testName} test at Cadabams`,
+    url: `${baseUrl}/bangalore/lab-test/${slug}`,
+    image: data.imageUrl || `${baseUrl}/default-test-image.jpg`,
+    citation: 'https://',
+    audio: {
+      '@type': 'AudioObject',
+      contentUrl: '',
+      description: '',
+      duration: 'T0M15S',
+      encodingFormat: 'audio/mpeg',
+      name: ''
+    },
+    hasMap: 'https://www.google.com/maps',
+    audience: {
+      '@type': 'MedicalAudience',
+      audienceType: 'Patients',
+      healthCondition: {
+        '@type': 'MedicalCondition',
+        name: 'Medical Testing'
       }
     },
-    relevantSpecialty: 'Medical Diagnostics',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${baseUrl}/bangalore/lab-test/${slug}`
-    }
+    reviewedBy: {
+      '@type': 'Person',
+      name: 'Dr. John Doe',
+      jobTitle: 'Medical Director',
+      url: `${baseUrl}/doctors/john-doe`,
+      sameAs: [
+        'https://www.linkedin.com/company/cadabams-hospitals'
+      ],
+      hasOccupation: {
+        '@type': 'Occupation',
+        name: 'Medical Director',
+        educationRequirements: 'MD in Laboratory Medicine'
+      }
+    },
+    specialty: 'Medical Diagnostics',
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Laboratory Testing'
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.5',
+      reviewCount: '100'
+    },
+    alternativeHeadline: `${data.testName} - Medical Laboratory Test`,
+    dateCreated: data.createdAt || new Date().toISOString(),
+    dateModified: data.updatedAt || new Date().toISOString(),
+    copyrightHolder: {
+      '@type': 'Organization',
+      name: 'Cadabams Healthcare'
+    },
+    keywords: data.seo?.keywords || `lab test, ${data.testName}, medical test, diagnostic test`
+  };
+
+  // FAQ Schema
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: data.alldata[3]?.faqs?.map(faq => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer
+      }
+    })) || []
   };
 
   // Breadcrumb Schema
@@ -58,7 +110,7 @@ const generateSchemas = (data, baseUrl, slug) => {
     ]
   };
 
-  return [testSchema, breadcrumbSchema];
+  return [medicalWebpageSchema, faqSchema, breadcrumbSchema];
 };
 
 // Helper function to capitalize location
@@ -93,7 +145,7 @@ export default function SlugPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(false);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://yourdomain.com';
+  const baseUrl = 'https://cadabams-diagnostics.vercel.app';
   const locationName = capitalizeLocation(location);
 
   useEffect(() => {
@@ -165,42 +217,66 @@ export default function SlugPage() {
     ? `Accurate lab results you can rely on. Certified centres in ${locationName}.`
     : 'Accurate lab results you can rely on. Certified centres in Bangalore.';
 
+  const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test/${slug}`;
+
   return (
     <Layout title={testData.testName || 'Test Page'}>
       <Head>
         {/* Basic Meta Tags */}
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
+        <title>{testData.seo?.title || pageTitle}</title>
+        <meta name="description" content={testData.seo?.description || pageDescription} />
         <meta 
           name="keywords" 
-          content={`lab test, medical test, diagnostic test, Cadabams healthcare, medical diagnosis, ${locationName}`} 
+          content={testData.seo?.keywords || `lab test, medical test, diagnostic test, Cadabams healthcare, medical diagnosis, ${locationName}`} 
         />
         
         {/* Robots Meta Tags */}
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content={testData.seo?.robotsMeta || "index, follow"} />
         <meta name="googlebot" content="index, follow" />
         
         {/* Canonical URL */}
-        <link rel="canonical" href={`${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`} />
+        <link rel="canonical" href={currentUrl} />
         
-        {/* Open Graph Tags */}
+        {/* Enhanced Open Graph Tags */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:image" content={`${baseUrl}/default-test-image.jpg`} />
-        <meta property="og:url" content={`${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`} />
+        <meta property="og:title" content={testData.seo?.ogTitle || pageTitle} />
+        <meta property="og:description" content={testData.seo?.ogDescription || pageDescription} />
+        <meta property="og:image" content={testData.seo?.ogImage || `${baseUrl}/default-test-image.jpg`} />
+        <meta property="og:url" content={currentUrl} />
         <meta property="og:site_name" content="Cadabams Health Labs" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:price:currency" content="INR" />
+        <meta property="og:price:amount" content={testData.alldata[0]?.basic_info?.price || ''} />
+        <meta property="og:availability" content="in stock" />
+        <meta property="og:brand" content="Cadabams Diagnostics" />
+        <meta property="og:email" content="info@cadabams.com" />
+        <meta property="og:phone_number" content="+91-XXX-XXX-XXXX" />
+        <meta property="og:street-address" content="Bangalore" />
+        <meta property="og:locality" content={locationName} />
+        <meta property="og:region" content="Karnataka" />
+        <meta property="og:postal-code" content="560001" />
+        <meta property="og:country-name" content="India" />
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@CadabamsGroup" />
-        <meta name="twitter:title" content={pageTitle} />
-        <meta name="twitter:description" content={pageDescription} />
-        <meta name="twitter:image" content={`${baseUrl}/default-test-image.jpg`} />
+        <meta name="twitter:creator" content="@CadabamsGroup" />
+        <meta name="twitter:title" content={testData.seo?.title || pageTitle} />
+        <meta name="twitter:description" content={testData.seo?.description || pageDescription} />
+        <meta name="twitter:image" content={testData.seo?.ogImage || `${baseUrl}/default-test-image.jpg`} />
+        <meta name="twitter:image:alt" content={`${testData.testName} at Cadabams Diagnostics`} />
+        <meta name="twitter:label1" content="Price" />
+        <meta name="twitter:data1" content={`₹${testData.alldata[0]?.basic_info?.price || ''}`} />
+        <meta name="twitter:label2" content="Location" />
+        <meta name="twitter:data2" content={locationName} />
 
         {/* Additional Meta Tags */}
         <meta name="format-detection" content="telephone=no" />
         <meta name="theme-color" content="#0047AB" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Cadabams Diagnostics" />
         
         {/* Schema.org JSON-LD */}
         <script

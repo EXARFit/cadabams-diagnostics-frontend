@@ -156,6 +156,7 @@ const CategoryCard = ({ categories = [] }) => (
 
 // Updated ContactForm Component
 const ContactForm = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -178,19 +179,26 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      // Create form data for Freshsales
-      const freshsalesData = new FormData();
-      freshsalesData.append('first_name', formData.firstName);
-      freshsalesData.append('last_name', formData.lastName);
-      freshsalesData.append('mobile', formData.mobile);
-      freshsalesData.append('email', formData.email);
-      freshsalesData.append('address', formData.address);
+      // Create form data with the correct field names based on the network request
+      const formDataToSend = new FormData();
+      formDataToSend.append('contact[first_name]', formData.firstName);
+      formDataToSend.append('contact[last_name]', formData.lastName);
+      formDataToSend.append('contact[mobile_number]', formData.mobile);
+      formDataToSend.append('contact[email]', formData.email);
+      formDataToSend.append('contact[address]', formData.address);
+      formDataToSend.append('entity_type', '2');
+      formDataToSend.append('asset_key', '1d0cec103ec4b3cdc7fc3db110b0b4ff58dadc2629d35e6bec3117da6dc6c94e');
+      formDataToSend.append('file_attachments_present', 'false');
 
       // Submit to Freshsales
-      await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/web_forms/1d0cec103ec4b3cdc7fc3db110b0b4ff58dadc2629d35e6bec3117da6dc6c94e/form.html', {
+      const response = await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/smart_form/create_entity?file_attachments_present=false', {
         method: 'POST',
-        body: freshsalesData
+        body: formDataToSend
       });
+
+      if (!response.ok) {
+        throw new Error('Form submission failed');
+      }
 
       // Reset form
       setFormData({
@@ -200,6 +208,10 @@ const ContactForm = () => {
         email: '',
         address: ''
       });
+
+      // Redirect to thank-you page after successful submission
+      router.push('/thank-you');
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
@@ -218,7 +230,7 @@ const ContactForm = () => {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            placeholder="E.g. John"
+            placeholder="Enter your first name"
             required
           />
         </div>
@@ -230,7 +242,7 @@ const ContactForm = () => {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            placeholder="E.g. Smith"
+            placeholder="Enter your last name"
             required
           />
         </div>
@@ -242,7 +254,7 @@ const ContactForm = () => {
             name="mobile"
             value={formData.mobile}
             onChange={handleChange}
-            placeholder="E.g. 17145965875"
+            placeholder="Enter your 10 digit mobile number"
             required
           />
         </div>
@@ -254,7 +266,7 @@ const ContactForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="E.g. john.smith@acmecorp.com"
+            placeholder="Enter your email id"
             required
           />
         </div>
@@ -266,7 +278,7 @@ const ContactForm = () => {
             name="address"
             value={formData.address}
             onChange={handleChange}
-            placeholder="E.g. 123 Main Street, Apt. 5"
+            placeholder="Enter your address"
           />
         </div>
 
