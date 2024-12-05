@@ -51,7 +51,7 @@ const generateSchemas = (data, baseUrl, slug) => {
       hasOccupation: {
         '@type': 'Occupation',
         name: 'Radiologist',
-        educationRequirements: 'MD in Radiology'
+        educationRequirements: 'MBBS , MD Radiodiagnosis'
       }
     },
     specialty: 'Medical Diagnostics',
