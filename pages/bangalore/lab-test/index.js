@@ -151,7 +151,7 @@ export default function LabtestPage() {
       dateModified: new Date().toISOString(),
       copyrightHolder: {
         '@type': 'Organization',
-        name: 'Cadabams Healthcare'
+        name: 'Cadabams Diagnostics'
       },
       keywords: `lab tests, medical tests, diagnostic tests, blood tests, pathology lab, ${locationName}, healthcare`
     };

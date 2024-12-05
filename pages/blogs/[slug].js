@@ -443,7 +443,7 @@ export default function BlogPost() {
     <AuthProvider>
       <Layout title={blogData.title || 'Blog Post'}>
         <Head>
-          <title>{`${blogData.title} | Cadabams Healthcare`}</title>
+          <title>{`${blogData.title} | Cadabams Diagnostics`}</title>
           <meta name="description" content={blogData.metaDescription || `Read about ${blogData.title}`} />
           <meta name="keywords" content={blogData.keywords || blogData.categoryName || 'healthcare, mental health, therapy'} />
           <meta name="robots" content="index, follow" />
@@ -454,7 +454,7 @@ export default function BlogPost() {
           <meta property="og:description" content={blogData.metaDescription || `Read about ${blogData.title}`} />
           <meta property="og:image" content={blogData.imageUrl || `${baseUrl}/default-og-image.jpg`} />
           <meta property="og:url" content={`${baseUrl}/blogs/${slug}`} />
-          <meta property="og:site_name" content="Cadabams Healthcare" />
+          <meta property="og:site_name" content="Cadabams Diagnostics" />
           <meta property="article:published_time" content={blogData.publishedDate || new Date().toISOString()} />
           <meta property="article:modified_time" content={blogData.updatedDate || new Date().toISOString()} />
           <meta property="article:author" content={blogData.verifiedBy || 'Cadabams Team'} />

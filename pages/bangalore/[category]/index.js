@@ -154,7 +154,7 @@ export default function CategoryPage() {
       dateModified: categoryData.updatedAt || new Date().toISOString(),
       copyrightHolder: {
         '@type': 'Organization',
-        name: 'Cadabams Healthcare'
+        name: 'Cadabams Diagnostics'
       },
       keywords: seoData.keywords
     };

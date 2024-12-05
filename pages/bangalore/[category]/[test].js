@@ -110,7 +110,7 @@ const generateSchemas = (data, baseUrl, test) => {
     dateModified: data.updatedAt || new Date().toISOString(),
     copyrightHolder: {
       '@type': 'Organization',
-      name: 'Cadabams Healthcare'
+      name: 'Cadabams Diagnostics'
     },
     keywords: data.seo?.keywords || `diagnostic test, ${data.testName}, medical test`
   };

@@ -69,7 +69,7 @@ const generateSchemas = (data, baseUrl, slug) => {
     dateModified: data.updatedAt || new Date().toISOString(),
     copyrightHolder: {
       '@type': 'Organization',
-      name: 'Cadabams Healthcare'
+      name: 'Cadabams Diagnostics'
     },
     keywords: data.seo?.keywords || `lab test, ${data.testName}, medical test, diagnostic test`
   };
