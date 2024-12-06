@@ -62,7 +62,7 @@ export default function LabtestPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { location } = router.query;
-  const baseUrl = 'https://cadabams-diagnostics.vercel.app';
+  const baseUrl = 'https://www.cadabamsdiagnostics.com';
   const locationName = capitalizeLocation(location);
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function LabtestPage() {
         '@type': 'Person',
         name: 'Dr. Shreyas Cadabam',
         jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-        url: 'https://cadabams-diagnostics.vercel.app/clinical-team',
+        url: 'https://www.cadabamsdiagnostics.com/clinical-team',
         sameAs: [
           'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
           'https://www.instagram.com/cadabams_diagnostics/',

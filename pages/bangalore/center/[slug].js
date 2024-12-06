@@ -60,7 +60,7 @@ const CenterDetailPage = () => {
       title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
       description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
       keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${address.area || 'bangalore'}, diagnostic services`,
-      url: `https://cadabams-diagnostics.vercel.app/bangalore/center/${slug}`,
+      url: `https://www.cadabamsdiagnostics.com/bangalore/center/${slug}`,
       imageUrl: center.image || 'https://diagnostics.cadabams.com/images/center-default.jpg'
     };
   };
@@ -96,7 +96,7 @@ const CenterDetailPage = () => {
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
-        <link rel="canonical" href={`https://cadabams-diagnostics.vercel.app/bangalore/center/${slug}`} />
+        <link rel="canonical" href={`https://www.cadabamsdiagnostics.com/bangalore/center/${slug}`} />
         
         {/* Open Graph Tags */}
         <meta property="og:title" content={seoData.title} />
@@ -155,7 +155,7 @@ const CenterDetailPage = () => {
               "https://www.facebook.com/CadabamsDiagnostics",
               "https://www.youtube.com/CadabamsDiagnostics",
               "https://www.linkedin.com/company/cadabams-diagnostics",
-              "https://cadabams-diagnostics.vercel.app",
+              "https://www.cadabamsdiagnostics.com",
               `https://www.google.com/maps?cid=${address.gmb_cid || ''}`
             ],
             "address": {
@@ -186,7 +186,7 @@ const CenterDetailPage = () => {
             "description": seoData.description,
             "url": seoData.url,
             "image": seoData.imageUrl,
-            "citation": "https://cadabams-diagnostics.vercel.app",
+            "citation": "https://www.cadabamsdiagnostics.com",
             "hasMap": `https://www.google.com/maps?cid=${address.gmb_cid || ''}`,
             "audience": {
               "@type": "MedicalAudience",

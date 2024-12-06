@@ -48,7 +48,7 @@ export default function CategoryPage() {
   const [categoryData, setCategoryData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const baseUrl = 'https://cadabams-diagnostics.vercel.app';
+  const baseUrl = 'https://www.cadabamsdiagnostics.com';
 
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -125,7 +125,7 @@ export default function CategoryPage() {
         '@type': 'Person',
         name: 'Dr. Shreyas Cadabam',
         jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-        url: 'https://cadabams-diagnostics.vercel.app/clinical-team',
+        url: 'https://www.cadabamsdiagnostics.com/clinical-team',
         sameAs: [
           'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
           'https://www.instagram.com/cadabams_diagnostics/',

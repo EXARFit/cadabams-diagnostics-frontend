@@ -81,7 +81,7 @@ const generateSchemas = (data, baseUrl, test) => {
       '@type': 'Person',
       name: 'Dr. Shreyas Cadabam',
       jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-      url: 'https://cadabams-diagnostics.vercel.app/clinical-team',
+      url: 'https://www.cadabamsdiagnostics.com/clinical-team',
       sameAs: [
         'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
         'https://www.instagram.com/cadabams_diagnostics/',
@@ -164,7 +164,7 @@ export default function TestDetailPage() {
   const [testData, setTestData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const baseUrl = 'https://cadabams-diagnostics.vercel.app';
+  const baseUrl = 'https://www.cadabamsdiagnostics.com';
 
   useEffect(() => {
     if (test) {
