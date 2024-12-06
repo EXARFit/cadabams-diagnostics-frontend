@@ -96,7 +96,7 @@ const CheckupCard = ({ content }) => {
       <div className={styles.cardBody}>
         <div className={styles.infoItem}>
           <FaFlask className={styles.icon} />
-          <span>{basicInfo?.parameters || '107 parameters included'}</span>
+          {/* <span>{basicInfo?.parameters || '107 parameters included'}</span> */}
         </div>
         <div className={styles.infoItem}>
           <FaClock className={styles.icon} />

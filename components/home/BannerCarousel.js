@@ -10,9 +10,9 @@ const BannerCarousel = ({ banners = [] }) => {
   // Static route paths for each banner
   const bannerRoutes = [
     '/bangalore/lab-test/glycosylated-haemoglobin-hba1c-test',
-    '/bangalore/lab-test/renal-function-test',
-    '/bangalore/lab-test/kidney-function-test-kft',
     '/bangalore/lab-test/diabetes-sugar-test-dst',
+    '/bangalore/lab-test/kidney-function-test-kft',
+    '/bangalore/lab-test/renal-function-test',
     '/bangalore/lab-test/liver-function-test-lft'
   ].slice(0, banners.length); // Only use as many routes as there are banners
 
