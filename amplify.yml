@@ -1,0 +1,282 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+  customHeaders:
+    - pattern: '**/*'
+      headers:
+        - key: 'Strict-Transport-Security'
+          value: 'max-age=31536000; includeSubDomains'
+        - key: 'X-Frame-Options'
+          value: 'SAMEORIGIN'
+        - key: 'X-Content-Type-Options'
+          value: 'nosniff'
+        - key: 'X-XSS-Protection'
+          value: '1; mode=block'
+    # Cache control headers for static assets
+    - pattern: '**/*.jpg'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000'
+    - pattern: '**/*.png'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000'
+    - pattern: '**/*.css'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000'
+    - pattern: '**/*.js'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000'
+  customRules:
+    # Blog category redirects
+    - source: /blogs/category/blood-test/blood-sugar/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/blood-test/quadruple-marker-test-blood-test/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/blood-test/thyroid/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/services/comparison/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/ultrasound-scan/anomaly-scan/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/ultrasound-scan/fetal-doppler-scan/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/ultrasound-scan/nt-scan/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/ultrasound-scan/tiffa-scan/
+      target: /blogs
+      status: 301
+
+    # Location redirects
+    - source: /locations/blood-test-centre-in-banashankari/
+      target: /bangalore/banashankari/lab-test
+      status: 301
+    - source: /locations/diagnostic-centre-in-banashankari/
+      target: /bangalore/center/banashankari
+      status: 301
+    - source: /locations/diagnostic-centre-in-indiranagar/
+      target: /bangalore/center/indiranagar
+      status: 301
+    - source: /locations/ultrasound-centre-in-banashankari/
+      target: /bangalore/banashankari/ultrasound-scan
+      status: 301
+    - source: /locations/xray-centre-in-banashankari/
+      target: /bangalore/banashankari/xray-scan
+      status: 301
+
+    # About and Management redirects
+    - source: /about-us/management-team/
+      target: /management-team
+      status: 301
+    - source: /about-us/clinical-team/
+      target: /clinical-team
+      status: 301
+    - source: /about-us/mission-vision/
+      target: /about-us
+      status: 301
+    - source: /about-us/
+      target: /about-us
+      status: 301
+
+    # Contact and Thank You pages
+    - source: /contact-us/
+      target: /contact-us
+      status: 301
+    - source: /contact/
+      target: /contact-us
+      status: 301
+    - source: /thank-you/
+      target: /thank-you
+      status: 301
+    - source: /thank-you-for-book-now/
+      target: /
+      status: 301
+
+    # Services and Treatments
+    - source: /treatments/
+      target: /
+      status: 301
+    - source: /services/
+      target: /
+      status: 301
+
+    # Test and Scan redirects
+    - source: /ultrasound-scan-banashankari/
+      target: /bangalore/banashankari/ultrasound-scan
+      status: 301
+    - source: /cbc-test-bangalore/
+      target: /bangalore/lab-test/complete-blood-count-cbc
+      status: 301
+    - source: /abdomen-pelvis-scan-bangalore/
+      target: /bangalore/ultrasound-scan/abdomen-and-pelvis-ultrasound-scans
+      status: 301
+    - source: /testis-scan-bangalore/
+      target: /bangalore/ultrasound-scan/testis-ultrasound-scan
+      status: 301
+    - source: /transvaginal-scan-bangalore/
+      target: /bangalore/ultrasound-scan/ultrasound-of-transvaginal-scan-tvs
+      status: 301
+    - source: /breast-biopsy-scan-bangalore/
+      target: /bangalore/ultrasound-scan/breast-biopsy-scan
+      status: 301
+    - source: /diabetes-test-bangalore/
+      target: /bangalore/lab-test/diabetes-test-dt
+      status: 301
+    - source: /fetal-imaging-in-bangalore/
+      target: /bangalore/pregnancy-scan/fetal-imaging
+      status: 301
+    - source: /fetal-interventional-in-bangalore/
+      target: /bangalore/pregnancy-scan/fetal-interventional-ultrasound-echo
+      status: 301
+    - source: /penile-doppler-test-in-bangalore/
+      target: /bangalore/ultrasound-scan/penile-doppler-ultrasound-scan
+      status: 301
+    - source: /sonomammography-scan-bangalore/
+      target: /bangalore/ultrasound-scan/sonomammography-ultrasound-scan
+      status: 301
+    - source: /thyroid-scan-bangalore/
+      target: /bangalore/ultrasound-scan/thyroid-scan
+      status: 301
+    - source: /echocardiography-test-in-bangalore/
+      target: /bangalore/ultrasound-scan/echocardiogram-testing
+      status: 301
+    - source: /elastography-test-in-bangalore/
+      target: /bangalore/ultrasound-scan/elastography-test
+      status: 301
+    - source: /kidney-blood-test-bangalore/
+      target: /bangalore/lab-test/kidney-function-test-kft
+      status: 301
+    - source: /liver-blood-test-bangalore/
+      target: /bangalore/lab-test/liver-function-test-lft
+      status: 301
+    - source: /perianal-imaging-center-in-bangalore/
+      target: /bangalore/mri-scan/perianal-imaging-center
+      status: 301
+    - source: /pregnancy-ultrasound-in-bangalore/
+      target: /bangalore/pregnancy-scan/pregnancy-ultrasound-scan
+      status: 301
+    - source: /msk-scans-in-bangalore/
+      target: /bangalore/mri-scan
+      status: 301
+    - source: /ultrasound-scan-bangalore/
+      target: /bangalore/ultrasound-scan
+      status: 301
+    - source: /xray-centre-in-bangalore/
+      target: /bangalore/xray-scan
+      status: 301
+
+    # Blog redirects
+    - source: /blog/
+      target: /blogs
+      status: 301
+    - source: /blogs/
+      target: /blogs
+      status: 301
+    - source: /blogs/echo-tmt-ecg/
+      target: /blogs
+      status: 301
+    - source: /blogs/general-ultrasound/
+      target: /blogs
+      status: 301
+    - source: /blogs/x-ray-x-ray-procedures/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/blood-test/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/pathology-lab/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/services/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/ultrasound-scan/
+      target: /blogs
+      status: 301
+    - source: /blogs/category/uncategorized/
+      target: /blogs
+      status: 301
+    - source: /blogs/hello-world/
+      target: /blogs
+      status: 301
+    - source: /blogs/author/test/
+      target: /blogs
+      status: 301
+
+    # Blog tag redirects (all blog tags redirect to /blogs)
+    - source: /blogs/tag/*
+      target: /blogs
+      status: 301
+
+    # Specific blog post redirects
+    - source: /blogs/the-power-of-pee-5-diseases-detectable-through-urine-tests/
+      target: /blogs/the-power-of-pee-diseases-detectable-through-urine-tests
+      status: 301
+    - source: /blogs/top-10-foods-to-include-in-your-diet-to-manage-diabetes-and-lower-blood-sugar/
+      target: /blogs/top-foods-to-include-in-your-diet-to-manage-diabetes-and-lower-blood-sugar
+      status: 301
+
+    # Other pages
+    - source: /blood-collection-at-home/
+      target: /
+      status: 301
+    - source: /landing-form/
+      target: /
+      status: 301
+    - source: /locations/
+      target: /
+      status: 301
+    - source: /create-your-website-with-blocks/
+      target: /
+      status: 301
+    - source: /gallery/
+      target: /
+      status: 301
+    - source: /sample-page/
+      target: /
+      status: 301
+
+    # Policy pages
+    - source: /cancellation-refund-policy/
+      target: /refund-policy
+      status: 301
+    - source: /privacy-policies/
+      target: /privacy-policy
+      status: 301
+    - source: /privacy-policy-2/
+      target: /privacy-policy
+      status: 301
+    - source: /privacy-policy/
+      target: /privacy-policy
+      status: 301
+    - source: /terms-and-conditions/
+      target: /terms-of-use
+      status: 301
+
+    # Force HTTPS
+    - source: /<*>
+      target: https://${host}/<*>
+      status: 301
+      condition: !https
