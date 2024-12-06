@@ -43,6 +43,11 @@ frontend:
         - key: 'Cache-Control'
           value: 'public, max-age=31536000'
   customRules:
+    # Force HTTPS (fixed syntax)
+    - source: http://${host}/<*>
+      target: https://${host}/<*>
+      status: 301
+
     # Blog category redirects
     - source: /blogs/category/blood-test/blood-sugar/
       target: /blogs
@@ -274,9 +279,3 @@ frontend:
     - source: /terms-and-conditions/
       target: /terms-of-use
       status: 301
-
-    # Force HTTPS
-    - source: /<*>
-      target: https://${host}/<*>
-      status: 301
-      condition: !https
