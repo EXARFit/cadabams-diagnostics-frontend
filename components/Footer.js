@@ -135,32 +135,32 @@ export default function Footer() {
             <h3>Popular Radiology Tests</h3>
             <ul>
               <li>
-                <Link href="/bangalore/radiology-scan/whole-abdomen">
+                <Link href="/bangalore/ultrasound-scan/abdominal-ultrasound">
                   Abdomen Ultrasound
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/radiology-scan/pelvic">
+                <Link href="/bangalore/ultrasound-scan/ultrasound-of-transvaginal-scan-tvs">
                   Pelvic Ultrasound
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/radiology-scan/pregnancy-tiffa">
+                <Link href="/bangalore/pregnancy-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound">
                   Pregnancy TIFFA Scan
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/radiology-scan/lumbar-spine">
+                <Link href="/bangalore/mri-scan/lumbar-lumbosacral-spine-without-contrast-mri">
                   Lumbar Spine MRI
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/radiology-scan/chest-xray">
+                <Link href="/bangalore/xray-scan/chest-x-ray">
                   Chest XRay
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/radiology-scan/musculoskeletal">
+                <Link href="/bangalore/ultrasound-scan/musculoskeletal-ultrasound-msk">
                   Musculoskeletal Ultrasound
                 </Link>
               </li>
