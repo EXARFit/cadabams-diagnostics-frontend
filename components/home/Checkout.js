@@ -2,15 +2,29 @@ import React, { useContext, useState, useCallback, useRef, useEffect } from 'rea
 import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 import { CartContext } from '../../contexts/CartContext';
-import { CreditCard, User, Mail, Phone, MapPin, Crosshair, Home, Hospital } from 'lucide-react';
+import { CreditCard, User, Mail, Phone, MapPin, Crosshair, Home, Hospital, Calendar } from 'lucide-react';
 import { GoogleMap, LoadScript, Marker, StandaloneSearchBox } from '@react-google-maps/api';
+import TimeSlotSelector from './TimeSlotSelector';
 import styles from '../../styles/Checkout.module.css';
 import AuthModal from './AuthModal';
+import axios from 'axios';
 
-// Crelio API Configuration
-const CRELIO_API_URL = 'https://uat.crelio.solutions/LHRegisterBillAPI';
-const CRELIO_TOKEN = '8862c370-09ef-11eb-841c-02524da836c8';
-const ORGANIZATION_ID = '324559';
+// API Configuration from documentation
+const BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/crelio';
+
+// Form validation helpers
+const validateMobile = (mobile) => {
+  const cleanMobile = mobile.replace(/\D/g, '');
+  return /^[6-9]\d{9}$/.test(cleanMobile);
+};
+
+const validateAge = (age) => {
+  return /^\d+\s+Years$/i.test(age);
+};
+
+const formatMobile = (mobile) => {
+  return mobile.replace(/\D/g, '');
+};
 
 const mapContainerStyle = {
   width: '100%',
@@ -19,7 +33,7 @@ const mapContainerStyle = {
 
 const defaultCenter = {
   lat: 12.9716,
-  lng: 77.5946 // Coordinates for Bangalore
+  lng: 77.5946
 };
 
 const libraries = ['places'];
@@ -27,7 +41,7 @@ const libraries = ['places'];
 const clinicLocations = [
   {
     id: 1,
-    name: 'Cadabam\'s Diagnostics Centre - Banashankari',
+    name: "Cadabam's Diagnostics Centre - Banashankari",
     address: 'No. 1/A, Bhavani HBCS, near Devegowda petrol Bunk, 1st Block, Banashankari 3rd Stage, Bengaluru, Karnataka 560070',
     coordinates: {
       lat: 12.9277,
@@ -46,128 +60,132 @@ const clinicLocations = [
 ];
 
 export default function Checkout() {
+  // Authentication and routing setup
   const { user, isAuthenticated } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { cart } = useContext(CartContext);
   const router = useRouter();
+
+  // Form processing states
   const [isProcessing, setIsProcessing] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
-  // Check if cart has lab tests
-  const hasLabTests = cart.some(item => item.templateName === 'labtest');
-  const hasNonLabTests = cart.some(item => item.templateName === 'non-labtest');
+  // Appointment states
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
 
-  // Set initial collection method
-  const getInitialCollectionMethod = () => {
-    if (hasNonLabTests && !hasLabTests) {
-      return 'clinic';
-    }
-    return 'home';
-  };
-
-  const [userDetails, setUserDetails] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    address: '',
-  });
-  const [selectedLocation, setSelectedLocation] = useState(defaultCenter);
-  const [map, setMap] = useState(null);
-  const searchBoxRef = useRef(null);
-  const [collectionMethod, setCollectionMethod] = useState(getInitialCollectionMethod());
-  const [selectedClinic, setSelectedClinic] = useState(null);
-  const [mapMarkers, setMapMarkers] = useState([]);
-
-  // Crelio API Integration
-  const createCrelioOrder = async (orderData) => {
-    try {
-      const currentDate = new Date().toISOString().split('T')[0];
-      
-      // Format test list according to Crelio API requirements
-      const testList = orderData.items.map(item => ({
-        testID: item.crelioTestId || "3992066", // Using a default test ID from documentation if not provided
-        testCode: item.testCode || "COVID-19 Screening 001", // Using a default test code if not provided
-        sampleId: ""
-      }));
-
-      const payload = {
-        countryCode: "+91",
-        mobile: orderData.user.phone,
-        email: orderData.user.email,
-        designation: "MR.",
-        fullName: orderData.user.name,
-        gender: "Male",
-        city: "Bangalore",
-        dob: "",
-        billDetails: {
-          emergencyFlag: "0",
-          billTotalAmount: orderData.total.toString(),
-          advance: "0",
-          billDate: currentDate,
-          paymentType: "CREDIT",
-          referralName: "Self",
-          organizationIdLH: ORGANIZATION_ID,
-          testList: testList,
-          paymentList: [
-            {
-              paymentType: "CREDIT",
-              paymentAmount: orderData.total.toString(),
-              chequeNo: "",
-              issueBank: ""
-            }
-          ]
-        }
-      };
-
-      // Add home collection specific fields if applicable
-      if (orderData.collectionMethod === 'home') {
-        payload.isHomecollection = 1;
-        payload.homeCollectionDateTime = new Date().toISOString();
-        payload.address = orderData.user.address;
-      }
-
-      const response = await fetch(`${CRELIO_API_URL}/${CRELIO_TOKEN}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.Message || 'Failed to create order in Crelio');
-      }
-
-      return {
-        crelioPatientId: data.patientId,
-        crelioBillId: data.billId,
-        reportDetails: data.reportDetails
-      };
-    } catch (error) {
-      console.error('Error creating Crelio order:', error);
-      throw error;
-    }
-  };
-
-  // Update collection method when cart changes
-  useEffect(() => {
-    if (hasNonLabTests && !hasLabTests) {
-      setCollectionMethod('clinic');
-    }
-  }, [hasNonLabTests, hasLabTests]);
-
+  // Calculate total price
   const totalPrice = cart.reduce((total, item) => {
     const itemPrice = parseFloat(item.discountedPrice) || 0;
     const quantity = parseInt(item.quantity) || 1;
     return total + (itemPrice * quantity);
   }, 0);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserDetails((prev) => ({ ...prev, [name]: value }));
+  // Cart type checks
+  const hasLabTests = cart.some(item => item.templateName === 'labtest');
+  const hasNonLabTests = cart.some(item => item.templateName === 'non-labtest');
+
+  // User details state with all required fields from API
+  const [userDetails, setUserDetails] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    address: '',
+    age: '',
+    gender: 'Male',
+    designation: 'MR.',
+    pincode: '',
+    city: 'Bangalore',
+    area: '',
+    dob: '',
+    patientType: 'patient'
+  });
+
+  // Map and location states
+  const [selectedLocation, setSelectedLocation] = useState(defaultCenter);
+  const [map, setMap] = useState(null);
+  const searchBoxRef = useRef(null);
+  const [collectionMethod, setCollectionMethod] = useState(() => {
+    if (hasNonLabTests && !hasLabTests) return 'clinic';
+    return 'home';
+  });
+  const [selectedClinic, setSelectedClinic] = useState(null);
+  const [mapMarkers, setMapMarkers] = useState([]);
+
+  // Time slot selection handler
+  const handleSlotSelect = (date, time) => {
+    setSelectedDate(date);
+    setSelectedTime(time);
   };
 
+  // Enhanced input change handler
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    let newValue = value;
+    let error = null;
+
+    switch (name) {
+      case 'phone':
+        newValue = formatMobile(value);
+        if (newValue && !validateMobile(newValue)) {
+          error = 'Please enter a valid 10-digit mobile number';
+        }
+        break;
+      case 'age':
+        if (value && !value.toLowerCase().endsWith('years')) {
+          newValue = `${value.replace(/\s*years\s*$/i, '')} Years`;
+        }
+        if (newValue && !validateAge(newValue)) {
+          error = 'Age must be in format "X Years"';
+        }
+        break;
+      case 'dob':
+        const dobDate = new Date(value);
+        const today = new Date();
+        if (dobDate > today) {
+          error = 'Date of Birth cannot be in the future';
+        }
+        break;
+    }
+
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+
+    setUserDetails(prev => ({
+      ...prev,
+      [name]: newValue,
+      ...(name === 'gender' ? { designation: value === 'Female' ? 'MS.' : 'MR.' } : {})
+    }));
+  };
+
+  // Age-DOB sync helper
+  const calculateAgeFromDOB = (dob) => {
+    const dobDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - dobDate.getFullYear();
+    const monthDiff = today.getMonth() - dobDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+      age--;
+    }
+    
+    return `${age} Years`;
+  };
+
+  // Effect to sync age when DOB changes
+  useEffect(() => {
+    if (userDetails.dob) {
+      const calculatedAge = calculateAgeFromDOB(userDetails.dob);
+      setUserDetails(prev => ({
+        ...prev,
+        age: calculatedAge
+      }));
+    }
+  }, [userDetails.dob]);
+
+  // Map interaction handlers
   const handleMapClick = useCallback((e) => {
     if (collectionMethod === 'home') {
       const newLocation = {
@@ -184,14 +202,46 @@ export default function Checkout() {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location }, (results, status) => {
         if (status === 'OK' && results[0]) {
-          setUserDetails(prev => ({ ...prev, address: results[0].formatted_address }));
+          const addressComponents = results[0].address_components;
+          const area = addressComponents.find(c => c.types.includes('sublocality'))?.long_name || '';
+          const pincode = addressComponents.find(c => c.types.includes('postal_code'))?.long_name || '';
+          
+          setUserDetails(prev => ({
+            ...prev,
+            address: results[0].formatted_address,
+            area: area,
+            pincode: pincode
+          }));
         }
       });
     }
   }, [map]);
 
-  const onLoad = useCallback((map) => {
-    setMap(map);
+  const handleGetUserLocation = useCallback(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setSelectedLocation(userLocation);
+          updateAddress(userLocation);
+          map?.panTo(userLocation);
+        },
+        (error) => {
+          console.error("Error getting user's location:", error);
+          alert('Unable to get your location. Please enter it manually.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser. Please enter your address manually.');
+    }
+  }, [map, updateAddress]);
+
+  // Map loading handlers
+  const onLoad = useCallback((mapInstance) => {
+    setMap(mapInstance);
   }, []);
 
   const onSearchBoxLoad = useCallback((ref) => {
@@ -207,8 +257,13 @@ export default function Checkout() {
         lng: place.geometry.location.lng()
       };
       setSelectedLocation(newLocation);
-      setUserDetails(prev => ({ ...prev, address: place.formatted_address }));
-      map.panTo(newLocation);
+      setUserDetails(prev => ({
+        ...prev,
+        address: place.formatted_address,
+        area: place.address_components.find(c => c.types.includes('sublocality'))?.long_name || '',
+        pincode: place.address_components.find(c => c.types.includes('postal_code'))?.long_name || ''
+      }));
+      map?.panTo(newLocation);
     }
   }, [map]);
 
@@ -229,36 +284,115 @@ export default function Checkout() {
 
   const handleClinicSelection = (clinic) => {
     setSelectedClinic(clinic);
-    setUserDetails(prev => ({ ...prev, address: clinic.address }));
+    setUserDetails(prev => ({
+      ...prev,
+      address: clinic.address,
+      area: clinic.area || '',
+      pincode: clinic.pincode || ''
+    }));
     if (map) {
       map.panTo(clinic.coordinates);
       map.setZoom(15);
     }
   };
 
-  const handleGetUserLocation = useCallback(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          setSelectedLocation(userLocation);
-          updateAddress(userLocation);
-          map?.panTo(userLocation);
-        },
-        (error) => {
-          console.error("Error getting user's location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-  }, [map, updateAddress]);
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
 
+    if (!userDetails.name) {
+      errors.name = 'Name is required';
+    }
+
+    if (!validateMobile(userDetails.phone)) {
+      errors.phone = 'Please enter a valid 10-digit mobile number';
+    }
+
+    if (!userDetails.email) {
+      errors.email = 'Email is required';
+    }
+
+    if (!validateAge(userDetails.age)) {
+      errors.age = 'Age must be in format "X Years"';
+    }
+
+    if (!userDetails.dob) {
+      errors.dob = 'Date of Birth is required (YYYY-MM-DD)';
+    } else {
+      const dobDate = new Date(userDetails.dob);
+      const today = new Date();
+      if (dobDate > today) {
+        errors.dob = 'Date of Birth cannot be in the future';
+      }
+    }
+
+    if (!userDetails.pincode) {
+      errors.pincode = 'Pincode is required';
+    }
+
+    if (collectionMethod === 'home' && !userDetails.address) {
+      errors.address = 'Address is required for home collection';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // API calls
+  const bookLabAppointment = async (payload) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/appointment`, payload);
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Failed to book appointment');
+      }
+      return response.data;
+    } catch (error) {
+      if (error.response?.data?.errors) {
+        const fieldErrors = {};
+        error.response.data.errors.forEach(err => {
+          fieldErrors[err.path] = err.msg;
+        });
+        setFormErrors(fieldErrors);
+        throw new Error('Please correct the highlighted fields');
+      }
+      throw error;
+    }
+  };
+
+  const bookHomeCollection = async (payload) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/home-collection`, payload);
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Failed to book home collection');
+      }
+      return response.data;
+    } catch (error) {
+      if (error.response?.data?.errors) {
+        const fieldErrors = {};
+        error.response.data.errors.forEach(err => {
+          fieldErrors[err.path] = err.msg;
+        });
+        setFormErrors(fieldErrors);
+        throw new Error('Please correct the highlighted fields');
+      }
+      throw error;
+    }
+  };
+
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      alert('Please correct the errors in the form before proceeding.');
+      return;
+    }
+
+    if (!selectedDate || !selectedTime) {
+      alert('Please select an appointment date and time');
+      return;
+    }
+    
     if (!isAuthenticated) {
       setIsAuthModalOpen(true);
       return;
@@ -267,56 +401,117 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
-      const order = {
-        user: userDetails,
-        items: cart,
-        total: totalPrice,
-        location: selectedLocation,
-        collectionMethod,
-        clinic: selectedClinic
+      const appointmentDateTime = `${selectedDate}T${selectedTime}:00Z`;
+      if (!appointmentDateTime) {
+        throw new Error('Invalid appointment date/time');
+      }
+
+      // Prepare common payload as per Crelio documentation
+      const commonPayload = {
+        countryCode: "+91",
+        mobile: formatMobile(userDetails.phone),
+        email: userDetails.email,
+        designation: userDetails.designation,
+        fullName: userDetails.name,
+        age: userDetails.age,
+        gender: userDetails.gender,
+        area: userDetails.area,
+        city: userDetails.city,
+        patientType: "patient",
+        labPatientId: "",
+        pincode: userDetails.pincode,
+        dob: userDetails.dob,
+        passportNo: "",
+        panNumber: "",
+        aadharNumber: "",
+        insuranceNo: "",
+        nationality: "",
+        ethnicity: "",
+        nationalIdentityNumber: "",
+        workerCode: "",
+        doctorCode: "",
+        billDetails: {
+          emergencyFlag: "0",
+          visitLevelTags: "",
+          billTotalAmount: totalPrice.toString(),
+          advance: "0",
+          billDate: new Date().toISOString().split('T')[0],
+          paymentType: "Cash",
+          referralName: "Self",
+          otherReferral: "",
+          orderNumber: "",
+          referralIdLH: "",
+          organisationName: "Cadabams Diagnostics",
+          billConcession: "0",
+          additionalAmount: "0",
+          organizationIdLH: "11541",
+          comments: "",
+          testList: cart.map(item => ({
+            testID: item.testID || "3992066",
+            testCode: item.testCode || "COVID Antigen (POC)",
+            sampleId: ""
+          })),
+          paymentList: [{
+            paymentType: "Cash",
+            paymentAmount: totalPrice.toString(),
+            chequeNo: "",
+            issueBank: ""
+          }]
+        }
       };
 
-      // Create order in Crelio system
-      const crelioResponse = await createCrelioOrder(order);
+      let response;
 
-      // Store Crelio IDs with the order
-      const orderWithCrelio = {
-        ...order,
-        crelioPatientId: crelioResponse.crelioPatientId,
-        crelioBillId: crelioResponse.crelioBillId,
-        reportDetails: crelioResponse.reportDetails
-      };
+      if (collectionMethod === 'home') {
+        // Home collection specific payload
+        const homePayload = {
+          ...commonPayload,
+          isHomecollection: 1,
+          homeCollectionDateTime: appointmentDateTime,
+          address: userDetails.address
+        };
+        response = await bookHomeCollection(homePayload);
+      } else {
+        // Lab appointment specific payload
+        const endDateTime = new Date(appointmentDateTime);
+        endDateTime.setMinutes(endDateTime.getMinutes() + 30);
 
-      console.log('Processing order:', orderWithCrelio);
+        const labPayload = {
+          ...commonPayload,
+          isAppointmentRequest: 1,
+          startDate: appointmentDateTime,
+          endDate: endDateTime.toISOString()
+        };
+        response = await bookLabAppointment(labPayload);
+      }
 
-      // Navigate to payment page with Crelio order details
       router.push({
         pathname: '/payment',
         query: {
-          orderId: crelioResponse.crelioBillId,
-          patientId: crelioResponse.crelioPatientId
+          orderId: response.data.billId,
+          patientId: response.data.patientId
         }
       });
     } catch (error) {
-      console.error('Checkout error:', error);
-      alert('There was an error processing your order. Please try again.');
+      console.error('Booking error:', error);
+      alert(error.message || 'There was an error processing your booking. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Render component (keeping the original JSX structure)
   return (
     <div className={styles.checkoutContainer}>
       <h1 className={styles.checkoutTitle}>Checkout</h1>
       <div className={styles.checkoutContent}>
         <form onSubmit={handleSubmit} className={styles.checkoutForm}>
+          {/* Personal Details Section */}
           <div className={styles.formSection}>
             <h2>Personal Details</h2>
             <div className={styles.formGroup}>
               <label htmlFor="name">
                 <User size={18} />
-                Name
+                Full Name
               </label>
               <input
                 type="text"
@@ -325,9 +520,14 @@ export default function Checkout() {
                 value={userDetails.name}
                 onChange={handleInputChange}
                 required
-                className={styles.whiteInput}
+                className={`${styles.whiteInput} ${formErrors.name ? styles.error : ''}`}
+                placeholder="Enter your full name"
               />
+              {formErrors.name && (
+                <span className={styles.errorMessage}>{formErrors.name}</span>
+              )}
             </div>
+
             <div className={styles.formGroup}>
               <label htmlFor="email">
                 <Mail size={18} />
@@ -340,9 +540,14 @@ export default function Checkout() {
                 value={userDetails.email}
                 onChange={handleInputChange}
                 required
-                className={styles.whiteInput}
+                className={`${styles.whiteInput} ${formErrors.email ? styles.error : ''}`}
+                placeholder="Enter your email"
               />
+              {formErrors.email && (
+                <span className={styles.errorMessage}>{formErrors.email}</span>
+              )}
             </div>
+
             <div className={styles.formGroup}>
               <label htmlFor="phone">
                 <Phone size={18} />
@@ -355,11 +560,85 @@ export default function Checkout() {
                 value={userDetails.phone}
                 onChange={handleInputChange}
                 required
-                className={styles.whiteInput}
+                className={`${styles.whiteInput} ${formErrors.phone ? styles.error : ''}`}
+                placeholder="10-digit mobile number"
+                maxLength="10"
               />
+              {formErrors.phone && (
+                <span className={styles.errorMessage}>{formErrors.phone}</span>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="dob">
+                <Calendar size={18} />
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                value={userDetails.dob}
+                onChange={handleInputChange}
+                required
+                max={new Date().toISOString().split('T')[0]}
+                className={`${styles.whiteInput} ${formErrors.dob ? styles.error : ''}`}
+              />
+              {formErrors.dob && (
+                <span className={styles.errorMessage}>{formErrors.dob}</span>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="age">Age</label>
+              <input
+                type="text"
+                id="age"
+                name="age"
+                value={userDetails.age}
+                onChange={handleInputChange}
+                required
+                className={`${styles.whiteInput} ${formErrors.age ? styles.error : ''}`}
+                placeholder="e.g., 49 Years"
+                readOnly
+              />
+              {formErrors.age && (
+                <span className={styles.errorMessage}>{formErrors.age}</span>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Gender</label>
+              <select
+                name="gender"
+                value={userDetails.gender}
+                onChange={handleInputChange}
+                className={styles.whiteInput}
+                required
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Pincode</label>
+              <input
+                type="text"
+                name="pincode"
+                value={userDetails.pincode}
+                onChange={handleInputChange}
+                className={`${styles.whiteInput} ${formErrors.pincode ? styles.error : ''}`}
+                placeholder="Enter pincode"
+                required
+              />
+              {formErrors.pincode && (
+                <span className={styles.errorMessage}>{formErrors.pincode}</span>
+              )}
             </div>
           </div>
 
+          {/* Collection Method Section */}
           <div className={styles.formSection}>
             <h2>Collection Method</h2>
             <div className={styles.collectionMethodContainer}>
@@ -384,6 +663,17 @@ export default function Checkout() {
             </div>
           </div>
 
+          {/* Appointment Time Selection */}
+          <div className={styles.formSection}>
+            <h2>Appointment Time</h2>
+            <TimeSlotSelector
+              onSlotSelect={handleSlotSelect}
+              selectedDate={selectedDate}
+              selectedTime={selectedTime}
+            />
+          </div>
+
+          {/* Location Details - Conditional Rendering */}
           {collectionMethod === 'home' ? (
             <div className={styles.formSection}>
               <h2>Home Collection Details</h2>
@@ -398,12 +688,17 @@ export default function Checkout() {
                   value={userDetails.address}
                   onChange={handleInputChange}
                   required
-                  className={styles.whiteInput}
+                  className={`${styles.whiteInput} ${formErrors.address ? styles.error : ''}`}
+                  placeholder="Enter your complete address for home collection"
                 />
+                {formErrors.address && (
+                  <span className={styles.errorMessage}>{formErrors.address}</span>
+                )}
               </div>
+
               <div className={styles.mapContainer}>
                 <LoadScript 
-                  googleMapsApiKey="AIzaSyDt543BUtXayBsSltJ5N4b62QC-FrRIuO8"
+                  googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY"
                   libraries={libraries}
                 >
                   <StandaloneSearchBox
@@ -454,7 +749,7 @@ export default function Checkout() {
               </div>
               <div className={styles.mapContainer}>
                 <LoadScript 
-                  googleMapsApiKey="AIzaSyDt543BUtXayBsSltJ5N4b62QC-FrRIuO8"
+                  googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY"
                   libraries={libraries}
                 >
                   <GoogleMap
@@ -476,6 +771,7 @@ export default function Checkout() {
             </div>
           )}
 
+          {/* Submit Button */}
           <button 
             type="submit" 
             className={styles.checkoutButton}
@@ -486,6 +782,7 @@ export default function Checkout() {
           </button>
         </form>
 
+        {/* Order Summary Section */}
         <div className={styles.orderSummary}>
           <h2>Order Summary</h2>
           <div className={styles.orderItems}>
@@ -509,6 +806,8 @@ export default function Checkout() {
           </div>
         </div>
       </div>
+
+      {/* Authentication Modal */}
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </div>
   );

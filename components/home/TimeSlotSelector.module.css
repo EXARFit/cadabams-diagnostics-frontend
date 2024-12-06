@@ -1,0 +1,115 @@
+.timeSlotContainer {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #1e3a8a;
+  font-weight: bold;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.dateSection {
+  margin-bottom: 24px;
+}
+
+.dateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.dateButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: black;
+}
+
+.dateButton:hover {
+  border-color: #1e3a8a;
+  background: #f8fafc;
+}
+
+.dateButton.active {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: white;
+}
+
+.dayOfWeek {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.dayOfMonth {
+  font-size: 1.25rem;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.month {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.timeSection {
+  margin-top: 24px;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.timeButton {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: black;
+}
+
+.timeButton:hover {
+  border-color: #1e3a8a;
+  background: #f8fafc;
+}
+
+.timeButton.active {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .dateGrid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .timeGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
