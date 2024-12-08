@@ -47,6 +47,8 @@ const TestOverview = ({ basicInfo, templateName }) => {
     setIsAdded(true);
   };
 
+  const showDiscount = basicInfo.price !== basicInfo.discountedPrice;
+
   return (
     <div className={styles.container}>
       <div className={styles.animatedBall} ref={leftBallRef} style={{ left: '5%' }} />
@@ -63,8 +65,12 @@ const TestOverview = ({ basicInfo, templateName }) => {
             </div>
             <div className={styles.pricing}>
               <span className={styles.discountedPrice}>₹{basicInfo.discountedPrice}</span>
-              <span className={styles.originalPrice}>₹{basicInfo.price}</span>
-              <span className={styles.discount}>{basicInfo.discount}% off</span>
+              {showDiscount && (
+                <>
+                  <span className={styles.originalPrice}>₹{basicInfo.price}</span>
+                  <span className={styles.discount}>{basicInfo.discount}% off</span>
+                </>
+              )}
             </div>
             <div className={styles.bookings}>
               <Users className={styles.icon} />
