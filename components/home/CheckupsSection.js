@@ -11,6 +11,7 @@ const CheckupCard = ({ test }) => {
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
   const basicInfo = test?.alldata?.[0]?.basic_info;
+  const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
 
   useEffect(() => {
     const isInCart = cart?.some(item => item.route === basicInfo?.route);
@@ -66,10 +67,14 @@ const CheckupCard = ({ test }) => {
         <div className={styles.cardHeader}>
           <h3>{basicInfo?.name}</h3>
           <div className={styles.priceContainer}>
-            <span className={styles.originalPrice}>₹{basicInfo?.price}</span>
+            {showDiscount && (
+              <span className={styles.originalPrice}>₹{basicInfo?.price}</span>
+            )}
             <span className={styles.discountedPrice}>₹{basicInfo?.discountedPrice}</span>
           </div>
-          <span className={styles.discount}>{basicInfo?.discount}% Off</span>
+          {showDiscount && (
+            <span className={styles.discount}>{basicInfo?.discount}% Off</span>
+          )}
         </div>
         <div className={styles.cardBody}>
           <div className={styles.infoItem}>

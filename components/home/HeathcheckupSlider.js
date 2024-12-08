@@ -11,6 +11,7 @@ const CheckupCard = ({ content }) => {
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
   const basicInfo = content?.test?.alldata?.[0]?.basic_info;
+  const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
 
   useEffect(() => {
     if (basicInfo?.route) {
@@ -79,13 +80,15 @@ const CheckupCard = ({ content }) => {
         <span className={styles.checkupLabel}>Premium Checkup</span>
         <h3>{basicInfo?.name}</h3>
         <div className={styles.priceContainer}>
-          <span className={styles.originalPrice}>
-            ₹{basicInfo?.price?.toLocaleString()}
-          </span>
+          {showDiscount && (
+            <span className={styles.originalPrice}>
+              ₹{basicInfo?.price?.toLocaleString()}
+            </span>
+          )}
           <span className={styles.discountedPrice}>
             ₹{basicInfo?.discountedPrice?.toLocaleString()}
           </span>
-          {basicInfo?.discount && (
+          {showDiscount && basicInfo?.discount && (
             <span className={styles.discount}>
               {basicInfo.discount}% OFF
             </span>

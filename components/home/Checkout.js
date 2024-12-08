@@ -69,7 +69,7 @@ export default function Checkout() {
   // Form processing states
   const [isProcessing, setIsProcessing] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-
+  const [testId, setTestId] = useState(cart[0]?.test?.alldata?.[0]?.basic_info?.testId || '');
   // Appointment states
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -100,7 +100,7 @@ export default function Checkout() {
     dob: '',
     patientType: 'patient'
   });
-
+    
   // Map and location states
   const [selectedLocation, setSelectedLocation] = useState(defaultCenter);
   const [map, setMap] = useState(null);
@@ -406,7 +406,7 @@ export default function Checkout() {
         throw new Error('Invalid appointment date/time');
       }
 
-      // Prepare common payload as per Crelio documentation
+      console.log("helooooo",cart[0]?.basicInfo?.testId);      // Prepare common payload as per Crelio documentation
       const commonPayload = {
         countryCode: "+91",
         mobile: formatMobile(userDetails.phone),
@@ -441,13 +441,13 @@ export default function Checkout() {
           otherReferral: "",
           orderNumber: "",
           referralIdLH: "",
-          organisationName: "Cadabams Diagnostics",
+          organisationName: "",
           billConcession: "0",
           additionalAmount: "0",
-          organizationIdLH: "11541",
+          organizationIdLH: "595933",
           comments: "",
           testList: cart.map(item => ({
-            testID: item.testID || "3992066",
+            testID: testId || "3992066",
             testCode: item.testCode || "COVID Antigen (POC)",
             sampleId: ""
           })),

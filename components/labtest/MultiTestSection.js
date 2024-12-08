@@ -29,6 +29,7 @@ const TestCard = ({ test, onViewDetails }) => {
   const { cart, addToCart } = useContext(CartContext);
   const basicInfo = test?.alldata?.[0]?.basic_info;
   const [isAdded, setIsAdded] = useState(false);
+  const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
 
   useEffect(() => {
     const isInCart = cart?.some(item => item.route === basicInfo?.route);
@@ -66,10 +67,14 @@ const TestCard = ({ test, onViewDetails }) => {
         <h3 className={styles.testName}>{basicInfo?.name}</h3>
         <div className={styles.priceSection}>
           <div className={styles.priceInfo}>
-            <span className={styles.originalPrice}>₹{basicInfo?.price}</span>
+            {showDiscount && (
+              <span className={styles.originalPrice}>₹{basicInfo?.price}</span>
+            )}
             <span className={styles.discountedPrice}>₹{basicInfo?.discountedPrice}</span>
           </div>
-          <span className={styles.discount}>{basicInfo?.discount}% Off</span>
+          {showDiscount && (
+            <span className={styles.discount}>{basicInfo?.discount}% Off</span>
+          )}
         </div>
         <div className={styles.parameters}></div>
         <div className={styles.reportTime}>
