@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  trailingSlash: false,
   images: {
     domains: [
       'cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com'
