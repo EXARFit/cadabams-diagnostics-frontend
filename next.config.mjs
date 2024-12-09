@@ -92,6 +92,7 @@ const nextConfig = {
         source: '/about-us/management-team',
         destination: '/management-team',
         permanent: true,
+        statusCode: 301
       },
       {
         source: '/about-us/clinical-team',
