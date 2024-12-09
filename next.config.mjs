@@ -105,24 +105,10 @@ const nextConfig = {
       },
 
       // Contact and Thank You pages
-      {
-        source: '/contact-us',
-        destination: '/contact-us',
-        permanent: true,
-      },
-      {
-        source: '/contact',
-        destination: '/contact-us',
-        permanent: true,
-      },
-      {
-        source: '/thank-you',
-        destination: '/thank-you',
-        permanent: true,
-      },
+      
       {
         source: '/thank-you-for-book-now',
-        destination: '/',
+        destination: '/thank-you',
         permanent: true,
       },
 
