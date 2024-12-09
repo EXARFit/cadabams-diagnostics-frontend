@@ -16,6 +16,366 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Blog category redirects
+      {
+        source: '/blogs/category/blood-test/blood-sugar',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/blood-test/quadruple-marker-test-blood-test',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/blood-test/thyroid',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/services/comparison',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/ultrasound-scan/anomaly-scan',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/ultrasound-scan/fetal-doppler-scan',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/ultrasound-scan/nt-scan',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/ultrasound-scan/tiffa-scan',
+        destination: '/blogs',
+        permanent: true,
+      },
+
+      // Location redirects
+      {
+        source: '/locations/blood-test-centre-in-banashankari',
+        destination: '/bangalore/banashankari/lab-test',
+        permanent: true,
+      },
+      {
+        source: '/locations/diagnostic-centre-in-banashankari',
+        destination: '/bangalore/center/banashankari',
+        permanent: true,
+      },
+      {
+        source: '/locations/diagnostic-centre-in-indiranagar',
+        destination: '/bangalore/center/indiranagar',
+        permanent: true,
+      },
+      {
+        source: '/locations/ultrasound-centre-in-banashankari',
+        destination: '/bangalore/banashankari/ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/locations/xray-centre-in-banashankari',
+        destination: '/bangalore/banashankari/xray-scan',
+        permanent: true,
+      },
+
+      // About and Management redirects
+      {
+        source: '/about-us/management-team',
+        destination: '/management-team',
+        permanent: true,
+      },
+      {
+        source: '/about-us/clinical-team',
+        destination: '/clinical-team',
+        permanent: true,
+      },
+      {
+        source: '/about-us/mission-vision',
+        destination: '/about-us',
+        permanent: true,
+      },
+
+      // Contact and Thank You pages
+      {
+        source: '/contact-us',
+        destination: '/contact-us',
+        permanent: true,
+      },
+      {
+        source: '/contact',
+        destination: '/contact-us',
+        permanent: true,
+      },
+      {
+        source: '/thank-you',
+        destination: '/thank-you',
+        permanent: true,
+      },
+      {
+        source: '/thank-you-for-book-now',
+        destination: '/',
+        permanent: true,
+      },
+
+      // Services and Treatments
+      {
+        source: '/treatments',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/services',
+        destination: '/',
+        permanent: true,
+      },
+
+      // Test and Scan redirects
+      {
+        source: '/ultrasound-scan-banashankari',
+        destination: '/bangalore/banashankari/ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/cbc-test-bangalore',
+        destination: '/bangalore/lab-test/complete-blood-count-cbc',
+        permanent: true,
+      },
+      {
+        source: '/abdomen-pelvis-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan/abdomen-and-pelvis-ultrasound-scans',
+        permanent: true,
+      },
+      {
+        source: '/testis-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan/testis-ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/transvaginal-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan/ultrasound-of-transvaginal-scan-tvs',
+        permanent: true,
+      },
+      {
+        source: '/breast-biopsy-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan/breast-biopsy-scan',
+        permanent: true,
+      },
+      {
+        source: '/diabetes-test-bangalore',
+        destination: '/bangalore/lab-test/diabetes-test-dt',
+        permanent: true,
+      },
+      {
+        source: '/fetal-imaging-in-bangalore',
+        destination: '/bangalore/pregnancy-scan/fetal-imaging',
+        permanent: true,
+      },
+      {
+        source: '/fetal-interventional-in-bangalore',
+        destination: '/bangalore/pregnancy-scan/fetal-interventional-ultrasound-echo',
+        permanent: true,
+      },
+      {
+        source: '/penile-doppler-test-in-bangalore',
+        destination: '/bangalore/ultrasound-scan/penile-doppler-ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/sonomammography-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan/sonomammography-ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/thyroid-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan/thyroid-scan',
+        permanent: true,
+      },
+      {
+        source: '/echocardiography-test-in-bangalore',
+        destination: '/bangalore/ultrasound-scan/echocardiogram-testing',
+        permanent: true,
+      },
+      {
+        source: '/elastography-test-in-bangalore',
+        destination: '/bangalore/ultrasound-scan/elastography-test',
+        permanent: true,
+      },
+      {
+        source: '/kidney-blood-test-bangalore',
+        destination: '/bangalore/lab-test/kidney-function-test-kft',
+        permanent: true,
+      },
+      {
+        source: '/liver-blood-test-bangalore',
+        destination: '/bangalore/lab-test/liver-function-test-lft',
+        permanent: true,
+      },
+      {
+        source: '/perianal-imaging-center-in-bangalore',
+        destination: '/bangalore/mri-scan/perianal-imaging-center',
+        permanent: true,
+      },
+      {
+        source: '/pregnancy-ultrasound-in-bangalore',
+        destination: '/bangalore/pregnancy-scan/pregnancy-ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/msk-scans-in-bangalore',
+        destination: '/bangalore/mri-scan',
+        permanent: true,
+      },
+      {
+        source: '/ultrasound-scan-bangalore',
+        destination: '/bangalore/ultrasound-scan',
+        permanent: true,
+      },
+      {
+        source: '/xray-centre-in-bangalore',
+        destination: '/bangalore/xray-scan',
+        permanent: true,
+      },
+
+      // Blog redirects
+      {
+        source: '/blog',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/echo-tmt-ecg',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/general-ultrasound',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/x-ray-x-ray-procedures',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/blood-test',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/pathology-lab',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/services',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/ultrasound-scan',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/category/uncategorized',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/hello-world',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/blogs/author/test',
+        destination: '/blogs',
+        permanent: true,
+      },
+
+      // Blog tag redirects
+      {
+        source: '/blogs/tag/:tag*',
+        destination: '/blogs',
+        permanent: true,
+      },
+
+      // Specific blog post redirects
+      {
+        source: '/blogs/the-power-of-pee-5-diseases-detectable-through-urine-tests',
+        destination: '/blogs/the-power-of-pee-diseases-detectable-through-urine-tests',
+        permanent: true,
+      },
+      {
+        source: '/blogs/top-10-foods-to-include-in-your-diet-to-manage-diabetes-and-lower-blood-sugar',
+        destination: '/blogs/top-foods-to-include-in-your-diet-to-manage-diabetes-and-lower-blood-sugar',
+        permanent: true,
+      },
+
+      // Other pages
+      {
+        source: '/blood-collection-at-home',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/landing-form',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/locations',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/create-your-website-with-blocks',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/gallery',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/sample-page',
+        destination: '/',
+        permanent: true,
+      },
+
+      // Policy pages
+      {
+        source: '/cancellation-refund-policy',
+        destination: '/refund-policy',
+        permanent: true,
+      },
+      {
+        source: '/privacy-policies',
+        destination: '/privacy-policy',
+        permanent: true,
+      },
+      {
+        source: '/privacy-policy-2',
+        destination: '/privacy-policy',
+        permanent: true,
+      },
+      {
+        source: '/terms-and-conditions',
+        destination: '/terms-of-use',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       // Default route
