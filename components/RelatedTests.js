@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import styles from './RelatedTests.module.css';
 
 const TestCard = ({ test, currentCategory }) => {
@@ -42,6 +42,14 @@ const TestCard = ({ test, currentCategory }) => {
     router.push(`/bangalore/${currentCategory}${basicInfo?.route}`);
   };
 
+  const sanitizeHTML = (html) => {
+    if (!html) return { __html: '' };
+    const sanitized = DOMPurify.sanitize(html, {
+      USE_PROFILES: { html: true }
+    });
+    return { __html: sanitized.slice(0, 100) + '...' };
+  };
+
   return (
     <motion.div
       className={styles.card}
@@ -68,9 +76,7 @@ const TestCard = ({ test, currentCategory }) => {
           {aboutTest?.desc && (
             <div
               className={styles.description}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(aboutTest.desc).slice(0, 100) + '...'
-              }}
+              dangerouslySetInnerHTML={sanitizeHTML(aboutTest.desc)}
             />
           )}
 

@@ -1,7 +1,7 @@
 // components/NonLabTestPage1.js
 import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import TestOverview from './TestOverview';
 import TestDetails from './TestDetails';
 import TestMeasures from './TestMeasures';
@@ -76,7 +76,12 @@ export default function NonLabTestPage1({ testInfo }) {
   ];
 
   const sanitizeHTML = (html) => {
-    return { __html: DOMPurify.sanitize(html) };
+    if (!html) return { __html: '' };
+    return { __html: DOMPurify.sanitize(html, {
+      USE_PROFILES: { html: true },
+      ADD_TAGS: ['iframe'],
+      ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']
+    })};
   };
 
   const getSectionTitle = (content, sectionType) => {
