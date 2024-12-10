@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
 import CategoryOverview from '@/components/CategoryOverview';
 import NonLabTestPage1 from '@/components/NonLabTestPage1';
 import RelatedTests from '@/components/RelatedTests';
 import styles from '../Category.module.css';
-import axios from 'axios';
 
 const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
 
@@ -41,9 +42,9 @@ const capitalizeLocation = (loc) => {
     .join(' ');
 };
 
-// Add getServerSideProps for SSR
-export async function getServerSideProps({ params, res }) {
-  const { category, location } = params;
+export async function getServerSideProps({ params, query, res }) {
+  const { category } = params;
+  const location = query.location || null;
   const baseUrl = 'https://www.cadabamsdiagnostics.com';
 
   try {
@@ -58,7 +59,7 @@ export async function getServerSideProps({ params, res }) {
     const categoryData = response.data.data[0];
     
     // SEO data preparation
-    const locationName = capitalizeLocation(location);
+    const locationName = capitalizeLocation(location || '');
     const categoryTitle = formatCategoryTitle(category);
     const categoryDesc = formatCategoryDescription(category);
     const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}${category}`;
@@ -82,13 +83,18 @@ export async function getServerSideProps({ params, res }) {
         categoryData,
         seoData,
         category,
-        location
+        location: location || null,
+        error: null
       }
     };
   } catch (error) {
     console.error('Error fetching category data:', error);
     return {
       props: {
+        categoryData: null,
+        seoData: null,
+        category: category || null,
+        location: location || null,
         error: 'Failed to fetch category data'
       }
     };
