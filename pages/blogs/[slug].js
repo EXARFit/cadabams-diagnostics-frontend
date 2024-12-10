@@ -9,9 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../../styles/BlogPost.module.css';
 import NotFound from '../../components/NotFound';
 
-// Schema Generator Function (Unchanged)
 const generateSchemas = (data, baseUrl, slug) => {
-  // Article Schema
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -41,7 +39,6 @@ const generateSchemas = (data, baseUrl, slug) => {
     url: `${baseUrl}/blogs/${slug}`
   };
 
-  // Breadcrumb Schema
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -67,7 +64,6 @@ const generateSchemas = (data, baseUrl, slug) => {
     ]
   };
 
-  // FAQ Schema (if FAQs exist)
   let faqSchema = null;
   if (data.faqs && data.faqs.length > 0) {
     try {
@@ -92,7 +88,6 @@ const generateSchemas = (data, baseUrl, slug) => {
   return [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
 };
 
-// Breadcrumb Component (Unchanged)
 const Breadcrumb = ({ title }) => (
   <div className={styles.breadcrumb}>
     <Link href="/" className={styles.breadcrumbLink}>Home</Link>
@@ -103,7 +98,6 @@ const Breadcrumb = ({ title }) => (
   </div>
 );
 
-// ImageWithFallback Component (Unchanged)
 const ImageWithFallback = ({ src, alt, width, height }) => {
   const [imageError, setImageError] = useState(false);
 
@@ -124,7 +118,6 @@ const ImageWithFallback = ({ src, alt, width, height }) => {
   );
 };
 
-// RecentBlogCard Component (Unchanged)
 const RecentBlogCard = ({ title, date }) => (
   <motion.div   
     className={styles.recentBlogCard}
@@ -136,7 +129,6 @@ const RecentBlogCard = ({ title, date }) => (
   </motion.div>
 );
 
-// CategoryCard Component (Unchanged)
 const CategoryCard = ({ categories = [] }) => (
   <div className={styles.categoryCard}>
     <h3>Categories</h3>
@@ -154,7 +146,6 @@ const CategoryCard = ({ categories = [] }) => (
   </div>
 );
 
-// Updated ContactForm Component
 const ContactForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -179,7 +170,6 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      // Create form data with the correct field names based on the network request
       const formDataToSend = new FormData();
       formDataToSend.append('contact[first_name]', formData.firstName);
       formDataToSend.append('contact[last_name]', formData.lastName);
@@ -190,7 +180,6 @@ const ContactForm = () => {
       formDataToSend.append('asset_key', '1d0cec103ec4b3cdc7fc3db110b0b4ff58dadc2629d35e6bec3117da6dc6c94e');
       formDataToSend.append('file_attachments_present', 'false');
 
-      // Submit to Freshsales
       const response = await fetch('https://cadabamsdiagnostics.myfreshworks.com/crm/sales/smart_form/create_entity?file_attachments_present=false', {
         method: 'POST',
         body: formDataToSend
@@ -200,7 +189,6 @@ const ContactForm = () => {
         throw new Error('Form submission failed');
       }
 
-      // Reset form
       setFormData({
         firstName: '',
         lastName: '',
@@ -209,7 +197,6 @@ const ContactForm = () => {
         address: ''
       });
 
-      // Redirect to thank-you page after successful submission
       router.push('/thank-you');
       
     } catch (error) {
@@ -294,7 +281,6 @@ const ContactForm = () => {
   );
 };
 
-// FAQSection Component (Unchanged)
 const FAQSection = ({ faqs }) => {
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -352,7 +338,6 @@ const FAQSection = ({ faqs }) => {
   );
 };
 
-// Main BlogPost Component (Rest remains unchanged)
 export default function BlogPost() {
   const [blogData, setBlogData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -360,7 +345,7 @@ export default function BlogPost() {
   const [notFound, setNotFound] = useState(false);
   const router = useRouter();
   const { slug } = router.query;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://yourdomain.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cadabamsdiagnostics.com/';
 
   useEffect(() => {
     if (slug) {
@@ -392,7 +377,28 @@ export default function BlogPost() {
         return;
       }
 
-      data.content = data.content?.replace(/['"]/g, '') || '';
+      if (data.content) {
+        data.content = data.content
+          .replace(/^["']|["']$/g, '')
+          .replace(/\\"/g, '"')
+          .replace(/\\\\"/g, '"')
+          .replace(/<a\s+href=\\*"([^"]+)"([^>]*)>/g, (match, url, attrs) => {
+            const cleanUrl = url.replace(/\\/g, '');
+            const hasTarget = attrs.includes('target=');
+            const hasRel = attrs.includes('rel=');
+            
+            let newAttrs = attrs;
+            if (!hasTarget) {
+              newAttrs += ' target="_blank"';
+            }
+            if (!hasRel) {
+              newAttrs += ' rel="noopener noreferrer"';
+            }
+            
+            return `<a href="${cleanUrl}"${newAttrs}>`;
+          });
+      }
+
       setBlogData(data);
       setIsLoading(false);
       
