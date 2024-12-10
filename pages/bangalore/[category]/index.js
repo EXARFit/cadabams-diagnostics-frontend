@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
 import CategoryOverview from '@/components/CategoryOverview';
 import NonLabTestPage1 from '@/components/NonLabTestPage1';
 import RelatedTests from '@/components/RelatedTests';
 import styles from '../Category.module.css';
+import axios from 'axios';
 
 const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
 
@@ -42,54 +41,63 @@ const capitalizeLocation = (loc) => {
     .join(' ');
 };
 
-export default function CategoryPage() {
-  const router = useRouter();
-  const { category, location } = router.query;
-  const [categoryData, setCategoryData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Add getServerSideProps for SSR
+export async function getServerSideProps({ params, res }) {
+  const { category, location } = params;
   const baseUrl = 'https://www.cadabamsdiagnostics.com';
 
-  useEffect(() => {
-    const fetchCategoryData = async () => {
-      if (!category) return;
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${category}`);
+    
+    if (!response.data.success || !response.data.data?.[0]) {
+      return {
+        notFound: true
+      };
+    }
 
-      setIsLoading(true);
-      try {
-        const response = await axios.get(`${API_BASE_URL}/${category}`);
-        if (response.data.success && response.data.data?.[0]) {
-          setCategoryData(response.data.data[0]);
-        } else {
-          throw new Error('Invalid data structure');
-        }
-      } catch (err) {
-        console.error('Error fetching category data:', err);
-        setError('Failed to fetch category data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategoryData();
-  }, [category]);
-
-  // SEO data preparation
-  const getSEOData = () => {
-    if (!categoryData) return null;
-
+    const categoryData = response.data.data[0];
+    
+    // SEO data preparation
     const locationName = capitalizeLocation(location);
     const categoryTitle = formatCategoryTitle(category);
     const categoryDesc = formatCategoryDescription(category);
     const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}${category}`;
 
-    return {
+    const seoData = {
       title: `${categoryTitle} in ${locationName} | Cadabam's Diagnostics`,
       description: `${categoryDesc} in ${locationName}. Trusted diagnostic centers with quick results.`,
       keywords: `${categoryTitle}, diagnostic center, ${locationName}, medical testing, health checkup, diagnostic scan`,
       url: currentUrl,
       imageUrl: `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`
     };
-  };
+
+    // Set cache headers
+    res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    );
+
+    return {
+      props: {
+        categoryData,
+        seoData,
+        category,
+        location
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching category data:', error);
+    return {
+      props: {
+        error: 'Failed to fetch category data'
+      }
+    };
+  }
+}
+
+export default function CategoryPage({ categoryData, seoData, category, location, error }) {
+  const router = useRouter();
+  const baseUrl = 'https://www.cadabamsdiagnostics.com';
 
   // Generate schemas for the page
   const generateSchemas = (seoData, categoryData, location) => {
@@ -202,35 +210,34 @@ export default function CategoryPage() {
     return [medicalWebpageSchema, faqSchema, breadcrumbSchema];
   };
 
-  if (isLoading) {
+  if (error) {
     return (
       <Layout>
         <Head>
-          <title>Loading... | Cadabam's Diagnostics</title>
-          <meta name="robots" content="index, follow" />
-        </Head>
-        <div className={styles.loadingContainer}>
-          <div className={styles.loading}>Loading...</div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error || !categoryData) {
-    return (
-      <Layout>
-        <Head>
-          <title>{error ? 'Error' : 'Category Not Found'} | Cadabam's Diagnostics</title>
+          <title>Error | Cadabam's Diagnostics</title>
           <meta name="robots" content="index, follow" />
         </Head>
         <div className={styles.errorContainer}>
-          <div className={styles.error}>{error || 'Category not found'}</div>
+          <div className={styles.error}>{error}</div>
         </div>
       </Layout>
     );
   }
 
-  const seoData = getSEOData();
+  if (!categoryData) {
+    return (
+      <Layout>
+        <Head>
+          <title>Category Not Found | Cadabam's Diagnostics</title>
+          <meta name="robots" content="index, follow" />
+        </Head>
+        <div className={styles.errorContainer}>
+          <div className={styles.error}>Category not found</div>
+        </div>
+      </Layout>
+    );
+  }
+
   const schemas = generateSchemas(seoData, categoryData, location);
 
   return (

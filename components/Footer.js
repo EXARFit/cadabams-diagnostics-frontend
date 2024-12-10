@@ -173,7 +173,7 @@ export default function Footer() {
             © 2023 Cadabams Health Care Pvt. Ltd. All rights reserved
           </div>
           <div className={styles.terms}>
-            <Link href="/terms">Terms</Link> |{' '}
+            <Link href="/terms-of-use">Terms</Link> |{' '}
             <Link href="/privacy-policy">Privacy Policy</Link> |{' '}
             <Link href="/cookie-policy">Cookie Policy</Link> |{' '}
             <Link href="/refund-policy">Refund Policy</Link> |{' '}
