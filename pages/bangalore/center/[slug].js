@@ -70,7 +70,7 @@ const CenterDetailPage = () => {
       <Layout title="Loading...">
         <Head>
           <title>Loading... | Cadabam's Diagnostics</title>
-          <meta name="robots" content="noindex, nofollow" />
+          <meta name="robots" content="index, follow" />
         </Head>
         <div className={styles.loadingContainer}>
           <div className={styles.spinner}></div>

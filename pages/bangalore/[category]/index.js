@@ -207,7 +207,7 @@ export default function CategoryPage() {
       <Layout>
         <Head>
           <title>Loading... | Cadabam's Diagnostics</title>
-          <meta name="robots" content="noindex, nofollow" />
+          <meta name="robots" content="index, follow" />
         </Head>
         <div className={styles.loadingContainer}>
           <div className={styles.loading}>Loading...</div>
@@ -221,7 +221,7 @@ export default function CategoryPage() {
       <Layout>
         <Head>
           <title>{error ? 'Error' : 'Category Not Found'} | Cadabam's Diagnostics</title>
-          <meta name="robots" content="noindex, nofollow" />
+          <meta name="robots" content="index, follow" />
         </Head>
         <div className={styles.errorContainer}>
           <div className={styles.error}>{error || 'Category not found'}</div>

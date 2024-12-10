@@ -29,21 +29,21 @@ export default function Footer() {
               <li>
                 <Link href="/clinical-team">Clinical Team</Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/careers">Careers</Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/blogs">Blogs</Link>
               </li>
               <li>
                 <Link href="/contact-us">Contact Us</Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/nabl-data">NABL Data</Link>
               </li>
               <li>
                 <Link href="/responsible-disclosure">Responsible Disclosure</Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 

@@ -34,7 +34,7 @@ export default function ThankYou() {
       <Layout>
         <Head>
           <title>Thank You | Cadabam's Diagnostics</title>
-          <meta name="robots" content="noindex, nofollow" />
+          <meta name="robots" content="index, follow" />
         </Head>
         
         <div className={styles.pageWrapper}>
