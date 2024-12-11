@@ -405,10 +405,14 @@ export default function Checkout() {
 
     try {
       const now = new Date();
-      // Using static values from Postman for testing
-      const appointmentDateTime = "2020-05-04T08:30:00Z";
-      const formattedEndDateTime = "2020-05-04T09:30:00Z";
-      const currentDate = "2020-04-12";
+      // Get current date in YYYY-MM-DD format
+      const today = new Date();
+      const currentDate = today.toISOString().split('T')[0];  // Gets YYYY-MM-DD
+      
+      // Using current date with static time format
+      const appointmentDateTime = `${currentDate}T08:30:00Z`;
+      const formattedEndDateTime = `${currentDate}T09:30:00Z`;
+      const billDateTime = `${currentDate}T06:41:42Z+05:30`;
 
       // Prepare common payload according to the new structure
       const commonPayload = {
@@ -451,7 +455,7 @@ export default function Checkout() {
           advance: "0",
           billConcession: "0",
           additionalAmount: "0",
-          billDate: "2020-04-12T06:41:42Z+05:30",
+          billDate: billDateTime,
           paymentType: "Cash",
           referralName: "Self",
           otherReferral: "",
