@@ -11,6 +11,7 @@ import axios from 'axios';
 
 // API Configuration from documentation
 const BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/crelio';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyDt543BUtXayBsSltJ5N4b62QC-FrRIuO8';
 
 // Form validation helpers
 const validateMobile = (mobile) => {
@@ -70,6 +71,8 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [testId, setTestId] = useState(cart[0]?.test?.alldata?.[0]?.basic_info?.testId || '');
+  const [labPatientId] = useState(`LAB${Date.now()}`);
+
   // Appointment states
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -401,60 +404,72 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
-      const appointmentDateTime = `${selectedDate}T${selectedTime}:00Z`;
-      if (!appointmentDateTime) {
-        throw new Error('Invalid appointment date/time');
-      }
+      const now = new Date();
+      // Using static values from Postman for testing
+      const appointmentDateTime = "2020-05-04T08:30:00Z";
+      const formattedEndDateTime = "2020-05-04T09:30:00Z";
+      const currentDate = "2020-04-12";
 
-      console.log("helooooo",cart[0]?.basicInfo?.testId);      // Prepare common payload as per Crelio documentation
+      // Prepare common payload according to the new structure
       const commonPayload = {
-        countryCode: "+91",
+        countryCode: "91",
         mobile: formatMobile(userDetails.phone),
         email: userDetails.email,
         designation: userDetails.designation,
         fullName: userDetails.name,
-        age: userDetails.age,
+        "Patient Name": userDetails.name,
+        firstName: userDetails.name.split(' ')[0],
+        middleName: "",
+        lastName: userDetails.name.split(' ').slice(1).join(' ') || ".",
+        age: parseInt(userDetails.age),
         gender: userDetails.gender,
         area: userDetails.area,
-        city: userDetails.city,
-        patientType: "patient",
-        labPatientId: "",
+        city: "Bangalore",
+        patientType: "IP",
+        labPatientId: labPatientId,
         pincode: userDetails.pincode,
+        patientId: "",
         dob: userDetails.dob,
         passportNo: "",
         panNumber: "",
         aadharNumber: "",
         insuranceNo: "",
-        nationality: "",
+        nationality: "Indian",
         ethnicity: "",
         nationalIdentityNumber: "",
         workerCode: "",
         doctorCode: "",
+        areaOfResidence: userDetails.area,
+        state: "Karnataka",
+        isAppointmentRequest: 1,
+        startDate: appointmentDateTime,
+        endDate: formattedEndDateTime,
+        sampleCollectionDate: appointmentDateTime,
         billDetails: {
           emergencyFlag: "0",
-          visitLevelTags: "",
-          billTotalAmount: totalPrice.toString(),
+          totalAmount: totalPrice.toString(),
           advance: "0",
-          billDate: new Date().toISOString().split('T')[0],
+          billConcession: "0",
+          additionalAmount: "0",
+          billDate: "2020-04-12T06:41:42Z+05:30",
           paymentType: "Cash",
           referralName: "Self",
           otherReferral: "",
-          orderNumber: "",
+          sampleId: `SP${Date.now()}`,
+          orderNumber: `ORD${Date.now()}`,
           referralIdLH: "",
           organisationName: "",
-          billConcession: "0",
-          additionalAmount: "0",
-          organizationIdLH: "595933",
-          comments: "",
+          organizationIdLH: "598387",
+          comments: "New Patient Registration",
           testList: cart.map(item => ({
-            testID: testId || "3992066",
-            testCode: item.testCode || "COVID Antigen (POC)",
-            sampleId: ""
+            testID: item?.test?.alldata?.[0]?.basic_info?.testId || "3992066",
+            testCode: "",
+            integrationCode: "",
+            dictionaryId: ""
           })),
           paymentList: [{
             paymentType: "Cash",
             paymentAmount: totalPrice.toString(),
-            chequeNo: "",
             issueBank: ""
           }]
         }
@@ -463,7 +478,6 @@ export default function Checkout() {
       let response;
 
       if (collectionMethod === 'home') {
-        // Home collection specific payload
         const homePayload = {
           ...commonPayload,
           isHomecollection: 1,
@@ -472,15 +486,9 @@ export default function Checkout() {
         };
         response = await bookHomeCollection(homePayload);
       } else {
-        // Lab appointment specific payload
-        const endDateTime = new Date(appointmentDateTime);
-        endDateTime.setMinutes(endDateTime.getMinutes() + 30);
-
         const labPayload = {
           ...commonPayload,
-          isAppointmentRequest: 1,
-          startDate: appointmentDateTime,
-          endDate: endDateTime.toISOString()
+          isAppointmentRequest: 1
         };
         response = await bookLabAppointment(labPayload);
       }
@@ -698,7 +706,7 @@ export default function Checkout() {
 
               <div className={styles.mapContainer}>
                 <LoadScript 
-                  googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY"
+                  googleMapsApiKey={GOOGLE_MAPS_API_KEY}
                   libraries={libraries}
                 >
                   <StandaloneSearchBox
@@ -749,7 +757,7 @@ export default function Checkout() {
               </div>
               <div className={styles.mapContainer}>
                 <LoadScript 
-                  googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY"
+                  googleMapsApiKey={GOOGLE_MAPS_API_KEY}
                   libraries={libraries}
                 >
                   <GoogleMap
