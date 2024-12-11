@@ -18,7 +18,9 @@ const generateSchemas = (data, baseUrl, slug) => {
     image: data.imageUrl ? [data.imageUrl] : [],
     author: {
       '@type': 'Person',
-      name: data.verifiedBy || 'Cadabams Team'
+      name: data.verifiedBy === 'Doctor A' ? 'Dr. Shreyas Cadabam' : 
+            data.verifiedBy === 'Doctor B' ? 'Dr. Divya Cadabam' : 
+            data.verifiedBy || 'Cadabams Team'
     },
     publisher: {
       '@type': 'Organization',
@@ -412,6 +414,12 @@ export default function BlogPost() {
     }
   };
 
+  const getDoctorName = (verifiedBy) => {
+    if (verifiedBy === 'Doctor A') return 'Dr. Shreyas Cadabam';
+    if (verifiedBy === 'Doctor B') return 'Dr. Divya Cadabam';
+    return verifiedBy;
+  };
+
   if (isLoading) {
     return (
       <AuthProvider>
@@ -463,7 +471,7 @@ export default function BlogPost() {
           <meta property="og:site_name" content="Cadabams Diagnostics" />
           <meta property="article:published_time" content={blogData.publishedDate || new Date().toISOString()} />
           <meta property="article:modified_time" content={blogData.updatedDate || new Date().toISOString()} />
-          <meta property="article:author" content={blogData.verifiedBy || 'Cadabams Team'} />
+          <meta property="article:author" content={getDoctorName(blogData.verifiedBy) || 'Cadabams Team'} />
           <meta property="article:section" content={blogData.categoryName || 'Health'} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@CadabamsGroup" />
@@ -496,7 +504,7 @@ export default function BlogPost() {
               </h1>
               {blogData.verifiedBy && (
                 <p className={styles.blogAuthor}>
-                  Verified by: {blogData.verifiedBy}
+                  Verified by: {getDoctorName(blogData.verifiedBy)}
                 </p>
               )}
               <div 
