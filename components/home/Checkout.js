@@ -2,15 +2,16 @@ import React, { useContext, useState, useCallback, useRef, useEffect } from 'rea
 import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 import { CartContext } from '../../contexts/CartContext';
-import { CreditCard, User, Mail, Phone, MapPin, Crosshair, Home, Hospital, Calendar } from 'lucide-react';
+import { CreditCard, User, Mail, Phone, MapPin, Crosshair, Home, Hospital, Calendar, Smartphone } from 'lucide-react';
 import { GoogleMap, LoadScript, Marker, StandaloneSearchBox } from '@react-google-maps/api';
 import TimeSlotSelector from './TimeSlotSelector';
 import styles from '../../styles/Checkout.module.css';
 import AuthModal from './AuthModal';
+import ThankYouModal from './ThankYouModal';
 import axios from 'axios';
 
-// API Configuration from documentation
-const BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/crelio';
+// API Configuration
+const BASE_URL = 'https://cadabamsapi.exar.ai/api/v1';
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDt543BUtXayBsSltJ5N4b62QC-FrRIuO8';
 
 // Form validation helpers
@@ -64,6 +65,8 @@ export default function Checkout() {
   // Authentication and routing setup
   const { user, isAuthenticated } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState(null);
   const { cart } = useContext(CartContext);
   const router = useRouter();
 
@@ -72,6 +75,7 @@ export default function Checkout() {
   const [formErrors, setFormErrors] = useState({});
   const [testId, setTestId] = useState(cart[0]?.test?.alldata?.[0]?.basic_info?.testId || '');
   const [labPatientId] = useState(`LAB${Date.now()}`);
+  const [paymentMethod, setPaymentMethod] = useState('cash');
 
   // Appointment states
   const [selectedDate, setSelectedDate] = useState('');
@@ -88,7 +92,7 @@ export default function Checkout() {
   const hasLabTests = cart.some(item => item.templateName === 'labtest');
   const hasNonLabTests = cart.some(item => item.templateName === 'non-labtest');
 
-  // User details state with all required fields from API
+  // User details state
   const [userDetails, setUserDetails] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -103,7 +107,7 @@ export default function Checkout() {
     dob: '',
     patientType: 'patient'
   });
-    
+
   // Map and location states
   const [selectedLocation, setSelectedLocation] = useState(defaultCenter);
   const [map, setMap] = useState(null);
@@ -341,44 +345,36 @@ export default function Checkout() {
     return Object.keys(errors).length === 0;
   };
 
-  // API calls
-  const bookLabAppointment = async (payload) => {
+  // Payment handler
+  const handlePayment = async (appointmentData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/appointment`, payload);
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Failed to book appointment');
+      if (paymentMethod === 'cash') {
+        const response = await axios.post(`${BASE_URL}/crelio/appointment`, appointmentData);
+        return response.data;
+      } else {
+        const payload = {
+          appointmentData: {
+            ...appointmentData,
+            billDetails: {
+              ...appointmentData.billDetails,
+              paymentType: 'PhonePe'
+            }
+          },
+          appointmentType: collectionMethod === 'home' ? 'home' : 'lab'
+        };
+        
+        const response = await axios.post(`${BASE_URL}/payment/initialize`, payload);
+        
+        if (response.data?.data?.paymentUrl) {
+          window.location.href = response.data.data.paymentUrl;
+          return null;
+        }
+        
+        return response.data;
       }
-      return response.data;
     } catch (error) {
-      if (error.response?.data?.errors) {
-        const fieldErrors = {};
-        error.response.data.errors.forEach(err => {
-          fieldErrors[err.path] = err.msg;
-        });
-        setFormErrors(fieldErrors);
-        throw new Error('Please correct the highlighted fields');
-      }
-      throw error;
-    }
-  };
-
-  const bookHomeCollection = async (payload) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/home-collection`, payload);
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Failed to book home collection');
-      }
-      return response.data;
-    } catch (error) {
-      if (error.response?.data?.errors) {
-        const fieldErrors = {};
-        error.response.data.errors.forEach(err => {
-          fieldErrors[err.path] = err.msg;
-        });
-        setFormErrors(fieldErrors);
-        throw new Error('Please correct the highlighted fields');
-      }
-      throw error;
+      console.error('Payment error:', error);
+      throw new Error(error.response?.data?.message || 'Payment initialization failed');
     }
   };
 
@@ -404,18 +400,12 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
-      const now = new Date();
-      // Get current date in YYYY-MM-DD format
-      const today = new Date();
-      const currentDate = today.toISOString().split('T')[0];  // Gets YYYY-MM-DD
-      
-      // Using current date with static time format
+      const currentDate = new Date().toISOString().split('T')[0];
       const appointmentDateTime = `${currentDate}T08:30:00Z`;
       const formattedEndDateTime = `${currentDate}T09:30:00Z`;
       const billDateTime = `${currentDate}T06:41:42Z+05:30`;
 
-      // Prepare common payload according to the new structure
-      const commonPayload = {
+      const appointmentData = {
         countryCode: "91",
         mobile: formatMobile(userDetails.phone),
         email: userDetails.email,
@@ -428,7 +418,7 @@ export default function Checkout() {
         age: parseInt(userDetails.age),
         gender: userDetails.gender,
         area: userDetails.area,
-        city: "Bangalore",
+        city: userDetails.city,
         patientType: "IP",
         labPatientId: labPatientId,
         pincode: userDetails.pincode,
@@ -456,7 +446,7 @@ export default function Checkout() {
           billConcession: "0",
           additionalAmount: "0",
           billDate: billDateTime,
-          paymentType: "Cash",
+          paymentType: paymentMethod === 'cash' ? 'Cash' : 'PhonePe',
           referralName: "Self",
           otherReferral: "",
           sampleId: `SP${Date.now()}`,
@@ -472,38 +462,45 @@ export default function Checkout() {
             dictionaryId: ""
           })),
           paymentList: [{
-            paymentType: "Cash",
+            paymentType: paymentMethod === 'cash' ? 'Cash' : 'PhonePe',
             paymentAmount: totalPrice.toString(),
             issueBank: ""
           }]
         }
       };
 
-      let response;
-
       if (collectionMethod === 'home') {
-        const homePayload = {
-          ...commonPayload,
-          isHomecollection: 1,
-          homeCollectionDateTime: appointmentDateTime,
-          address: userDetails.address
-        };
-        response = await bookHomeCollection(homePayload);
-      } else {
-        const labPayload = {
-          ...commonPayload,
-          isAppointmentRequest: 1
-        };
-        response = await bookLabAppointment(labPayload);
+        appointmentData.isHomecollection = 1;
+        appointmentData.homeCollectionDateTime = appointmentDateTime;
+        appointmentData.address = userDetails.address;
       }
 
-      router.push({
-        pathname: '/payment',
-        query: {
-          orderId: response.data.billId,
-          patientId: response.data.patientId
-        }
-      });
+      const paymentResponse = await handlePayment(appointmentData);
+
+      // If it's a PhonePe payment and we got redirected, we don't need to do anything else
+      if (paymentMethod === 'phonePe' && !paymentResponse) {
+        return;
+      }
+
+      if (paymentResponse?.data?.code === 200) {
+        // For successful cash payments, show thank you modal
+        setBookingDetails({
+          patientId: paymentResponse.data.patientId,
+          billId: paymentResponse.data.billId,
+          appointmentId: paymentResponse.data.appointmentId
+        });
+        setIsThankYouModalOpen(true);
+      } else {
+        // For other cases, redirect to payment page
+        router.push({
+          pathname: '/payment',
+          query: {
+            orderId: paymentResponse.data.billId,
+            patientId: paymentResponse.data.patientId,
+            paymentMethod
+          }
+        });
+      }
     } catch (error) {
       console.error('Booking error:', error);
       alert(error.message || 'There was an error processing your booking. Please try again.');
@@ -675,6 +672,29 @@ export default function Checkout() {
             </div>
           </div>
 
+          {/* Payment Method Section */}
+          <div className={styles.formSection}>
+            <h2>Payment Method</h2>
+            <div className={styles.paymentMethodContainer}>
+              <button
+                type="button"
+                className={`${styles.paymentMethodButton} ${paymentMethod === 'cash' ? styles.active : ''}`}
+                onClick={() => setPaymentMethod('cash')}
+              >
+                <CreditCard size={18} />
+                Cash Payment
+              </button>
+              <button
+                type="button"
+                className={`${styles.paymentMethodButton} ${paymentMethod === 'phonePe' ? styles.active : ''}`}
+                onClick={() => setPaymentMethod('phonePe')}
+              >
+                <Smartphone size={18} />
+                Pay with PhonePe
+              </button>
+            </div>
+          </div>
+
           {/* Appointment Time Selection */}
           <div className={styles.formSection}>
             <h2>Appointment Time</h2>
@@ -821,6 +841,15 @@ export default function Checkout() {
 
       {/* Authentication Modal */}
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      
+      <ThankYouModal 
+        isOpen={isThankYouModalOpen} 
+        onClose={() => {
+          setIsThankYouModalOpen(false);
+          router.push('/');  // Redirect to home page when modal is closed
+        }}
+        bookingDetails={bookingDetails}
+      />
     </div>
   );
 }

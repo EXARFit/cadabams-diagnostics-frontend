@@ -368,8 +368,47 @@ textarea.whiteInput {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+
+
 }
 
+.paymentMethodContainer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.paymentMethodButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  color: black;
+  border-radius: 0.5rem;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.paymentMethodButton:hover {
+  border-color: #4f46e5;
+  background-color: #f8fafc;
+}
+
+.paymentMethodButton.active {
+  border-color: #4f46e5;
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+
+.phonePeIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
 /* Responsive styles for payment section */
 @media (max-width: 768px) {
   .paymentModeContainer {
