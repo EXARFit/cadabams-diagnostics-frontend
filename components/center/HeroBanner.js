@@ -31,8 +31,11 @@ const HeroBanner = ({ title, subtitle, image }) => {
         <div className={styles.textContent}>
           <h1 className={styles.title}>
             {title}
-            <span className={styles.highlight}>{subtitle}</span>
-          </h1>
+           </h1>
+           <h2>
+           <span className={styles.highlight}>{subtitle}</span>
+           </h2>
+          
           
           <div className={styles.features}>
             {features.map((feature, index) => (
