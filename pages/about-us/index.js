@@ -20,7 +20,7 @@ const AboutUs = () => {
     title: "About Us | Leading Diagnostic Center in Bangalore | Cadabam's Diagnostics",
     description: "Discover Cadabam's Diagnostics - Bangalore's premier diagnostic center with 30+ years of excellence. Advanced imaging, expert medical team, and comprehensive healthcare services.",
     keywords: "Cadabams diagnostics, diagnostic center bangalore, medical imaging bangalore, healthcare services, diagnostic tests, medical team, radiology center",
-    url: "https://cadabamsdiagnostics.com/about",
+    url: "https://cadabamsdiagnostics.com/about-us",
     imageUrl: "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png"
   };
 
