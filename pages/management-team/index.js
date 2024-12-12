@@ -19,7 +19,7 @@ const ManagementTeam = () => {
     title: "Management Team | Leadership & Vision | Cadabam's Diagnostics",
     description: "Meet the visionary leaders of Cadabam's Diagnostics. Our management team brings 30+ years of healthcare excellence, led by Chairman Cadabam M Ramesh and an experienced executive board.",
     keywords: "Cadabams management, healthcare leadership, Cadabam M Ramesh, Sudha R Cadabam, Sandesh Cadabam, healthcare management bangalore, diagnostic center management",
-    url: "https://www.cadabamsdiagnostics.com/management-team",
+    url: "https://cadabamsdiagnostics.com/management-team",
     imageUrl: "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png"
   };
 
