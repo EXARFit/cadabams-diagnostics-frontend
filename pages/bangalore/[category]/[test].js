@@ -13,7 +13,9 @@ const getTestType = (test = '') => {
   if (test.includes('mri')) return 'mri-scan';
   if (test.includes('ct')) return 'ct-scan';
   if (test.includes('ultrasound')) return 'ultrasound-scan';
-  return 'diagnostic-scan';
+  if (test.includes('pregnancy')) return 'pregnancy-scan';
+  return 'radiology-scan';
+
 };
 
 // Helper function to format test type for display in UI
