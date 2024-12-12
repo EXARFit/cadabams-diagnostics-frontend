@@ -32,9 +32,9 @@ const HeroBanner = ({ title, subtitle, image }) => {
           <h1 className={styles.title}>
             {title}
            </h1>
-           <h2 className={styles.highlight}>
+           {/* <h2 className={styles.highlight}>
            {subtitle}
-           </h2>
+           </h2> */}
           
           
           <div className={styles.features}>
