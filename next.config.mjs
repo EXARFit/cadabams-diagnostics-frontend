@@ -36,6 +36,11 @@ const nextConfig = {
 
     // Flatten array of redirect pairs
     return [
+      // New redirects
+      ...createRedirectPair('/pathology-lab-bangalore', '/'),
+      ...createRedirectPair('/health-test-packages-bangalore', '/'),
+      ...createRedirectPair('/laboratory', '/'),
+
       // Blog category redirects
       ...createRedirectPair('/blogs/category/blood-test/blood-sugar', '/blogs'),
       ...createRedirectPair('/blogs/category/blood-test/quadruple-marker-test-blood-test', '/blogs'),
