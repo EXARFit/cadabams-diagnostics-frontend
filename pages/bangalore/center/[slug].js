@@ -1,91 +1,129 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Image from 'next/image';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
 import CenterPage from './CenterPage';
 import styles from './DynamicCenterPage.module.css';
+import axios from 'axios';
 
-const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
 
-const CenterDetailPage = () => {
-  const router = useRouter();
-  const { slug } = router.query;
-  const [centerData, setCenterData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+// Helper function to transform center data
+const transformCenterData = (data) => {
+  if (!data) return null;
+  
+  return {
+    ...data,
+    services: data.services?.map(service => ({
+      ...service,
+      image: service.image || '/placeholder.jpg',
+      tests: service.tests?.map(test =>
+        typeof test === 'object' ? test.testName : test
+      )
+    }))
+  };
+};
 
-  useEffect(() => {
-    if (!router.isReady || !slug) return;
+// SEO data preparation function
+const getSEOData = (centerData) => {
+  if (!centerData) return null;
 
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/center/${slug}`);
+  const center = centerData.basic_info || {};
+  const address = centerData.address || {};
 
-        if (response.data?.data) {
-          const transformedData = {
-            ...response.data.data,
-            services: response.data.data.services?.map(service => ({
-              ...service,
-              image: service.image || '/placeholder.jpg',
-              tests: service.tests?.map(test =>
-                typeof test === 'object' ? test.testName : test
-              )
-            }))
-          };
-          setCenterData(transformedData);
-        } else {
-          router.push('/bangalore');
-        }
-      } catch (err) {
-        console.error('Error fetching center data:', err);
-        router.push('/bangalore');
-      } finally {
-        setIsLoading(false);
-      }
+  return {
+    title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
+    description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
+    keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${address.area || 'bangalore'}, diagnostic services`,
+    url: `https://cadabamsdiagnostics.com/bangalore/center/${center.slug || ''}`,
+    imageUrl: center.image || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+  };
+};
+
+// Server-side props
+export async function getServerSideProps({ params, res }) {
+  const { slug } = params;
+
+  if (!slug) {
+    return {
+      redirect: {
+        destination: '/bangalore',
+        permanent: false,
+      },
     };
+  }
 
-    fetchData();
-  }, [slug, router, router.isReady]);
+  try {
+    // Add cache control headers
+    res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=10, stale-while-revalidate=59'
+    );
 
-  // SEO data preparation
-  const getSEOData = () => {
-    if (!centerData) return null;
+    const response = await axios.get(`${API_BASE_URL}/center/${slug}`);
+    const centerData = response.data?.data;
 
-    const center = centerData.basic_info || {};
-    const address = centerData.address || {};
+    if (!centerData) {
+      return {
+        redirect: {
+          destination: '/bangalore',
+          permanent: false,
+        },
+      };
+    }
+
+    const transformedData = transformCenterData(centerData);
 
     return {
-      title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
-      description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
-      keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${address.area || 'bangalore'}, diagnostic services`,
-      url: `https://cadabamsdiagnostics.com/bangalore/center/${slug}`,
-      imageUrl: center.image || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+      props: {
+        centerData: transformedData,
+        error: null
+      }
     };
-  };
+  } catch (error) {
+    console.error('Error fetching center data:', error);
+    return {
+      props: {
+        centerData: null,
+        error: 'Failed to fetch center data'
+      }
+    };
+  }
+}
 
-  if (!router.isReady || !slug || isLoading) {
+const CenterDetailPage = ({ centerData, error }) => {
+  const router = useRouter();
+
+  if (!centerData && error) {
     return (
-      <Layout title="Loading...">
+      <Layout title="Error">
         <Head>
-          <title>Loading... | Cadabam's Diagnostics</title>
-          <meta name="robots" content="index, follow" />
+          <title>Error | Cadabam's Diagnostics</title>
+          <meta name="robots" content="noindex, follow" />
         </Head>
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
+        <div className={styles.errorContainer}>
+          <h2>Error: {error}</h2>
+          <button 
+            onClick={() => router.reload()}
+            className={styles.retryButton}
+          >
+            Try Again
+          </button>
         </div>
       </Layout>
     );
   }
 
   if (!centerData) {
-    router.push('/bangalore');
+    if (typeof window !== 'undefined') {
+      router.push('/bangalore');
+    }
     return null;
   }
 
-  const seoData = getSEOData();
+  const seoData = getSEOData(centerData);
   const { address = {}, basic_info = {} } = centerData;
+  const { slug } = router.query;
 
   return (
     <Layout title={basic_info.center_name || 'Diagnostic Center'}>
@@ -113,136 +151,145 @@ const CenterDetailPage = () => {
         <meta name="twitter:description" content={seoData.description} />
         <meta name="twitter:image" content={seoData.imageUrl} />
         
-        {/* FAQ Schema */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [{
-              "@type": "Question",
-              "name": "What services does Cadabam's Diagnostics offer?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": `${basic_info.center_name} offers comprehensive diagnostic services including ${centerData.services?.map(s => s.name).join(', ')}.`
-              }
-            }, {
-              "@type": "Question",
-              "name": "What are the working hours of the diagnostic center?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": `Our center is open from ${basic_info.opening_time || '00:00'} to ${basic_info.closing_time || '23:59'} every day.`
-              }
-            }, {
-              "@type": "Question",
-              "name": "Where is the diagnostic center located?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": `${basic_info.center_name} is located at ${address.street}, ${address.area}, ${address.pincode}.`
-              }
-            }]
-          })}
-        </script>
-
-        {/* Organization Schema */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": basic_info.center_name,
-            "url": seoData.url,
-            "sameAs": [
-              "https://www.instagram.com/cadabamsdiagnostics",
-              "https://www.facebook.com/CadabamsDiagnostics",
-              "https://www.youtube.com/CadabamsDiagnostics",
-              "https://www.linkedin.com/company/cadabams-diagnostics",
-              "https://www.cadabamsdiagnostics.com",
-              `https://www.google.com/maps?cid=${address.gmb_cid || ''}`
-            ],
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": address.street || "",
-              "addressLocality": address.area || "Bangalore",
-              "addressRegion": "Karnataka",
-              "postalCode": address.pincode || "",
-              "addressCountry": "IN"
-            },
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": basic_info.phone || "",
-              "contactType": "Customer Service",
-              "areaServed": "IN",
-              "availableLanguage": "en"
-            },
-            "logo": basic_info.logo || "/images/logo.png"
-          })}
-        </script>
-
-        {/* Medical WebPage Schema */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "MedicalWebPage",
-            "name": seoData.title,
-            "description": seoData.description,
-            "url": seoData.url,
-            "image": seoData.imageUrl,
-            "citation": "https://cadabamsdiagnostics.com",
-            "hasMap": `https://www.google.com/maps?cid=${address.gmb_cid || ''}`,
-            "audience": {
-              "@type": "MedicalAudience",
-              "audienceType": "Patients",
-              "healthCondition": {
-                "@type": "MedicalCondition",
-                "name": "Various Medical Conditions"
-              }
-            },
-            "reviewedBy": {
-              "@type": "Person",
-              "name": basic_info.doctor_name || "Medical Professional",
-              "jobTitle": basic_info.doctor_designation || "Medical Director",
-              "url": `${seoData.url}/team`,
-              "sameAs": [
-                basic_info.doctor_linkedin || "",
-                basic_info.doctor_profile || ""
-              ],
-              "hasOccupation": {
-                "@type": "Occupation",
-                "name": basic_info.doctor_designation || "Medical Director",
-                "educationRequirements": basic_info.doctor_qualification || "MBBS, MD"
-              }
-            },
-            "specialty": centerData.services?.map(s => s.name).join(', '),
-            "about": {
-              "@type": "MedicalCondition",
-              "name": "Diagnostic Services"
-            },
-            "dateCreated": basic_info.created_at || new Date().toISOString(),
-            "dateModified": basic_info.updated_at || new Date().toISOString(),
-            "copyrightHolder": {
-              "@type": "Organization",
-              "name": "Cadabam's Diagnostics"
-            },
-            "keywords": seoData.keywords
-          })}
-        </script>
-
-        {/* Video Schema (if video exists) */}
-        {basic_info.video_url && (
-          <script type="application/ld+json">
-            {JSON.stringify({
+        {/* Schema.org JSON-LD Scripts */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "VideoObject",
-              "name": `${basic_info.center_name} - Virtual Tour`,
-              "description": `Take a virtual tour of ${basic_info.center_name} and explore our state-of-the-art diagnostic facilities`,
-              "thumbnailUrl": [
-                basic_info.video_thumbnail || seoData.imageUrl
+              "@type": "FAQPage",
+              "mainEntity": [{
+                "@type": "Question",
+                "name": "What services does Cadabam's Diagnostics offer?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": `${basic_info.center_name} offers comprehensive diagnostic services including ${centerData.services?.map(s => s.name).join(', ')}.`
+                }
+              }, {
+                "@type": "Question",
+                "name": "What are the working hours of the diagnostic center?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": `Our center is open from ${basic_info.opening_time || '00:00'} to ${basic_info.closing_time || '23:59'} every day.`
+                }
+              }, {
+                "@type": "Question",
+                "name": "Where is the diagnostic center located?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": `${basic_info.center_name} is located at ${address.street}, ${address.area}, ${address.pincode}.`
+                }
+              }]
+            })
+          }}
+        />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": basic_info.center_name,
+              "url": seoData.url,
+              "sameAs": [
+                "https://www.instagram.com/cadabamsdiagnostics",
+                "https://www.facebook.com/CadabamsDiagnostics",
+                "https://www.youtube.com/CadabamsDiagnostics",
+                "https://www.linkedin.com/company/cadabams-diagnostics",
+                "https://www.cadabamsdiagnostics.com",
+                `https://www.google.com/maps?cid=${address.gmb_cid || ''}`
               ],
-              "uploadDate": basic_info.video_upload_date || new Date().toISOString(),
-              "duration": basic_info.video_duration || "PT1M54S",
-              "contentUrl": basic_info.video_url,
-              "embedUrl": basic_info.video_embed_url
-            })}
-          </script>
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": address.street || "",
+                "addressLocality": address.area || "Bangalore",
+                "addressRegion": "Karnataka",
+                "postalCode": address.pincode || "",
+                "addressCountry": "IN"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": basic_info.phone || "",
+                "contactType": "Customer Service",
+                "areaServed": "IN",
+                "availableLanguage": "en"
+              },
+              "logo": basic_info.logo || "/images/logo.png"
+            })
+          }}
+        />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "MedicalWebPage",
+              "name": seoData.title,
+              "description": seoData.description,
+              "url": seoData.url,
+              "image": seoData.imageUrl,
+              "citation": "https://cadabamsdiagnostics.com",
+              "hasMap": `https://www.google.com/maps?cid=${address.gmb_cid || ''}`,
+              "audience": {
+                "@type": "MedicalAudience",
+                "audienceType": "Patients",
+                "healthCondition": {
+                  "@type": "MedicalCondition",
+                  "name": "Various Medical Conditions"
+                }
+              },
+              "reviewedBy": {
+                "@type": "Person",
+                "name": basic_info.doctor_name || "Medical Professional",
+                "jobTitle": basic_info.doctor_designation || "Medical Director",
+                "url": `${seoData.url}/team`,
+                "sameAs": [
+                  basic_info.doctor_linkedin || "",
+                  basic_info.doctor_profile || ""
+                ],
+                "hasOccupation": {
+                  "@type": "Occupation",
+                  "name": basic_info.doctor_designation || "Medical Director",
+                  "educationRequirements": basic_info.doctor_qualification || "MBBS, MD"
+                }
+              },
+              "specialty": centerData.services?.map(s => s.name).join(', '),
+              "about": {
+                "@type": "MedicalCondition",
+                "name": "Diagnostic Services"
+              },
+              "dateCreated": basic_info.created_at || new Date().toISOString(),
+              "dateModified": basic_info.updated_at || new Date().toISOString(),
+              "copyrightHolder": {
+                "@type": "Organization",
+                "name": "Cadabam's Diagnostics"
+              },
+              "keywords": seoData.keywords
+            })
+          }}
+        />
+
+        {basic_info.video_url && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "VideoObject",
+                "name": `${basic_info.center_name} - Virtual Tour`,
+                "description": `Take a virtual tour of ${basic_info.center_name} and explore our state-of-the-art diagnostic facilities`,
+                "thumbnailUrl": [
+                  basic_info.video_thumbnail || seoData.imageUrl
+                ],
+                "uploadDate": basic_info.video_upload_date || new Date().toISOString(),
+                "duration": basic_info.video_duration || "PT1M54S",
+                "contentUrl": basic_info.video_url,
+                "embedUrl": basic_info.video_embed_url
+              })
+            }}
+          />
         )}
       </Head>
 
