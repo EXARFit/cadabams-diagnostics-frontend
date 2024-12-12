@@ -27,6 +27,9 @@ import {
   getLocationAwarePath 
 } from '../../config/locations';
 
+// Import AuthModal component
+import AuthModal from './AuthModal';
+
 export default function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -154,200 +157,208 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.navbarContent}>
-        <div className={styles.leftSection}>
-          <Link href="/" className={styles.logo}>
-            <Image
-              src="https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1728018316689-966136917.png"
-              alt="Logo"
-              width={120}
-              height={48}
-              priority
-            />
-          </Link>
-
-          <div className={styles.locationDropdownWrapper}>
-            <div className={styles.locationDropdown}>
-              <FaMapMarkerAlt className={styles.locationIcon} />
-              <select
-                value={selectedLocation.value}
-                onChange={handleLocationChange}
-                className={styles.locationSelect}
-              >
-                {BANGALORE_LOCATIONS.map((location) => (
-                  <option key={location.value} value={location.value}>
-                    {location.name}
-                  </option>
-                ))}
-              </select>
-              <FaChevronDown className={styles.dropdownArrow} />
-            </div>
-          </div>
-
-          <button
-            className={styles.mobileMenuButton}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-        </div>
-
-        <div className={styles.centerSection}>
-          <div className={styles.searchForm}>
-            <div className={styles.searchInputWrapper}>
-              <FaSearch className={styles.searchIcon} />
-              <input
-                type="text"
-                placeholder="Search tests or scans..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={styles.searchInput}
+    <>
+      <nav className={styles.navbar}>
+        <div className={styles.navbarContent}>
+          <div className={styles.leftSection}>
+            <Link href="/" className={styles.logo}>
+              <Image
+                src="https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1728018316689-966136917.png"
+                alt="Logo"
+                width={120}
+                height={48}
+                priority
               />
-              
-              {showResults && (
-                <div className={styles.searchDropdownContainer}>
-                  <div className={styles.searchDropdown}>
-                    {isLoading ? (
-                      <div className={styles.loadingText}>Searching...</div>
-                    ) : searchResults.length > 0 ? (
-                      searchResults.map((result, index) => (
-                        <div 
-                          key={index}
-                          className={styles.searchResult}
-                          onClick={() => handleResultClick(result)}
-                        >
-                          <div className={styles.resultContent}>
-                            <div className={styles.resultName}>{result.name}</div>
-                            {result.price && (
-                              <div className={styles.resultPrice}>₹{result.price}</div>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className={styles.loadingText}>No results found</div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.rightSection}>
-          <div className={`${styles.navLinks} ${isMobileMenuOpen ? styles.open : ''}`}>
-            <Link 
-              href={getLocationAwarePath('/lab-test', selectedLocation)} 
-              className={styles.navLink}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <FaFlask />
-              <span>Lab Tests</span>
             </Link>
 
-            <div className={styles.dropdownContainer}>
-              <button
-                className={`${styles.navLink} ${isRadiologyDropdownOpen ? styles.active : ''}`}
-                onClick={() => {
-                  setIsRadiologyDropdownOpen(!isRadiologyDropdownOpen);
-                  setIsCentersDropdownOpen(false);
-                }}
-              >
-                <FaUserMd />
-                <span>Radiology</span>
-                <FaChevronDown className={`${styles.dropdownArrow} ${isRadiologyDropdownOpen ? styles.rotated : ''}`} />
-              </button>
-              
-              <div className={`${styles.dropdownContent} ${isRadiologyDropdownOpen ? styles.visible : ''}`}>
-                {RADIOLOGY_OPTIONS.map((option) => (
-                  <Link
-                    key={option.path}
-                    href={getLocationAwarePath(option.path, selectedLocation)}
-                    className={styles.dropdownItem}
-                    onClick={() => {
-                      setIsRadiologyDropdownOpen(false);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    {option.name}
-                  </Link>
-                ))}
+            <div className={styles.locationDropdownWrapper}>
+              <div className={styles.locationDropdown}>
+                <FaMapMarkerAlt className={styles.locationIcon} />
+                <select
+                  value={selectedLocation.value}
+                  onChange={handleLocationChange}
+                  className={styles.locationSelect}
+                >
+                  {BANGALORE_LOCATIONS.map((location) => (
+                    <option key={location.value} value={location.value}>
+                      {location.name}
+                    </option>
+                  ))}
+                </select>
+                <FaChevronDown className={styles.dropdownArrow} />
               </div>
             </div>
 
-            <div className={styles.dropdownContainer}>
-              <button
-                className={`${styles.navLink} ${isCentersDropdownOpen ? styles.active : ''}`}
-                onClick={() => {
-                  setIsCentersDropdownOpen(!isCentersDropdownOpen);
-                  setIsRadiologyDropdownOpen(false);
-                }}
-              >
-                <FaClinicMedical />
-                <span>Centers</span>
-                <FaChevronDown className={`${styles.dropdownArrow} ${isCentersDropdownOpen ? styles.rotated : ''}`} />
-              </button>
-              
-              <div className={`${styles.dropdownContent} ${isCentersDropdownOpen ? styles.visible : ''}`}>
-                {centerLocations.map((location) => (
-                  <Link
-                    key={location.path}
-                    href={`/bangalore/center/${location.value}`}
-                    className={styles.dropdownItem}
-                    onClick={() => {
-                      setIsCentersDropdownOpen(false);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    {location.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <Link 
-              href="/blogs" 
-              className={styles.navLink} 
-              onClick={() => setIsMobileMenuOpen(false)}
+            <button
+              className={styles.mobileMenuButton}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <FaBlog />
-              <span>Blogs</span>
-            </Link>
-
-            <Link 
-              href="/cart" 
-              className={styles.navLink} 
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <div className={styles.cartWrapper}>
-                <FaShoppingCart />
-                {cart.length > 0 && (
-                  <span className={styles.cartCount}>{cart.length}</span>
-                )}
-              </div>
-              <span>Cart</span>
-            </Link>
-
-            <button 
-              onClick={handleAuthAction} 
-              className={styles.navLink}
-            >
-              {isAuthenticated ? (
-                <>
-                  <FaSignOutAlt />
-                  <span>Logout</span>
-                </>
-              ) : (
-                <>
-                  <FaSignInAlt />
-                  <span>Login</span>
-                </>
-              )}
+              {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
           </div>
+
+          <div className={styles.centerSection}>
+            <div className={styles.searchForm}>
+              <div className={styles.searchInputWrapper}>
+                <FaSearch className={styles.searchIcon} />
+                <input
+                  type="text"
+                  placeholder="Search tests or scans..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={styles.searchInput}
+                />
+                
+                {showResults && (
+                  <div className={styles.searchDropdownContainer}>
+                    <div className={styles.searchDropdown}>
+                      {isLoading ? (
+                        <div className={styles.loadingText}>Searching...</div>
+                      ) : searchResults.length > 0 ? (
+                        searchResults.map((result, index) => (
+                          <div 
+                            key={index}
+                            className={styles.searchResult}
+                            onClick={() => handleResultClick(result)}
+                          >
+                            <div className={styles.resultContent}>
+                              <div className={styles.resultName}>{result.name}</div>
+                              {result.price && (
+                                <div className={styles.resultPrice}>₹{result.price}</div>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className={styles.loadingText}>No results found</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.rightSection}>
+            <div className={`${styles.navLinks} ${isMobileMenuOpen ? styles.open : ''}`}>
+              <Link 
+                href={getLocationAwarePath('/lab-test', selectedLocation)} 
+                className={styles.navLink}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <FaFlask />
+                <span>Lab Tests</span>
+              </Link>
+
+              <div className={styles.dropdownContainer}>
+                <button
+                  className={`${styles.navLink} ${isRadiologyDropdownOpen ? styles.active : ''}`}
+                  onClick={() => {
+                    setIsRadiologyDropdownOpen(!isRadiologyDropdownOpen);
+                    setIsCentersDropdownOpen(false);
+                  }}
+                >
+                  <FaUserMd />
+                  <span>Radiology</span>
+                  <FaChevronDown className={`${styles.dropdownArrow} ${isRadiologyDropdownOpen ? styles.rotated : ''}`} />
+                </button>
+                
+                <div className={`${styles.dropdownContent} ${isRadiologyDropdownOpen ? styles.visible : ''}`}>
+                  {RADIOLOGY_OPTIONS.map((option) => (
+                    <Link
+                      key={option.path}
+                      href={getLocationAwarePath(option.path, selectedLocation)}
+                      className={styles.dropdownItem}
+                      onClick={() => {
+                        setIsRadiologyDropdownOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      {option.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.dropdownContainer}>
+                <button
+                  className={`${styles.navLink} ${isCentersDropdownOpen ? styles.active : ''}`}
+                  onClick={() => {
+                    setIsCentersDropdownOpen(!isCentersDropdownOpen);
+                    setIsRadiologyDropdownOpen(false);
+                  }}
+                >
+                  <FaClinicMedical />
+                  <span>Centers</span>
+                  <FaChevronDown className={`${styles.dropdownArrow} ${isCentersDropdownOpen ? styles.rotated : ''}`} />
+                </button>
+                
+                <div className={`${styles.dropdownContent} ${isCentersDropdownOpen ? styles.visible : ''}`}>
+                  {centerLocations.map((location) => (
+                    <Link
+                      key={location.path}
+                      href={`/bangalore/center/${location.value}`}
+                      className={styles.dropdownItem}
+                      onClick={() => {
+                        setIsCentersDropdownOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      {location.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <Link 
+                href="/blogs" 
+                className={styles.navLink} 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <FaBlog />
+                <span>Blogs</span>
+              </Link>
+
+              <Link 
+                href="/cart" 
+                className={styles.navLink} 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <div className={styles.cartWrapper}>
+                  <FaShoppingCart />
+                  {cart.length > 0 && (
+                    <span className={styles.cartCount}>{cart.length}</span>
+                  )}
+                </div>
+                <span>Cart</span>
+              </Link>
+
+              <button 
+                onClick={handleAuthAction} 
+                className={styles.navLink}
+              >
+                {isAuthenticated ? (
+                  <>
+                    <FaSignOutAlt />
+                    <span>Logout</span>
+                  </>
+                ) : (
+                  <>
+                    <FaSignInAlt />
+                    <span>Login</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Add AuthModal component */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
+    </>
   );
 }
