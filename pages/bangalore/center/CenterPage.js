@@ -65,9 +65,9 @@ const CenterPage = ({ centerData }) => {
             <div className={styles.leftContent}>
               {basic_info.center_name && (
                 <section className={styles.section}>
-                  <h1 className={styles.mainHeading}>
+                  <h2 className={styles.mainHeading}>
                     Experience Precision and Compassionate Care in {basic_info.center_name}
-                  </h1>
+                  </h2>
                   {basic_info.center_description && (
                     <div className={styles.description}>
                       {basic_info.center_description.split('\n').map((paragraph, index) => (
