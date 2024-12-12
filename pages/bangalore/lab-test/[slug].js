@@ -40,7 +40,7 @@ const generateSchemas = (data, baseUrl, slug) => {
       '@type': 'Person',
       name: 'Dr. Shreyas Cadabam',
       jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-      url: 'https://www.cadabamsdiagnostics.com/clinical-team',
+      url: 'https://cadabamsdiagnostics.com/clinical-team',
       sameAs: [
         'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
         'https://www.instagram.com/cadabams_diagnostics/',
