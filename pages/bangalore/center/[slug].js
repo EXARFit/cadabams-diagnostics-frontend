@@ -186,7 +186,7 @@ const CenterDetailPage = () => {
             "description": seoData.description,
             "url": seoData.url,
             "image": seoData.imageUrl,
-            "citation": "https://www.cadabamsdiagnostics.com",
+            "citation": "https://cadabamsdiagnostics.com",
             "hasMap": `https://www.google.com/maps?cid=${address.gmb_cid || ''}`,
             "audience": {
               "@type": "MedicalAudience",
