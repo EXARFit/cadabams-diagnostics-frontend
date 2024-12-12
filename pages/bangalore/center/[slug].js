@@ -96,7 +96,7 @@ const CenterDetailPage = () => {
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
-        <link rel="canonical" href={`https://www.cadabamsdiagnostics.com/bangalore/center/${slug}`} />
+        <link rel="canonical" href={`https://cadabamsdiagnostics.com/bangalore/center/${slug}`} />
         
         {/* Open Graph Tags */}
         <meta property="og:title" content={seoData.title} />
