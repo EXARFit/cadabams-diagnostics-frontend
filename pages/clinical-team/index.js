@@ -22,7 +22,7 @@ const ClinicalTeam = () => {
     title: "Clinical Team | Expert Radiologists & Specialists | Cadabam's Diagnostics",
     description: "Meet our expert team of radiologists and specialists at Cadabam's Diagnostics. Led by Dr. S Pradeep, Dr. Divya Cadabam, and Dr. Shreyas Cadabam, offering specialized diagnostic services in Bangalore.",
     keywords: "Cadabams clinical team, radiologists bangalore, Dr S Pradeep, Dr Divya Cadabam, Dr Shreyas Cadabam, diagnostic specialists, fetal medicine experts, interventional radiology",
-    url: "https://www.cadabamsdiagnostics.com/clinical-team",
+    url: "https://cadabamsdiagnostics.com/clinical-team",
     imageUrl: "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png"
   };
   
