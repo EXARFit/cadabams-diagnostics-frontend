@@ -286,11 +286,13 @@ const ContactForm = () => {
 const FAQSection = ({ faqs }) => {
   const [openIndex, setOpenIndex] = useState(null);
 
-  if (!faqs || !faqs.length) return null;
+  // Return null if faqs is not present or empty or parsing fails
+  if (!faqs?.length) return null;
 
-  let parsedFaqs = [];
+  let parsedFaqs;
   try {
     parsedFaqs = JSON.parse(faqs[0]);
+    if (!parsedFaqs?.length) return null;
   } catch (error) {
     console.error('Error parsing FAQs:', error);
     return null;
@@ -347,7 +349,7 @@ export default function BlogPost() {
   const [notFound, setNotFound] = useState(false);
   const router = useRouter();
   const { slug } = router.query;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cadabamsdiagnostics.com/';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cadabamsdiagnostics.com';
 
   useEffect(() => {
     if (slug) {
@@ -511,7 +513,9 @@ export default function BlogPost() {
                 className={styles.blogContent}
                 dangerouslySetInnerHTML={{ __html: blogData.content || '' }}
               />
-              <FAQSection faqs={blogData.faqs} />
+              {blogData.faqs && blogData.faqs.length > 0 && (
+                <FAQSection faqs={blogData.faqs} />
+              )}
             </main>
             
             <aside className={styles.sidebar}>

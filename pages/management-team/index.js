@@ -1,6 +1,7 @@
 // pages/management-team/index.jsx
 "use client";
 import React from 'react';
+import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { 
   Award, Users, Star, Target,
@@ -13,6 +14,15 @@ import { AuthProvider } from '../../contexts/AuthContext';
 import styles from './ManagementTeam.module.css';
 
 const ManagementTeam = () => {
+  // SEO Data
+  const seoData = {
+    title: "Management Team | Leadership & Vision | Cadabam's Diagnostics",
+    description: "Meet the visionary leaders of Cadabam's Diagnostics. Our management team brings 30+ years of healthcare excellence, led by Chairman Cadabam M Ramesh and an experienced executive board.",
+    keywords: "Cadabams management, healthcare leadership, Cadabam M Ramesh, Sudha R Cadabam, Sandesh Cadabam, healthcare management bangalore, diagnostic center management",
+    url: "https://www.cadabamsdiagnostics.com/management-team",
+    imageUrl: "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png"
+  };
+
   const stats = [
     {
       value: "30+",
@@ -118,7 +128,68 @@ const ManagementTeam = () => {
 
   return (
     <AuthProvider>
-      <Layout title="Management Team | Cadabams Diagnostics">
+      <Layout>
+        <Head>
+          {/* Basic Meta Tags */}
+          <title>{seoData.title}</title>
+          <meta name="description" content={seoData.description} />
+          <meta name="keywords" content={seoData.keywords} />
+          <meta name="robots" content="index, follow" />
+          
+          {/* Canonical Tag */}
+          <link rel="canonical" href={seoData.url} />
+          
+          {/* Open Graph Tags */}
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={seoData.title} />
+          <meta property="og:description" content={seoData.description} />
+          <meta property="og:image" content={seoData.imageUrl} />
+          <meta property="og:url" content={seoData.url} />
+          <meta property="og:site_name" content="Cadabams Diagnostics" />
+          <meta property="og:locale" content="en_IN" />
+          <meta property="og:brand" content="Cadabams Diagnostics" />
+          <meta property="og:email" content="info@cadabamsdiagnostics.com" />
+          <meta property="og:phone_number" content="+918050381444" />
+          <meta property="og:street-address" content="19th Main Road, HSR Layout" />
+          <meta property="og:locality" content="Bangalore" />
+          <meta property="og:region" content="Karnataka" />
+          <meta property="og:postal-code" content="560102" />
+          <meta property="og:country-name" content="India" />
+          
+          {/* Twitter Card Tags */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:site" content="@CadabamsDX" />
+          <meta name="twitter:creator" content="@CadabamsDX" />
+          <meta name="twitter:title" content={seoData.title} />
+          <meta name="twitter:description" content={seoData.description} />
+          <meta name="twitter:image" content={seoData.imageUrl} />
+          <meta name="twitter:image:alt" content="Cadabams Diagnostics Management Team" />
+
+          {/* Additional Meta Tags */}
+          <meta name="format-detection" content="telephone=no" />
+          <meta name="theme-color" content="#0047AB" />
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <meta name="apple-mobile-web-app-title" content="Cadabams Diagnostics" />
+          
+          {/* Article Specific Meta Tags */}
+          <meta property="article:publisher" content="https://www.facebook.com/cadabamsdiagnostics" />
+          <meta property="article:modified_time" content={new Date().toISOString()} />
+          <meta property="article:author" content="Cadabams Diagnostics" />
+          <meta property="article:section" content="Management Team" />
+          
+          {/* Additional SEO Tags */}
+          <meta name="geo.region" content="IN-KA" />
+          <meta name="geo.placename" content="Bangalore" />
+          <meta name="geo.position" content="12.9716;77.5946" />
+          <meta name="ICBM" content="12.9716, 77.5946" />
+          
+          {/* Viewport and Charset */}
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta charSet="UTF-8" />
+        </Head>
+
         <div className={styles.container}>
           {/* Hero Section */}
           <div className={styles.hero}>
@@ -199,14 +270,14 @@ const ManagementTeam = () => {
                     </ul>
                   </div>
                   <div className={styles.actions}>
-                    <button className={styles.contactButton}>
+                    {/* <button className={styles.contactButton}>
                       <Mail className={styles.buttonIcon} />
                       Contact
                     </button>
                     <button className={styles.linkedinButton}>
                       <Linkedin className={styles.buttonIcon} />
                       Connect
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </motion.div>
@@ -226,7 +297,7 @@ const ManagementTeam = () => {
               <div className={styles.contactInfo}>
                 <div className={styles.contactItem}>
                   <Phone className={styles.contactIcon} />
-                  <span>+91 1234567890</span>
+                  <span>+918050381444</span>
                 </div>
                 <div className={styles.contactItem}>
                   <Mail className={styles.contactIcon} />

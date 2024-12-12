@@ -149,7 +149,7 @@ export default function SlugPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(false);
-  const baseUrl = 'https://www.cadabamsdiagnostics.com';
+  const baseUrl = 'https://cadabamsdiagnostics.com';
   const locationName = capitalizeLocation(location);
 
   useEffect(() => {
@@ -263,8 +263,8 @@ export default function SlugPage() {
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@CadabamsGroup" />
-        <meta name="twitter:creator" content="@CadabamsGroup" />
+        <meta name="twitter:site" content="@CadabamsDX" />  
+        <meta name="twitter:creator" content="@CadabamsDX" />
         <meta name="twitter:title" content={testData.seo?.title || pageTitle} />
         <meta name="twitter:description" content={testData.seo?.description || pageDescription} />
         <meta name="twitter:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />

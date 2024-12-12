@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import styles from './CenterPage.module.css';
 import PropTypes from 'prop-types'; 
@@ -17,9 +17,7 @@ import TeamSection from '@/components/center/TeamSection';
 import OtherCenters from '@/components/center/OtherCenters';
 import BlogSection from '@/components/center/BlogSection';
 
-
 const CenterPage = ({ centerData }) => {
-    // Add null check for centerData
     if (!centerData) {
       return (
         <div className={styles.loadingContainer}>
@@ -28,7 +26,6 @@ const CenterPage = ({ centerData }) => {
       );
     }
   
-    // Safely destructure with default values
     const {
       basic_info = {},
       center_info = {},
@@ -49,7 +46,6 @@ const CenterPage = ({ centerData }) => {
     return (
       <div className={styles.pageContainer}>
         <div className={styles.mainContent}>
-          {/* Only render Breadcrumb if location and city are available */}
           {basic_info.location && basic_info.city && (
             <Breadcrumb 
               location={basic_info.location} 
@@ -57,7 +53,6 @@ const CenterPage = ({ centerData }) => {
             />
           )}
   
-          {/* Only render HeroBanner if required props are available */}
           {basic_info.center_name && (
             <HeroBanner 
               title={basic_info.center_name}
@@ -67,12 +62,11 @@ const CenterPage = ({ centerData }) => {
           )}
   
           <div className={styles.contentWrapper}>
-            {/* Main Content */}
             <div className={styles.leftContent}>
               {basic_info.center_name && (
                 <section className={styles.section}>
                   <h1 className={styles.mainHeading}>
-                    {basic_info.center_name}
+                    Experience Precision and Compassionate Care in {basic_info.center_name}
                   </h1>
                   {basic_info.center_description && (
                     <div className={styles.description}>
@@ -84,7 +78,6 @@ const CenterPage = ({ centerData }) => {
                 </section>
               )}
   
-              {/* Only render components if their required data is available */}
               {services.length > 0 && (
                 <CenterServices services={services} />
               )}
@@ -125,7 +118,6 @@ const CenterPage = ({ centerData }) => {
               )}
             </div>
   
-            {/* Sidebar */}
             <div className={styles.rightSidebar}>
               {center_info && working_hours && (
                 <div className={styles.stickyWrapper}>
@@ -140,9 +132,9 @@ const CenterPage = ({ centerData }) => {
         </div>
       </div>
     );
-  };
+};
   
-  CenterPage.propTypes = {
+CenterPage.propTypes = {
     centerData: PropTypes.shape({
       basic_info: PropTypes.shape({
         center_name: PropTypes.string,
@@ -164,9 +156,9 @@ const CenterPage = ({ centerData }) => {
       health_insights: PropTypes.array,
       working_hours: PropTypes.object
     })
-  };
+};
   
-  CenterPage.defaultProps = {
+CenterPage.defaultProps = {
     centerData: {
       basic_info: {},
       center_info: {},
@@ -183,6 +175,6 @@ const CenterPage = ({ centerData }) => {
         sunday: { start: '09:00', end: '18:00' }
       }
     }
-  };
+};
   
-  export default React.memo(CenterPage);
+export default React.memo(CenterPage);

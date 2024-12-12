@@ -8,7 +8,8 @@ const CATEGORY_IMAGES = {
   'mri-scan': "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732179954157-336998260.png",
   'msk-scan': "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732179990913-212865095.png",
   'ultrasound-scan': "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732180039295-322475488.png",
-  'xray-scan': "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732180132539-627275886.png"
+  'xray-scan': "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732180132539-627275886.png",
+  'pregnancy-scan': "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png"
 };
 
 const DEFAULT_IMAGE = "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png";
@@ -38,7 +39,8 @@ const formatCategoryName = (name, categoryType) => {
     'mri-scan': 'MRI',
     'msk-scan': 'MSK',
     'ultrasound-scan': 'Ultrasound',
-    'xray-scan': 'X-Ray'
+    'xray-scan': 'X-Ray',
+    'pregnancy-scan': 'Pregnancy'
   };
 
   // Get the base category name
