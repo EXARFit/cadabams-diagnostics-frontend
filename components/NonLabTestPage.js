@@ -1,5 +1,5 @@
 import React from 'react';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import TestOverview from './TestOverview1';
 import TestDetails from './TestDetails';
 import TestMeasures from './TestMeasures';
@@ -42,7 +42,13 @@ export default function NonLabTestPage({ testData }) {
   ];
 
   const sanitizeHTML = (html) => {
-    return { __html: DOMPurify.sanitize(html) };
+    if (!html || typeof html !== 'string') return { __html: '' };
+    try {
+      return { __html: DOMPurify.sanitize(html || '') };
+    } catch (error) {
+      console.error('Sanitization error:', error);
+      return { __html: '' };
+    }
   };
 
   const SectionWithImage = ({ title, content, image, imageAlt, isReversed = false }) => (
@@ -50,7 +56,7 @@ export default function NonLabTestPage({ testData }) {
       <h2 className={styles.sectionTitle}>{title}</h2>
       <div className={styles.sectionContent} style={{ flexDirection: isReversed ? 'row-reverse' : 'row' }}>
         <div className={styles.sectionText} dangerouslySetInnerHTML={sanitizeHTML(content)} />
-        {image && <img src={image} alt={imageAlt} className={styles.sectionImage} />}
+        {image && <img src={image} alt={imageAlt || title} className={styles.sectionImage} />}
       </div>
     </div>
   );
@@ -60,33 +66,32 @@ export default function NonLabTestPage({ testData }) {
       <div className={styles.content}>
         <TestOverview basicInfo={basicInfo} />
         <TestDetails basicInfo={basicInfo} requisite={requisite} />
-        {/* <TestMeasures basicInfo={basicInfo} /> */}
         <LabStats />
         <ScrollSpyNavigation tabs={tabs}>
           <SectionWithImage
             title="About The Test"
-            content={`<h3>${aboutTest.title}</h3>${aboutTest.desc}`}
+            content={`<h3>${aboutTest.title || ''}</h3>${aboutTest.desc || ''}`}
             image={aboutTest.imageSrc}
             imageAlt="About the test"
           />
           <SectionWithImage
             title="List of Parameters"
-            content={`<h3>${testParameter.title}</h3>${testParameter.desc}`}
+            content={`<h3>${testParameter.title || ''}</h3>${testParameter.desc || ''}`}
             image={testParameter.imageSrc}
             imageAlt="Test parameters"
             isReversed
           />
           <SectionWithImage
             title="Why This Test"
-            content={`<h3>${whoNeedTest.title}</h3>${whoNeedTest.desc}`}
+            content={`<h3>${whoNeedTest.title || ''}</h3>${whoNeedTest.desc || ''}`}
             image={whoNeedTest.imageSrc}
             imageAlt="Who needs this test"
           />
           <SectionWithImage
             title="Benefits"
             content={`
-              <h3>${benifitTest.title}</h3>${benifitTest.desc}
-              <h3>${diseasesDiagnosed.title}</h3>${diseasesDiagnosed.desc}
+              <h3>${benifitTest.title || ''}</h3>${benifitTest.desc || ''}
+              <h3>${diseasesDiagnosed.title || ''}</h3>${diseasesDiagnosed.desc || ''}
             `}
             image={benifitTest.imageSrc || diseasesDiagnosed.imageSrc}
             imageAlt="Benefits of the test"
@@ -94,7 +99,7 @@ export default function NonLabTestPage({ testData }) {
           />
           <SectionWithImage
             title="Preparing for test"
-            content={`<h3>${testPreparation.title}</h3>${testPreparation.desc}`}
+            content={`<h3>${testPreparation.title || ''}</h3>${testPreparation.desc || ''}`}
             image={testPreparation.imageSrc}
             imageAlt="Test preparation"
           />
@@ -128,7 +133,7 @@ export default function NonLabTestPage({ testData }) {
           </div>
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>FAQs</h2>
-            {faq.map((item, index) => (
+            {Array.isArray(faq) && faq.map((item, index) => (
               <div key={index} className={styles.faqItem}>
                 <h3 className={styles.faqQuestion}>{item.question}</h3>
                 <div

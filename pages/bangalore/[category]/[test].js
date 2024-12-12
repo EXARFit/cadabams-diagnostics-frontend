@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
@@ -28,6 +27,20 @@ const formatTestType = (testType) => {
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join(' ');
+};
+
+// Helper function to clean URL path
+const cleanPath = (path) => {
+  if (!path) return '';
+  return path.replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
+};
+
+// Helper function to construct proper URLs for related tests
+const getRelatedTestUrl = (testRoute) => {
+  if (!testRoute) return '';
+  const cleanRoute = cleanPath(testRoute);
+  const category = getTestType(cleanRoute);
+  return `/bangalore/${category}/${cleanRoute}`;
 };
 
 // Breadcrumb Component
@@ -158,45 +171,36 @@ const generateSchemas = (data, baseUrl, test) => {
   return [medicalWebpageSchema, faqSchema, breadcrumbSchema];
 };
 
-export default function TestDetailPage() {
+// Get server-side props
+export async function getServerSideProps({ params }) {
+  const { test } = params;
+
+  try {
+    const testData = await fetchTestData(test);
+    
+    return {
+      props: {
+        testData,
+        error: null
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching test data:', error);
+    return {
+      props: {
+        testData: null,
+        error: 'Failed to fetch test data'
+      }
+    };
+  }
+}
+
+export default function TestDetailPage({ testData, error }) {
   const router = useRouter();
   const { test } = router.query;
-  const [testData, setTestData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const baseUrl = 'https://www.cadabamsdiagnostics.com';
 
-  useEffect(() => {
-    if (test) {
-      setIsLoading(true);
-      fetchTestData(test)
-        .then((response) => {
-          if (response) {
-            setTestData(response);
-          } else {
-            throw new Error('Invalid data structure');
-          }
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.error('Error fetching data:', err);
-          setError('Failed to fetch data');
-          setIsLoading(false);
-        });
-    }
-  }, [test]);
-
-  // Helper function to construct proper URLs for related tests
-  const getRelatedTestUrl = (testRoute) => {
-    // Remove leading slash if present
-    const cleanRoute = testRoute.startsWith('/') ? testRoute.slice(1) : testRoute;
-    // Get the category type using the same logic as the main test
-    const category = getTestType(cleanRoute);
-    // Return the properly formatted URL
-    return `/bangalore/${category}/${cleanRoute}`;
-  };
-
-  if (isLoading) {
+  if (!test) {
     return (
       <Layout title="Loading Test...">
         <div className={styles.loadingContainer}>
@@ -316,18 +320,21 @@ export default function TestDetailPage() {
                 <h2>Related Tests</h2>
               </div>
               <div className={styles.relatedTestsGrid}>
-                {relatedTests.map((relatedTest) => (
-                  <Link
-                    key={relatedTest._id}
-                    href={getRelatedTestUrl(relatedTest.route)}
-                    className={styles.relatedTestCard}
-                  >
-                    <div className={styles.testName}>
-                      {relatedTest.testName}
-                    </div>
-                    <div className={styles.arrowIcon}>→</div>
-                  </Link>
-                ))}
+                {relatedTests.map((relatedTest) => {
+                  const url = getRelatedTestUrl(relatedTest.route);
+                  return (
+                    <Link
+                      key={relatedTest._id}
+                      href={url}
+                      className={styles.relatedTestCard}
+                    >
+                      <div className={styles.testName}>
+                        {relatedTest.testName}
+                      </div>
+                      <div className={styles.arrowIcon}>→</div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </section>
