@@ -20,14 +20,14 @@ export default function ContactPage() {
           <title>Contact Us | Cadabam's Diagnostics - Leading Diagnostic Center in Bangalore</title>
           <meta name="description" content="Contact Cadabam's Diagnostics for all your medical testing and diagnostic needs. Book appointments, request home sample collection, or get information about our services." />
           <meta name="robots" content="index, follow" />
-          <link rel="canonical" href="https://diagnostics.cadabams.com/contact" />
+          <link rel="canonical" href="https://cadabamsdiagnostics.com/contact-us" />
           
           {/* Open Graph Tags */}
           <meta property="og:title" content="Contact Cadabam's Diagnostics - Leading Diagnostic Center in Bangalore" />
           <meta property="og:description" content="Get in touch with Cadabam's Diagnostics for all your medical testing and diagnostic needs. Easy appointment booking and home sample collection available." />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://diagnostics.cadabams.com/contact" />
-          <meta property="og:image" content="https://diagnostics.cadabams.com/images/og-image.jpg" />
+          <meta property="og:url" content="https://cadabamsdiagnostics.com/contact" />
+          <meta property="og:image" content="https://cadabamsdiagnostics.com/images/og-image.jpg" />
           <meta property="og:site_name" content="Cadabam's Diagnostics" />
           
           {/* Schema.org markup */}
@@ -37,7 +37,7 @@ export default function ContactPage() {
               "@type": "ContactPage",
               "name": "Contact Cadabam's Diagnostics",
               "description": "Contact page for Cadabam's Diagnostics - Leading diagnostic center in Bangalore",
-              "url": "https://diagnostics.cadabams.com/contact",
+              "url": "https://cadabamsdiagnostics.com/contact-us",
               "mainEntity": {
                 "@type": "Organization",
                 "name": "Cadabam's Diagnostics",
