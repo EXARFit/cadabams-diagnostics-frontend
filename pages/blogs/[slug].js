@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import { AuthProvider } from '../../contexts/AuthContext';
-import Layout from '../../components/Layout';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import styles from '../../styles/BlogPost.module.css';
+import { AuthProvider } from '../../contexts/AuthContext';
+import Layout from '../../components/Layout';
 import NotFound from '../../components/NotFound';
+import styles from '../../styles/BlogPost.module.css';
 
+// Schema Generator Function (unchanged)
 const generateSchemas = (data, baseUrl, slug) => {
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -90,6 +91,7 @@ const generateSchemas = (data, baseUrl, slug) => {
   return [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
 };
 
+// Component definitions (unchanged)
 const Breadcrumb = ({ title }) => (
   <div className={styles.breadcrumb}>
     <Link href="/" className={styles.breadcrumbLink}>Home</Link>
@@ -286,7 +288,6 @@ const ContactForm = () => {
 const FAQSection = ({ faqs }) => {
   const [openIndex, setOpenIndex] = useState(null);
 
-  // Return null if faqs is not present or empty or parsing fails
   if (!faqs?.length) return null;
 
   let parsedFaqs;
@@ -342,114 +343,115 @@ const FAQSection = ({ faqs }) => {
   );
 };
 
-export default function BlogPost() {
-  const [blogData, setBlogData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [notFound, setNotFound] = useState(false);
-  const router = useRouter();
-  const { slug } = router.query;
+// Server-side data fetching
+export async function getServerSideProps(context) {
+  const { slug } = context.params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cadabamsdiagnostics.com';
 
-  useEffect(() => {
-    if (slug) {
-      fetchBlogPost(slug);
+  try {
+    const response = await fetch(`https://cadabamsapi.exar.ai/api/v1/cms/blog/${slug}`);
+    
+    if (response.status === 404) {
+      return { notFound: true };
     }
-  }, [slug]);
 
-  const fetchBlogPost = async (slug) => {
-    try {
-      setError(null);
-      setNotFound(false);
-      const response = await fetch(`https://cadabamsapi.exar.ai/api/v1/cms/blog/${slug}`);
-      
-      if (response.status === 404) {
-        setNotFound(true);
-        setIsLoading(false);
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch blog post');
-      }
-
-      const data = await response.json();
-      
-      if (!data || !data.title) {
-        setNotFound(true);
-        setIsLoading(false);
-        return;
-      }
-
-      if (data.content) {
-        data.content = data.content
-          .replace(/^["']|["']$/g, '')
-          .replace(/\\"/g, '"')
-          .replace(/\\\\"/g, '"')
-          .replace(/<a\s+href=\\*"([^"]+)"([^>]*)>/g, (match, url, attrs) => {
-            const cleanUrl = url.replace(/\\/g, '');
-            const hasTarget = attrs.includes('target=');
-            const hasRel = attrs.includes('rel=');
-            
-            let newAttrs = attrs;
-            if (!hasTarget) {
-              newAttrs += ' target="_blank"';
-            }
-            if (!hasRel) {
-              newAttrs += ' rel="noopener noreferrer"';
-            }
-            
-            return `<a href="${cleanUrl}"${newAttrs}>`;
-          });
-      }
-
-      setBlogData(data);
-      setIsLoading(false);
-      
-    } catch (err) {
-      if (err.message === 'Not Found' || err.message.includes('404')) {
-        setNotFound(true);
-      } else {
-        setError(err.message);
-      }
-      setIsLoading(false);
+    if (!response.ok) {
+      throw new Error('Failed to fetch blog post');
     }
-  };
 
-  const getDoctorName = (verifiedBy) => {
-    if (verifiedBy === 'Doctor A') return 'Dr. Shreyas Cadabam';
-    if (verifiedBy === 'Doctor B') return 'Dr. Divya Cadabam';
-    return verifiedBy;
-  };
+    let blogData = await response.json();
+    
+    if (!blogData || !blogData.title) {
+      return { notFound: true };
+    }
 
-  if (isLoading) {
-    return (
-      <AuthProvider>
-        <Layout title="Loading Blog Post...">
-          <div className={styles.loadingContainer}>
-            <h2>Loading blog post...</h2>
-          </div>
-        </Layout>
-      </AuthProvider>
-    );
+    // Clean and process the content
+    if (blogData.content) {
+      // First, handle any JSON string encoding
+      try {
+        // If content is a JSON string, parse it
+        if (typeof blogData.content === 'string' && 
+            (blogData.content.startsWith('"') || blogData.content.startsWith("'"))) {
+          blogData.content = JSON.parse(blogData.content);
+        }
+      } catch (e) {
+        console.error('Error parsing content JSON:', e);
+      }
+
+      // Clean up the content
+      blogData.content = blogData.content
+        .replace(/^["']+|["']+$/g, '') // Remove quotes at start/end
+        .replace(/\\"/g, '"')          // Fix escaped quotes
+        .replace(/\\'/g, "'")          // Fix escaped single quotes
+        .replace(/\\\\/g, '\\')        // Fix double escaped backslashes
+        .replace(/\\n/g, '\n')         // Handle newlines
+        .replace(/\\t/g, '\t');        // Handle tabs
+
+      // Process HTML links
+      blogData.content = blogData.content.replace(
+        /<a\s+href=\\*"([^"]+)"([^>]*)>/g,
+        (match, url, attrs) => {
+          const cleanUrl = url.replace(/\\/g, '');
+          const hasTarget = attrs.includes('target=');
+          const hasRel = attrs.includes('rel=');
+          
+          let newAttrs = attrs;
+          if (!hasTarget) newAttrs += ' target="_blank"';
+          if (!hasRel) newAttrs += ' rel="noopener noreferrer"';
+          
+          return `<a href="${cleanUrl}"${newAttrs}>`;
+        }
+      );
+
+      // Final cleanup for any leftover escaped characters
+      blogData.content = blogData.content
+        .replace(/&quot;/g, '"')
+        .replace(/&#34;/g, '"')
+        .replace(/&apos;/g, "'")
+        .replace(/&#39;/g, "'");
+    }
+
+    // Clean up FAQs
+    if (blogData.faqs && blogData.faqs.length > 0) {
+      try {
+        let faqs = blogData.faqs[0];
+        
+        // If FAQs is a string, try to parse it
+        if (typeof faqs === 'string') {
+          faqs = faqs.replace(/^["']+|["']+$/g, ''); // Remove wrapping quotes
+          const parsedFaqs = JSON.parse(faqs);
+          blogData.faqs = [JSON.stringify(parsedFaqs)];
+        }
+      } catch (error) {
+        console.error('Error processing FAQs:', error);
+        blogData.faqs = [];
+      }
+    }
+
+    return {
+      props: {
+        blogData,
+        baseUrl,
+        slug
+      }
+    };
+
+  } catch (error) {
+    console.error('Server-side error:', error);
+    return { notFound: true };
   }
+}
 
-  if (notFound) {
-    return <NotFound />;
-  }
+// Helper function to get doctor name
+const getDoctorName = (verifiedBy) => {
+  if (verifiedBy === 'Doctor A') return 'Dr. Shreyas Cadabam';
+  if (verifiedBy === 'Doctor B') return 'Dr. Divya Cadabam';
+  return verifiedBy;
+};
 
-  if (error) {
-    return (
-      <AuthProvider>
-        <Layout title="Error">
-          <div className={styles.errorContainer}>
-            <h2>Error: {error}</h2>
-            <button onClick={() => fetchBlogPost(slug)}>Try Again</button>
-          </div>
-        </Layout>
-      </AuthProvider>
-    );
-  }
+// Main component
+export default function BlogPost({ blogData, baseUrl, slug }) {
+  const router = useRouter();
 
   if (!blogData) {
     return <NotFound />;

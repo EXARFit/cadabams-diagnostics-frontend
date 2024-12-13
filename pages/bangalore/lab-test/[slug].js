@@ -142,56 +142,50 @@ const Breadcrumb = ({ title }) => (
   </nav>
 );
 
-export default function SlugPage() {
-  const router = useRouter();
-  const { slug, location } = router.query;
-  const [testData, setTestData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [notFound, setNotFound] = useState(false);
+export async function getServerSideProps(context) {
+  const { slug, location } = context.params;
   const baseUrl = 'https://cadabamsdiagnostics.com';
   const locationName = capitalizeLocation(location);
 
-  useEffect(() => {
-    if (slug) {
-      setIsLoading(true);
-      setError(null);
-      setNotFound(false);
-
-      fetchTestData(slug)
-        .then((response) => {
-          if (response && response.testName) {
-            setTestData(response);
-          } else {
-            setNotFound(true);
-          }
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.error('Error fetching data:', err);
-          if (err.message.includes('404') || err.response?.status === 404) {
-            setNotFound(true);
-          } else {
-            setError('Failed to fetch data');
-          }
-          setIsLoading(false);
-        });
+  try {
+    const testData = await fetchTestData(slug);
+    
+    if (!testData || !testData.testName) {
+      return {
+        notFound: true
+      };
     }
-  }, [slug]);
 
-  if (isLoading) {
-    return (
-      <Layout title="Loading Test...">
-        <div className={styles.loadingContainer}>
-          <h2>Loading...</h2>
-        </div>
-      </Layout>
-    );
-  }
+    const pageTitle = location 
+      ? `Lab Test Services in ${locationName} | Cadabams Diagnostics`
+      : 'Lab Test Services in Bangalore | Cadabams Diagnostics';
+      
+    const pageDescription = location
+      ? `Accurate lab results you can rely on. Certified centres in ${locationName}.`
+      : 'Accurate lab results you can rely on. Certified centres in Bangalore.';
 
-  if (notFound) {
-    return <NotFound />;
+    return {
+      props: {
+        testData,
+        baseUrl,
+        locationName,
+        pageTitle,
+        pageDescription,
+        slug
+      }
+    };
+  } catch (error) {
+    console.error('Server-side error:', error);
+    return {
+      notFound: true
+    };
   }
+}
+
+export default function SlugPage({ testData, baseUrl, locationName, pageTitle, pageDescription, slug }) {
+  const router = useRouter();
+  const { location } = router.query;
+  const [error, setError] = useState(null);
 
   if (error) {
     return (
@@ -213,21 +207,13 @@ export default function SlugPage() {
     return <NotFound />;
   }
 
-  const pageTitle = location 
-    ? `Lab Test Services in ${locationName} | Cadabams Diagnostics`
-    : 'Lab Test Services in Bangalore | Cadabams Diagnostics';
-    
-  const pageDescription = location
-    ? `Accurate lab results you can rely on. Certified centres in ${locationName}.`
-    : 'Accurate lab results you can rely on. Certified centres in Bangalore.';
-
   const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test/${slug}`;
 
   return (
     <Layout title={testData.testName || 'Test Page'}>
       <Head>
         {/* Basic Meta Tags */}
-        <title>{testData.seo?.title}</title>
+        <title>{testData.seo?.title || pageTitle}</title>
         <meta name="description" content={testData.seo?.description || pageDescription} />
         <meta 
           name="keywords" 
@@ -243,7 +229,7 @@ export default function SlugPage() {
         
         {/* Enhanced Open Graph Tags */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={testData.seo?.title} />
+        <meta property="og:title" content={testData.seo?.title || pageTitle} />
         <meta property="og:description" content={testData.seo?.description || pageDescription} />
         <meta property="og:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta property="og:url" content={currentUrl} />

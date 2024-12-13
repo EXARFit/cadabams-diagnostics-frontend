@@ -1,101 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { AuthProvider } from '../../contexts/AuthContext';
 import Layout from '../../components/Layout';
 import styles from '../../styles/BlogsHomePage.module.css';
 
-export default function BlogsHomePage() {
-  const [blogPosts, setBlogPosts] = useState([]);
-  const [categories, setCategories] = useState(['All']);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Helper Components
+const BlogImage = ({ src, alt }) => {
+  if (!src) {
+    return (
+      <div className={styles.fallbackImage}>
+        <svg 
+          width="48" 
+          height="48" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2"
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.imageWrapper}>
+      <Image
+        src={src}
+        alt={alt}
+        layout="fill"
+        objectFit="cover"
+        className={styles.blogImage}
+      />
+    </div>
+  );
+};
+
+export async function getServerSideProps() {
+  try {
+    const response = await fetch('https://cadabamsapi.exar.ai/api/v1/cms/blog/');
+    if (!response.ok) {
+      throw new Error('Failed to fetch blog posts');
+    }
+    const blogPosts = await response.json();
+    
+    const uniqueCategories = ['All', ...new Set(blogPosts.map(post => post.categoryName))];
+
+    return {
+      props: {
+        initialBlogPosts: blogPosts,
+        initialCategories: uniqueCategories,
+      }
+    };
+  } catch (error) {
+    console.error('Server-side error:', error);
+    return {
+      props: {
+        initialBlogPosts: [],
+        initialCategories: ['All'],
+        error: 'Failed to load blog posts'
+      }
+    };
+  }
+}
+
+export default function BlogsHomePage({ initialBlogPosts, initialCategories, error: serverError }) {
+  const [blogPosts] = useState(initialBlogPosts);
+  const [categories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    fetchBlogPosts();
-  }, []);
-
-  const fetchBlogPosts = async () => {
-    try {
-      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/cms/blog/');
-      if (!response.ok) {
-        throw new Error('Failed to fetch blog posts');
-      }
-      const data = await response.json();
-      setBlogPosts(data);
-      
-      const uniqueCategories = ['All', ...new Set(data.map(post => post.categoryName))];
-      setCategories(uniqueCategories);
-      
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-    }
-  };
 
   const filteredPosts = blogPosts.filter(post => 
     (activeCategory === 'All' || post.categoryName === activeCategory) &&
     post.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const BlogImage = ({ src, alt }) => {
-    if (!src) {
-      return (
-        <div className={styles.fallbackImage}>
-          <svg 
-            width="48" 
-            height="48" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2"
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-        </div>
-      );
-    }
-
-    return (
-      <div className={styles.imageWrapper}>
-        <Image
-          src={src}
-          alt={alt}
-          layout="fill"
-          objectFit="cover"
-          className={styles.blogImage}
-        />
-      </div>
-    );
-  };
-
-  if (isLoading) {
-    return (
-      <AuthProvider>
-        <Layout title="Loading Blog Posts...">
-          <div className={styles.loadingContainer}>
-            <h2>Loading blog posts...</h2>
-          </div>
-        </Layout>
-      </AuthProvider>
-    );
-  }
-
-  if (error) {
+  if (serverError) {
     return (
       <AuthProvider>
         <Layout title="Error">
           <div className={styles.errorContainer}>
-            <h2>Error: {error}</h2>
-            <button onClick={fetchBlogPosts}>Try Again</button>
+            <h2>Error: {serverError}</h2>
+            <button onClick={() => window.location.reload()}>Try Again</button>
           </div>
         </Layout>
       </AuthProvider>
@@ -105,6 +98,20 @@ export default function BlogsHomePage() {
   return (
     <AuthProvider>
       <Layout title="Cadabam's Health Blog">
+        <Head>
+          <title>Health Blog | Cadabams Diagnostics</title>
+          <meta name="description" content="Discover insights for a healthier you with Cadabams Health Blog. Expert medical advice, health tips, and wellness guides." />
+          <meta name="keywords" content="health blog, medical blog, wellness blog, health tips, medical advice, Cadabams blog" />
+          <meta name="robots" content="index, follow" />
+          <meta property="og:title" content="Health Blog | Cadabams Diagnostics" />
+          <meta property="og:description" content="Discover insights for a healthier you with Cadabams Health Blog." />
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content="https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/3d-happy-cartoon-doctor-cartoon-doctor-on-transparent-background-generative-ai-png-ezgif.com-webp-to-png-converter.webp" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Health Blog | Cadabams Diagnostics" />
+          <meta name="twitter:description" content="Discover insights for a healthier you with Cadabams Health Blog." />
+        </Head>
+
         <div className={styles.container}>
           <motion.div 
             className={styles.headerCard}
