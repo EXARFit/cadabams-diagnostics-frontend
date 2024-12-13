@@ -1,5 +1,5 @@
 import React from 'react';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import TestOverview from './TestOverview';
 import TestDetails from './TestDetails';
 import TestMeasures from './TestMeasures';
@@ -59,45 +59,49 @@ export default function TestPage({ testData }) {
   ];
 
   const sanitizeHTML = (html) => {
-    return { __html: DOMPurify.sanitize(html, purifyConfig) };
+    if (!html) return { __html: '' };
+    try {
+      return { __html: DOMPurify.sanitize(html, purifyConfig) };
+    } catch (error) {
+      console.error('Sanitization error:', error);
+      return { __html: html };
+    }
   };
 
   return (
     <div className={styles.pageContainer}>
-      <style>
-        {`
-          .content ul, .content ol {
-            padding-left: 2rem;
-            margin: 1rem 0;
-          }
-          .content ul ul, .content ol ol,
-          .content ul ol, .content ol ul {
-            margin: 0.5rem 0;
-          }
-          .content li {
-            margin: 0.5rem 0;
-          }
-          .content ul > li {
-            list-style-type: disc;
-          }
-          .content ul > li > ul > li {
-            list-style-type: circle;
-          }
-          .content ul > li > ul > li > ul > li {
-            list-style-type: square;
-          }
-          .content ol > li {
-            list-style-type: decimal;
-          }
-          .content ol > li > ol > li {
-            list-style-type: lower-alpha;
-          }
-          .content ol > li > ol > li > ol > li {
-            list-style-type: lower-roman;
-          }
-        `}
-      </style>
-      <div className={styles.navbar}>{/* Your existing navbar content */}</div>
+      <style jsx global>{`
+        .content ul, .content ol {
+          padding-left: 2rem;
+          margin: 1rem 0;
+        }
+        .content ul ul, .content ol ol,
+        .content ul ol, .content ol ul {
+          margin: 0.5rem 0;
+        }
+        .content li {
+          margin: 0.5rem 0;
+        }
+        .content ul > li {
+          list-style-type: disc;
+        }
+        .content ul > li > ul > li {
+          list-style-type: circle;
+        }
+        .content ul > li > ul > li > ul > li {
+          list-style-type: square;
+        }
+        .content ol > li {
+          list-style-type: decimal;
+        }
+        .content ol > li > ol > li {
+          list-style-type: lower-alpha;
+        }
+        .content ol > li > ol > li > ol > li {
+          list-style-type: lower-roman;
+        }
+      `}</style>
+      <div className={styles.navbar}></div>
       <div className={`${styles.content} content`}>
         <TestOverview basicInfo={basicInfo} />
         <TestDetails basicInfo={basicInfo} requisite={requisite} />
@@ -241,7 +245,6 @@ export default function TestPage({ testData }) {
           </div>
         </ScrollSpyNavigation>
         <RelativeLinks relativeTests={relativeTest} />
-        
       </div>
     </div>
   );

@@ -179,3 +179,41 @@
     font-size: 0.85rem;
   }
 }
+
+.contentList ul, .contentList ol {
+  padding-left: 2rem;
+  margin: 1rem 0;
+}
+
+.contentList ul ul, .contentList ol ol,
+.contentList ul ol, .contentList ol ul {
+  margin: 0.5rem 0;
+}
+
+.contentList li {
+  margin: 0.5rem 0;
+}
+
+.contentList ul > li {
+  list-style-type: disc;
+}
+
+.contentList ul > li > ul > li {
+  list-style-type: circle;
+}
+
+.contentList ul > li > ul > li > ul > li {
+  list-style-type: square;
+}
+
+.contentList ol > li {
+  list-style-type: decimal;
+}
+
+.contentList ol > li > ol > li {
+  list-style-type: lower-alpha;
+}
+
+.contentList ol > li > ol > li > ol > li {
+  list-style-type: lower-roman;
+}

@@ -357,7 +357,7 @@ export default function Checkout() {
             ...appointmentData,
             billDetails: {
               ...appointmentData.billDetails,
-              paymentType: 'PhonePe'
+              paymentType: 'Online'
             }
           },
           appointmentType: collectionMethod === 'home' ? 'home' : 'lab'
@@ -400,10 +400,29 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
-      const currentDate = new Date().toISOString().split('T')[0];
-      const appointmentDateTime = `${currentDate}T08:30:00Z`;
-      const formattedEndDateTime = `${currentDate}T09:30:00Z`;
-      const billDateTime = `${currentDate}T06:41:42Z+05:30`;
+      // Convert selected local time to UTC
+      const [hours, minutes] = selectedTime.split(':');
+      const appointmentDate = new Date(`${selectedDate}T${selectedTime}`);
+      
+      // Create a UTC date by adjusting for the timezone offset
+      const utcDate = new Date(Date.UTC(
+        appointmentDate.getFullYear(),
+        appointmentDate.getMonth(),
+        appointmentDate.getDate(),
+        parseInt(hours),
+        parseInt(minutes)
+      ));
+      
+      const endAppointmentDate = new Date(utcDate.getTime() + 60 * 60 * 1000); // Add 1 hour
+
+      // Format dates in ISO string with 'Z' suffix as per API docs
+      const startDateTime = utcDate.toISOString().replace('.000Z', 'Z');
+      const endDateTime = endAppointmentDate.toISOString().replace('.000Z', 'Z');
+      
+      // Format bill date with timezone as per API docs
+      const billDate = new Date().toISOString()
+        .replace('.000Z', '')
+        + '+05:30';
 
       const appointmentData = {
         countryCode: "91",
@@ -436,17 +455,17 @@ export default function Checkout() {
         areaOfResidence: userDetails.area,
         state: "Karnataka",
         isAppointmentRequest: 1,
-        startDate: appointmentDateTime,
-        endDate: formattedEndDateTime,
-        sampleCollectionDate: appointmentDateTime,
+        startDate: startDateTime,
+        endDate: endDateTime,
+        sampleCollectionDate: startDateTime,
         billDetails: {
           emergencyFlag: "0",
           totalAmount: totalPrice.toString(),
           advance: "0",
           billConcession: "0",
           additionalAmount: "0",
-          billDate: billDateTime,
-          paymentType: paymentMethod === 'cash' ? 'Cash' : 'PhonePe',
+          billDate: billDate,
+          paymentType: paymentMethod === 'cash' ? 'Cash' : 'Online',
           referralName: "Self",
           otherReferral: "",
           sampleId: `SP${Date.now()}`,
@@ -462,7 +481,7 @@ export default function Checkout() {
             dictionaryId: ""
           })),
           paymentList: [{
-            paymentType: paymentMethod === 'cash' ? 'Cash' : 'PhonePe',
+            paymentType: paymentMethod === 'cash' ? 'Cash' : 'Online',
             paymentAmount: totalPrice.toString(),
             issueBank: ""
           }]
@@ -471,19 +490,17 @@ export default function Checkout() {
 
       if (collectionMethod === 'home') {
         appointmentData.isHomecollection = 1;
-        appointmentData.homeCollectionDateTime = appointmentDateTime;
+        appointmentData.homeCollectionDateTime = startDateTime;
         appointmentData.address = userDetails.address;
       }
 
       const paymentResponse = await handlePayment(appointmentData);
 
-      // If it's a PhonePe payment and we got redirected, we don't need to do anything else
       if (paymentMethod === 'phonePe' && !paymentResponse) {
         return;
       }
 
       if (paymentResponse?.data?.code === 200) {
-        // For successful cash payments, show thank you modal
         setBookingDetails({
           patientId: paymentResponse.data.patientId,
           billId: paymentResponse.data.billId,
@@ -491,7 +508,6 @@ export default function Checkout() {
         });
         setIsThankYouModalOpen(true);
       } else {
-        // For other cases, redirect to payment page
         router.push({
           pathname: '/payment',
           query: {
