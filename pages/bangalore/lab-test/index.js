@@ -52,7 +52,7 @@ const generateSchemas = (locationName, baseUrl, location) => {
       encodingFormat: 'audio/mpeg',
       name: ''
     },
-    hasMap: 'https://www.google.com/maps',
+    hasMap: 'https://google.com/maps',
     audience: {
       '@type': 'MedicalAudience',
       audienceType: 'Patients',
@@ -65,13 +65,13 @@ const generateSchemas = (locationName, baseUrl, location) => {
       '@type': 'Person',
       name: 'Dr. Shreyas Cadabam',
       jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-      url: 'https://www.cadabamsdiagnostics.com/clinical-team',
+      url: 'https://cadabamsdiagnostics.com/clinical-team',
       sameAs: [
-        'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
-        'https://www.instagram.com/cadabams_diagnostics/',
-        'https://www.facebook.com/cadabamsdiagnostics',
+        'https://linkedin.com/in/shreyas-cadabam-30a2429a/',
+        'https://instagram.com/cadabams_diagnostics/',
+        'https://facebook.com/cadabamsdiagnostics',
         'https://twitter.com/CadabamsDX',
-        'https://www.linkedin.com/company/cadabam\'s-group/'
+        'https://linkedin.com/company/cadabam\'s-group/'
       ],
       hasOccupation: {
         '@type': 'Occupation',
@@ -136,7 +136,7 @@ const generateSchemas = (locationName, baseUrl, location) => {
 
 export async function getServerSideProps(context) {
   const { location } = context.query;
-  const baseUrl = 'https://www.cadabamsdiagnostics.com';
+  const baseUrl = 'https://cadabamsdiagnostics.com';
   const locationName = capitalizeLocation(location);
 
   try {

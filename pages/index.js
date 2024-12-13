@@ -40,7 +40,7 @@ const PageHead = ({ pageTitle, pageDescription, currentUrl, faqData }) => {
       "email": "info@cadabamsdiagnostics.com",
       "foundingDate": "2020",
       "description": pageDescription,
-      "logo": "https://www.cadabamsdiagnostics.com/images/logo.png",
+      "logo": "https://cadabamsdiagnostics.com/images/logo.png",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+91-80-2545-7777",
@@ -55,11 +55,11 @@ const PageHead = ({ pageTitle, pageDescription, currentUrl, faqData }) => {
         "reviewCount": "1250"
       },
       "sameAs": [
-        "https://www.instagram.com/cadabamsdiagnostics",
-        "https://www.facebook.com/CadabamsDiagnostics",
-        "https://www.youtube.com/c/CadabamsDiagnostics",
-        "https://www.linkedin.com/company/cadabams-diagnostics",
-        "https://www.cadabamsdiagnostics.com"
+        "https://instagram.com/cadabamsdiagnostics",
+        "https://facebook.com/CadabamsDiagnostics",
+        "https://youtube.com/c/CadabamsDiagnostics",
+        "https://linkedin.com/company/cadabams-diagnostics",
+        "https://cadabamsdiagnostics.com"
       ]
     }
   ];
@@ -76,7 +76,7 @@ const PageHead = ({ pageTitle, pageDescription, currentUrl, faqData }) => {
       <meta property="og:description" content={pageDescription} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={currentUrl} />
-      <meta property="og:image" content="https://www.cadabamsdiagnostics.com/images/og-image.jpg" />
+      <meta property="og:image" content="https://cadabamsdiagnostics.com/images/og-image.jpg" />
       <meta property="og:site_name" content="Cadabam's Diagnostics" />
 
       {/* Schema.org structured data */}
@@ -255,7 +255,7 @@ export default function BangalorePage() {
 
   const pageTitle = `Cadabam's Diagnostics${params.length > 0 ? ` - ${params.join(' / ')}` : ''} | Best Diagnostic Center in Bangalore`;
   const pageDescription = "Cadabam's Diagnostics offers comprehensive diagnostic services including blood tests, scans, and health checkups. Book your diagnostic tests online or get home sample collection in Bangalore.";
-  const currentUrl = `https://www.cadabamsdiagnostics.com${router.asPath}`;
+  const currentUrl = `https://cadabamsdiagnostics.com${router.asPath}`;
 
   const pageContent = (
     <AuthProvider>
