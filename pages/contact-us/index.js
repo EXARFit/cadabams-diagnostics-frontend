@@ -1,4 +1,3 @@
-// pages/contact/index.js
 import { useState } from 'react';
 import Head from 'next/head';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -35,20 +34,33 @@ export default function ContactPage() {
             {JSON.stringify({
               "@context": "https://schema.org",
               "@type": "ContactPage",
-              "name": "Contact Cadabam's Diagnostics",
-              "description": "Contact page for Cadabam's Diagnostics - Leading diagnostic center in Bangalore",
               "url": "https://cadabamsdiagnostics.com/contact-us",
               "mainEntity": {
-                "@type": "Organization",
-                "name": "Cadabam's Diagnostics",
-                "telephone": "+91-80-2323-2323",
-                "email": "info@cadabamsdiagnostics.com",
+                "@type": "MedicalOrganization",
+                "name": "Cadabams Diagnostics",
+                "url": "https://cadabamsdiagnostics.com",
+                "contactPoint": [
+                  {
+                    "@type": "ContactPoint",
+                    "telephone": "+91-9741476476",
+                    "contactType": "customer service",
+                    "areaServed": "IN",
+                    "availableLanguage": ["English"]
+                  },
+                  {
+                    "@type": "ContactPoint",
+                    "telephone": "+91-7353226622",
+                    "contactType": "emergency",
+                    "areaServed": "IN",
+                    "availableLanguage": ["English"]
+                  }
+                ],
                 "address": {
                   "@type": "PostalAddress",
-                  "streetAddress": "19th Main Road, HSR Layout",
+                  "streetAddress": "17th Mile, Kanakapura Road, Gulakamale Post",
                   "addressLocality": "Bangalore",
-                  "postalCode": "560102",
                   "addressRegion": "Karnataka",
+                  "postalCode": "560082",
                   "addressCountry": "IN"
                 }
               }
