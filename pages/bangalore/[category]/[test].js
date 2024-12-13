@@ -99,7 +99,7 @@ const generateSchemas = (data, baseUrl, test) => {
       '@type': 'Person',
       name: 'Dr. Shreyas Cadabam',
       jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-      url: 'https://www.cadabamsdiagnostics.com/clinical-team',
+      url: 'https://cadabamsdiagnostics.com/clinical-team',
       sameAs: [
         'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
         'https://www.instagram.com/cadabams_diagnostics/',
@@ -217,7 +217,7 @@ export async function getServerSideProps({ params }) {
 export default function TestDetailPage({ testData, error, invalidCategory }) {
   const router = useRouter();
   const { test } = router.query;
-  const baseUrl = 'https://www.cadabamsdiagnostics.com';
+  const baseUrl = 'https://cadabamsdiagnostics.com';
   const testType = getTestType(test);
 
   if (!test) {

@@ -45,7 +45,7 @@ const capitalizeLocation = (loc) => {
 export async function getServerSideProps({ params, query, res }) {
   const { category } = params;
   const location = query.location || null;
-  const baseUrl = 'https://www.cadabamsdiagnostics.com';
+  const baseUrl = 'https://cadabamsdiagnostics.com';
 
   try {
     const response = await axios.get(`${API_BASE_URL}/${category}`);
@@ -103,7 +103,7 @@ export async function getServerSideProps({ params, query, res }) {
 
 export default function CategoryPage({ categoryData, seoData, category, location, error }) {
   const router = useRouter();
-  const baseUrl = 'https://www.cadabamsdiagnostics.com';
+  const baseUrl = 'https://cadabamsdiagnostics.com';
 
   // Generate schemas for the page
   const generateSchemas = (seoData, categoryData, location) => {
@@ -139,7 +139,7 @@ export default function CategoryPage({ categoryData, seoData, category, location
         '@type': 'Person',
         name: 'Dr. Shreyas Cadabam',
         jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-        url: 'https://www.cadabamsdiagnostics.com/clinical-team',
+        url: 'https://cadabamsdiagnostics.com/clinical-team',
         sameAs: [
           'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
           'https://www.instagram.com/cadabams_diagnostics/',
