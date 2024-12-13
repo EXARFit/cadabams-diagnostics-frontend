@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import NonLabTestPage from '@/components/NonLabTestPage';
+import NotFound from '@/components/NotFound';
 import { fetchTestData } from '@/utils/api';
 import styles from '../../../styles/TestPage.module.css';
 
@@ -14,12 +15,12 @@ const getTestType = (test = '') => {
   if (test.includes('ct')) return 'ct-scan';
   if (test.includes('ultrasound')) return 'ultrasound-scan';
   if (test.includes('pregnancy')) return 'pregnancy-scan';
-  return 'radiology-scan';
-
+  return null; // Return null for non-matching categories
 };
 
 // Helper function to format test type for display in UI
 const formatTestType = (testType) => {
+  if (!testType) return '';
   return testType
     .split('-')
     .map(word => {
@@ -42,7 +43,7 @@ const getRelatedTestUrl = (testRoute) => {
   if (!testRoute) return '';
   const cleanRoute = cleanPath(testRoute);
   const category = getTestType(cleanRoute);
-  return `/bangalore/${category}/${cleanRoute}`;
+  return category ? `/bangalore/${category}/${cleanRoute}` : '';
 };
 
 // Breadcrumb Component
@@ -65,6 +66,8 @@ const Breadcrumb = ({ title, testType }) => (
 // Schema Generator Function
 const generateSchemas = (data, baseUrl, test) => {
   const testType = getTestType(test);
+  
+  if (!testType) return [];
   
   // Medical Webpage Schema
   const medicalWebpageSchema = {
@@ -176,6 +179,18 @@ const generateSchemas = (data, baseUrl, test) => {
 // Get server-side props
 export async function getServerSideProps({ params }) {
   const { test } = params;
+  const testType = getTestType(test);
+
+  // Return early if test type is not recognized
+  if (!testType) {
+    return {
+      props: {
+        testData: null,
+        error: null,
+        invalidCategory: true
+      }
+    };
+  }
 
   try {
     const testData = await fetchTestData(test);
@@ -183,7 +198,8 @@ export async function getServerSideProps({ params }) {
     return {
       props: {
         testData,
-        error: null
+        error: null,
+        invalidCategory: false
       }
     };
   } catch (error) {
@@ -191,16 +207,18 @@ export async function getServerSideProps({ params }) {
     return {
       props: {
         testData: null,
-        error: 'Failed to fetch test data'
+        error: 'Failed to fetch test data',
+        invalidCategory: false
       }
     };
   }
 }
 
-export default function TestDetailPage({ testData, error }) {
+export default function TestDetailPage({ testData, error, invalidCategory }) {
   const router = useRouter();
   const { test } = router.query;
   const baseUrl = 'https://www.cadabamsdiagnostics.com';
+  const testType = getTestType(test);
 
   if (!test) {
     return (
@@ -208,6 +226,14 @@ export default function TestDetailPage({ testData, error }) {
         <div className={styles.loadingContainer}>
           <h2>Loading...</h2>
         </div>
+      </Layout>
+    );
+  }
+
+  if (invalidCategory) {
+    return (
+      <Layout title="Test Not Found">
+        <NotFound />
       </Layout>
     );
   }
@@ -231,14 +257,11 @@ export default function TestDetailPage({ testData, error }) {
   if (!testData) {
     return (
       <Layout title="Not Found">
-        <div className={styles.notFoundContainer}>
-          <h2>Test not found</h2>
-        </div>
+        <NotFound />
       </Layout>
     );
   }
 
-  const testType = getTestType(test);
   const currentUrl = `${baseUrl}/bangalore/${testType}/${test}`;
   const relatedTests = testData?.alldata?.[13]?.relative_test?.tests || [];
 
@@ -324,6 +347,7 @@ export default function TestDetailPage({ testData, error }) {
               <div className={styles.relatedTestsGrid}>
                 {relatedTests.map((relatedTest) => {
                   const url = getRelatedTestUrl(relatedTest.route);
+                  if (!url) return null; // Skip invalid categories
                   return (
                     <Link
                       key={relatedTest._id}
