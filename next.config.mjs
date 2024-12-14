@@ -36,7 +36,16 @@ const nextConfig = {
 
     // Flatten array of redirect pairs
     return [
-      // New redirects
+      // New redirects from the spreadsheet
+      ...createRedirectPair('/bangalore/lab-test/complete-blood-count-test-cbc', '/bangalore/lab-test/complete-blood-count-cbc'),
+      ...createRedirectPair('/bangalore/lab-test/diabetes-test-dt', '/bangalore/lab-test/diabetes-sugar-test-dst'),
+      ...createRedirectPair('/blog/page/2', '/'),
+      ...createRedirectPair('/blogs/difference-between-mri-and-x-ray', '/blogs/difference-between-mri-and-xray'),
+      ...createRedirectPair('/blogs/understanding-ecg-readings', '/blogs'),
+      ...createRedirectPair('/pelvic-scan-bangalore', '/bangalore/ultrasound-scan/ultrasound-of-transvaginal-scan-tvs'),
+      ...createRedirectPair('/x-ray-ultrasound', '/xray-scan'),
+
+      // Existing redirects
       ...createRedirectPair('/pathology-lab-bangalore', '/'),
       ...createRedirectPair('/health-test-packages-bangalore', '/'),
       ...createRedirectPair('/laboratory', '/'),
