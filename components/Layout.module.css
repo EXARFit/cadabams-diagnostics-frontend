@@ -28,6 +28,57 @@
   z-index: 30;
 }
 
+/* Floating Call Button Styles */
+.floatingCall {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.callIcon {
+  background-color: #dc3545;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+  color: white;
+}
+
+.callIcon:hover {
+  transform: scale(1.1);
+  background-color: #c82333;
+}
+
+.callTooltip {
+  background-color: white;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-right: 12px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  position: absolute;
+  right: 70px;
+  white-space: nowrap;
+}
+
+.floatingCall:hover .callTooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 0rem;
@@ -42,5 +93,13 @@
     margin-bottom: 80px;
     position: relative;
     z-index: 1;
+  }
+
+  .callTooltip {
+    display: none; /* Hide tooltip on mobile */
+  }
+
+  .floatingCall {
+    bottom: 70px; /* Position above the mobile cart summary */
   }
 }
