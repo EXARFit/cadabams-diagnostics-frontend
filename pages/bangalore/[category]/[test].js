@@ -64,9 +64,7 @@ const Breadcrumb = ({ title, testType }) => (
 );
 
 // Schema Generator Function
-const generateSchemas = (data, baseUrl, test) => {
-  const testType = getTestType(test);
-  
+const generateSchemas = (data, currentUrl, test, testType) => {
   if (!testType) return [];
   
   // Medical Webpage Schema
@@ -75,7 +73,7 @@ const generateSchemas = (data, baseUrl, test) => {
     '@type': 'MedicalWebPage',
     name: data.seo?.title || `${data.testName} at Cadabams`,
     description: data.seo?.description || `Learn about ${data.testName} at Cadabams`,
-    url: `${baseUrl}/bangalore/${testType}/${test}`,
+    url: currentUrl,
     image: data.imageUrl || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
     citation: 'https://',
     audio: {
@@ -156,19 +154,19 @@ const generateSchemas = (data, baseUrl, test) => {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: baseUrl
+        item: 'https://cadabamsdiagnostics.com'
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: formatTestType(testType),
-        item: `${baseUrl}/bangalore/${testType}`
+        item: `https://cadabamsdiagnostics.com/${testType}`
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: data.testName,
-        item: `${baseUrl}/bangalore/${testType}/${test}`
+        item: currentUrl
       }
     ]
   };
@@ -177,9 +175,10 @@ const generateSchemas = (data, baseUrl, test) => {
 };
 
 // Get server-side props
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, req }) {
   const { test } = params;
   const testType = getTestType(test);
+  const hasBangalore = req.url.includes('/bangalore/');
 
   // Return early if test type is not recognized
   if (!testType) {
@@ -187,7 +186,8 @@ export async function getServerSideProps({ params }) {
       props: {
         testData: null,
         error: null,
-        invalidCategory: true
+        invalidCategory: true,
+        hasBangalore
       }
     };
   }
@@ -199,7 +199,8 @@ export async function getServerSideProps({ params }) {
       props: {
         testData,
         error: null,
-        invalidCategory: false
+        invalidCategory: false,
+        hasBangalore
       }
     };
   } catch (error) {
@@ -208,17 +209,21 @@ export async function getServerSideProps({ params }) {
       props: {
         testData: null,
         error: 'Failed to fetch test data',
-        invalidCategory: false
+        invalidCategory: false,
+        hasBangalore
       }
     };
   }
 }
 
-export default function TestDetailPage({ testData, error, invalidCategory }) {
+export default function TestDetailPage({ testData, error, invalidCategory, hasBangalore }) {
   const router = useRouter();
   const { test } = router.query;
   const baseUrl = 'https://cadabamsdiagnostics.com';
   const testType = getTestType(test);
+  const currentUrl = hasBangalore 
+    ? `${baseUrl}/bangalore/${testType}/${test}`
+    : `${baseUrl}/${testType}/${test}`;
 
   if (!test) {
     return (
@@ -262,8 +267,8 @@ export default function TestDetailPage({ testData, error, invalidCategory }) {
     );
   }
 
-  const currentUrl = `${baseUrl}/bangalore/${testType}/${test}`;
   const relatedTests = testData?.alldata?.[13]?.relative_test?.tests || [];
+  const schemas = generateSchemas(testData, currentUrl, test, testType);
 
   return (
     <Layout title={testData.testName || 'Test Page'}>
@@ -328,7 +333,7 @@ export default function TestDetailPage({ testData, error, invalidCategory }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateSchemas(testData, baseUrl, test))
+            __html: JSON.stringify(schemas)
           }}
         />
       </Head>

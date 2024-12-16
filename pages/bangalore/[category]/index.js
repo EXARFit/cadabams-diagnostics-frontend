@@ -10,7 +10,6 @@ import styles from '../Category.module.css';
 
 const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
 
-// Helper function to format category titles
 const formatCategoryTitle = (category) => {
   const titles = {
     'mri-scan': 'MRI Scan Centre',
@@ -42,10 +41,13 @@ const capitalizeLocation = (loc) => {
     .join(' ');
 };
 
-export async function getServerSideProps({ params, query, res }) {
+export async function getServerSideProps({ params, query, res, req }) {
   const { category } = params;
   const location = query.location || null;
   const baseUrl = 'https://cadabamsdiagnostics.com';
+  
+  // Check if the URL includes bangalore
+  const hasBangalore = req.url.includes('/bangalore/');
 
   try {
     const response = await axios.get(`${API_BASE_URL}/${category}`);
@@ -62,7 +64,9 @@ export async function getServerSideProps({ params, query, res }) {
     const locationName = capitalizeLocation(location || '');
     const categoryTitle = formatCategoryTitle(category);
     const categoryDesc = formatCategoryDescription(category);
-    const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}${category}`;
+    const currentUrl = hasBangalore 
+      ? `${baseUrl}/bangalore/${category}`
+      : `${baseUrl}/${category}`;
 
     const seoData = {
       title: `${categoryTitle} in ${locationName} | Cadabam's Diagnostics`,
@@ -73,10 +77,12 @@ export async function getServerSideProps({ params, query, res }) {
     };
 
     // Set cache headers
-    res.setHeader(
-      'Cache-Control',
-      'public, s-maxage=60, stale-while-revalidate=300'
-    );
+    if (res) {
+      res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=60, stale-while-revalidate=300'
+      );
+    }
 
     return {
       props: {
@@ -84,7 +90,8 @@ export async function getServerSideProps({ params, query, res }) {
         seoData,
         category,
         location: location || null,
-        error: null
+        error: null,
+        hasBangalore
       }
     };
   } catch (error) {
@@ -95,15 +102,19 @@ export async function getServerSideProps({ params, query, res }) {
         seoData: null,
         category: category || null,
         location: location || null,
-        error: 'Failed to fetch category data'
+        error: 'Failed to fetch category data',
+        hasBangalore
       }
     };
   }
 }
 
-export default function CategoryPage({ categoryData, seoData, category, location, error }) {
+export default function CategoryPage({ categoryData, seoData, category, location, error, hasBangalore }) {
   const router = useRouter();
   const baseUrl = 'https://cadabamsdiagnostics.com';
+  const currentUrl = hasBangalore 
+    ? `${baseUrl}/bangalore/${category}`
+    : `${baseUrl}/${category}`;
 
   // Generate schemas for the page
   const generateSchemas = (seoData, categoryData, location) => {
@@ -115,7 +126,7 @@ export default function CategoryPage({ categoryData, seoData, category, location
       '@type': 'MedicalWebPage',
       name: seoData.title,
       description: seoData.description,
-      url: seoData.url,
+      url: currentUrl,
       image: seoData.imageUrl,
       citation: 'https://',
       audio: {
@@ -208,7 +219,7 @@ export default function CategoryPage({ categoryData, seoData, category, location
           '@type': 'ListItem',
           position: 3,
           name: categoryData.name,
-          item: seoData.url
+          item: currentUrl
         }
       ]
     };
@@ -256,14 +267,14 @@ export default function CategoryPage({ categoryData, seoData, category, location
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
-        <link rel="canonical" href={seoData.url} />
+        <link rel="canonical" href={currentUrl} />
         
         {/* Open Graph Tags */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={seoData.title} />
         <meta property="og:description" content={seoData.description} />
         <meta property="og:image" content={seoData.imageUrl} />
-        <meta property="og:url" content={seoData.url} />
+        <meta property="og:url" content={currentUrl} />
         <meta property="og:site_name" content="Cadabams Diagnostics" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:brand" content="Cadabams Diagnostics" />

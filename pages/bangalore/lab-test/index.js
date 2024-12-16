@@ -26,8 +26,11 @@ const capitalizeLocation = (loc) => {
 };
 
 // Generate schemas for the page
-const generateSchemas = (locationName, baseUrl, location) => {
-  const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`;
+const generateSchemas = (locationName, baseUrl, location, hasBangalore) => {
+  const currentUrl = hasBangalore
+    ? `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`
+    : `${baseUrl}/${location ? `${location}/` : ''}lab-test`;
+    
   const pageTitle = location 
     ? `Reliable Lab Tests in ${locationName} | Cadabams Diagnostics`
     : 'Reliable Lab Tests in Bangalore | Cadabams Diagnostics';
@@ -134,10 +137,11 @@ const generateSchemas = (locationName, baseUrl, location) => {
   return [medicalWebpageSchema, breadcrumbSchema];
 };
 
-export async function getServerSideProps(context) {
-  const { location } = context.query;
+export async function getServerSideProps({ query, req }) {
+  const { location } = query;
   const baseUrl = 'https://cadabamsdiagnostics.com';
   const locationName = capitalizeLocation(location);
+  const hasBangalore = req.url.includes('/bangalore/');
 
   try {
     const response = await axios.get(API_BASE_URL);
@@ -151,7 +155,9 @@ export async function getServerSideProps(context) {
       ? `Get accurate and reliable lab test services in ${locationName} at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!`
       : 'Get accurate and reliable lab test services in Bangalore at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!';
 
-    const currentUrl = `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`;
+    const currentUrl = hasBangalore
+      ? `${baseUrl}/bangalore/${location ? `${location}/` : ''}lab-test`
+      : `${baseUrl}/${location ? `${location}/` : ''}lab-test`;
 
     return {
       props: {
@@ -161,7 +167,8 @@ export async function getServerSideProps(context) {
         pageTitle,
         pageDescription,
         currentUrl,
-        location: location || null
+        location: location || null,
+        hasBangalore
       }
     };
   } catch (error) {
@@ -172,7 +179,8 @@ export async function getServerSideProps(context) {
         error: 'Failed to fetch data',
         baseUrl,
         locationName,
-        location: location || null
+        location: location || null,
+        hasBangalore
       }
     };
   }
@@ -186,9 +194,10 @@ export default function LabtestPage({
   pageDescription, 
   currentUrl,
   location,
-  error 
+  error,
+  hasBangalore
 }) {
-  const schemas = generateSchemas(locationName, baseUrl, location);
+  const schemas = generateSchemas(locationName, baseUrl, location, hasBangalore);
 
   if (error) {
     return (
