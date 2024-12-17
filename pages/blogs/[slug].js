@@ -9,7 +9,7 @@ import Layout from '../../components/Layout';
 import NotFound from '../../components/NotFound';
 import styles from '../../styles/BlogPost.module.css';
 
-// Schema Generator Function (unchanged)
+// Schema Generator Function
 const generateSchemas = (data, baseUrl, slug) => {
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -91,7 +91,6 @@ const generateSchemas = (data, baseUrl, slug) => {
   return [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
 };
 
-// Component definitions (unchanged)
 const Breadcrumb = ({ title }) => (
   <div className={styles.breadcrumb}>
     <Link href="/" className={styles.breadcrumbLink}>Home</Link>
@@ -122,14 +121,15 @@ const ImageWithFallback = ({ src, alt, width, height }) => {
   );
 };
 
-const RecentBlogCard = ({ title, date }) => (
+const RecentBlogCard = ({ title, slug }) => (
   <motion.div   
     className={styles.recentBlogCard}
     whileHover={{ scale: 1.05 }}
     transition={{ duration: 0.2 }}
   >
-    <h4>{title}</h4>
-    <p>{date}</p>
+    <Link href={`/blogs/${slug}`}>
+      <h4>{title}</h4>
+    </Link>
   </motion.div>
 );
 
@@ -343,7 +343,6 @@ const FAQSection = ({ faqs }) => {
   );
 };
 
-// Server-side data fetching
 export async function getServerSideProps(context) {
   const { slug } = context.params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cadabamsdiagnostics.com';
@@ -365,11 +364,8 @@ export async function getServerSideProps(context) {
       return { notFound: true };
     }
 
-    // Clean and process the content
     if (blogData.content) {
-      // First, handle any JSON string encoding
       try {
-        // If content is a JSON string, parse it
         if (typeof blogData.content === 'string' && 
             (blogData.content.startsWith('"') || blogData.content.startsWith("'"))) {
           blogData.content = JSON.parse(blogData.content);
@@ -378,16 +374,14 @@ export async function getServerSideProps(context) {
         console.error('Error parsing content JSON:', e);
       }
 
-      // Clean up the content
       blogData.content = blogData.content
-        .replace(/^["']+|["']+$/g, '') // Remove quotes at start/end
-        .replace(/\\"/g, '"')          // Fix escaped quotes
-        .replace(/\\'/g, "'")          // Fix escaped single quotes
-        .replace(/\\\\/g, '\\')        // Fix double escaped backslashes
-        .replace(/\\n/g, '\n')         // Handle newlines
-        .replace(/\\t/g, '\t');        // Handle tabs
+        .replace(/^["']+|["']+$/g, '')
+        .replace(/\\"/g, '"')
+        .replace(/\\'/g, "'")
+        .replace(/\\\\/g, '\\')
+        .replace(/\\n/g, '\n')
+        .replace(/\\t/g, '\t');
 
-      // Process HTML links
       blogData.content = blogData.content.replace(
         /<a\s+href=\\*"([^"]+)"([^>]*)>/g,
         (match, url, attrs) => {
@@ -403,7 +397,6 @@ export async function getServerSideProps(context) {
         }
       );
 
-      // Final cleanup for any leftover escaped characters
       blogData.content = blogData.content
         .replace(/&quot;/g, '"')
         .replace(/&#34;/g, '"')
@@ -411,14 +404,12 @@ export async function getServerSideProps(context) {
         .replace(/&#39;/g, "'");
     }
 
-    // Clean up FAQs
     if (blogData.faqs && blogData.faqs.length > 0) {
       try {
         let faqs = blogData.faqs[0];
         
-        // If FAQs is a string, try to parse it
         if (typeof faqs === 'string') {
-          faqs = faqs.replace(/^["']+|["']+$/g, ''); // Remove wrapping quotes
+          faqs = faqs.replace(/^["']+|["']+$/g, '');
           const parsedFaqs = JSON.parse(faqs);
           blogData.faqs = [JSON.stringify(parsedFaqs)];
         }
@@ -442,14 +433,12 @@ export async function getServerSideProps(context) {
   }
 }
 
-// Helper function to get doctor name
 const getDoctorName = (verifiedBy) => {
   if (verifiedBy === 'Doctor A') return 'Dr. Shreyas Cadabam';
   if (verifiedBy === 'Doctor B') return 'Dr. Divya Cadabam';
   return verifiedBy;
 };
 
-// Main component
 export default function BlogPost({ blogData, baseUrl, slug }) {
   const router = useRouter();
 
@@ -523,7 +512,34 @@ export default function BlogPost({ blogData, baseUrl, slug }) {
             <aside className={styles.sidebar}>
               <div className={styles.recentBlogs}>
                 <h3>Recent Blogs</h3>
-                <RecentBlogCard title="Sample Recent Blog" date="May 15, 2023" />
+                <RecentBlogCard 
+                  title="Difference Between PET Scans and CT Scans"
+                  slug="difference-between-pet-scans-and-ct-scans"
+                />
+                <RecentBlogCard 
+                  title="Difference Between ECG Test and Echo Test"
+                  slug="difference-between-ecg-test-and-echo-test"
+                />
+                <RecentBlogCard 
+                  title="Difference Between Ultrasound and CT Scan"
+                  slug="difference-between-ultrasound-and-ct-scan"
+                />
+                <RecentBlogCard 
+                  title="Understanding Thyroid Stimulating Hormone (TSH) Levels"
+                  slug="understanding-thyroid-stimulating-hormone-tsh-levels"
+                />
+                <RecentBlogCard 
+                  title="Understanding Anomaly Scan During Pregnancy"
+                  slug="understanding-anomaly-scan-during-pregnancy"
+                />
+                <RecentBlogCard 
+                  title="Understanding Fetal Doppler Scans"
+                  slug="understanding-fetal-doppler-scans"
+                />
+                <RecentBlogCard 
+                  title="Understanding Nuchal Translucency Scan During Pregnancy"
+                  slug="understanding-nuchal-translucency-scan-during-pregnancy"
+                />
               </div>
               
               <div className={styles.categories}>

@@ -65,7 +65,7 @@ export async function getServerSideProps({ params, query, res, req }) {
     const categoryTitle = formatCategoryTitle(category);
     const categoryDesc = formatCategoryDescription(category);
     const currentUrl = hasBangalore 
-      ? `${baseUrl}/bangalore/${category}`
+      ? `${baseUrl}/bangalore${location ? `/${location}` : ''}/${category}`
       : `${baseUrl}/${category}`;
 
     const seoData = {
@@ -113,7 +113,7 @@ export default function CategoryPage({ categoryData, seoData, category, location
   const router = useRouter();
   const baseUrl = 'https://cadabamsdiagnostics.com';
   const currentUrl = hasBangalore 
-    ? `${baseUrl}/bangalore/${category}`
+    ? `${baseUrl}/bangalore${location ? `/${location}` : ''}/${category}`
     : `${baseUrl}/${category}`;
 
   // Generate schemas for the page
@@ -213,7 +213,9 @@ export default function CategoryPage({ categoryData, seoData, category, location
           '@type': 'ListItem',
           position: 2,
           name: locationName,
-          item: `${baseUrl}/bangalore/${location || ''}`
+          item: hasBangalore 
+            ? `${baseUrl}/bangalore${location ? `/${location}` : ''}`
+            : baseUrl
         },
         {
           '@type': 'ListItem',
