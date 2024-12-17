@@ -93,7 +93,7 @@ const nextConfig = {
       ...createRedirectPair('/sonomammography-scan-bangalore', '/bangalore/ultrasound-scan/sonomammography-ultrasound-scan'),
       ...createRedirectPair('/thyroid-scan-bangalore', '/bangalore/ultrasound-scan/thyroid-scan'),
       ...createRedirectPair('/echocardiography-test-in-bangalore', '/bangalore/ultrasound-scan/echocardiogram-testing'),
-      ...createRedirectPair('/elastography-test-in-bangalore', '/bangalore/ultrasound-scan/elastography-test'),
+      ...createRedirectPair('/elastography-test-in-bangalore', '/bangalore/ultrasound-scan/elastography-ultrasound-test'),
       ...createRedirectPair('/kidney-blood-test-bangalore', '/bangalore/lab-test/kidney-function-test-kft'),
       ...createRedirectPair('/liver-blood-test-bangalore', '/bangalore/lab-test/liver-function-test-lft'),
       ...createRedirectPair('/perianal-imaging-center-in-bangalore', '/bangalore/mri-scan/perianal-imaging-center'),
