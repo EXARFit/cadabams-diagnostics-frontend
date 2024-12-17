@@ -98,7 +98,7 @@ const nextConfig = {
       ...createRedirectPair('/liver-blood-test-bangalore', '/bangalore/lab-test/liver-function-test-lft'),
       ...createRedirectPair('/perianal-imaging-center-in-bangalore', '/bangalore/mri-scan/perianal-imaging-center'),
       ...createRedirectPair('/pregnancy-ultrasound-in-bangalore', '/bangalore/pregnancy-scan/pregnancy-ultrasound-scan'),
-      ...createRedirectPair('/msk-scans-in-bangalore', '/bangalore/mri-scan'),
+      ...createRedirectPair('/msk-scans-in-bangalore', '/bangalore/msk-scan'),
       ...createRedirectPair('/ultrasound-scan-bangalore', '/bangalore/ultrasound-scan'),
       ...createRedirectPair('/xray-centre-in-bangalore', '/bangalore/xray-scan'),
 
