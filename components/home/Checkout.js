@@ -28,6 +28,19 @@ const formatMobile = (mobile) => {
   return mobile.replace(/\D/g, '');
 };
 
+// Date formatting helper for IST
+const formatToIST = (date) => {
+  // Create a new date object
+  const istDate = new Date(date);
+  
+  // Convert to IST (UTC+5:30)
+  const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+  const istTime = new Date(istDate.getTime() + istOffset);
+  
+  // Format as required by the API: "YYYY-MM-DDTHH:mm:ssZ+05:30"
+  return istTime.toISOString().replace('.000Z', '') + '+05:30';
+};
+
 const mapContainerStyle = {
   width: '100%',
   height: '400px'
@@ -67,7 +80,7 @@ export default function Checkout() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false);
   const [bookingDetails, setBookingDetails] = useState(null);
-  const { cart } = useContext(CartContext);
+  const { cart, clearCart } = useContext(CartContext);
   const router = useRouter();
 
   // Form processing states
@@ -344,27 +357,38 @@ export default function Checkout() {
     return Object.keys(errors).length === 0;
   };
 
-  // Payment handler
+  // Payment handler with updated logic
   const handlePayment = async (appointmentData) => {
     try {
+      let updatedAppointmentData = {
+        ...appointmentData,
+        billDetails: {
+          ...appointmentData.billDetails,
+          totalAmount: paymentMethod === 'phonePe' ? appointmentData.billDetails.totalAmount : "0",
+          advance: paymentMethod === 'phonePe' ? appointmentData.billDetails.totalAmount : "0",
+          paymentType: paymentMethod === 'cash' ? 'Cash' : 'Online',
+          paymentList: [{
+            paymentType: paymentMethod === 'cash' ? 'Cash' : 'Online',
+            paymentAmount: paymentMethod === 'phonePe' ? appointmentData.billDetails.totalAmount : "0",
+            issueBank: ""
+          }]
+        }
+      };
+
       if (paymentMethod === 'cash') {
-        const response = await axios.post(`${BASE_URL}/crelio/appointment`, appointmentData);
+        const response = await axios.post(`${BASE_URL}/crelio/appointment`, updatedAppointmentData);
+        clearCart();
         return response.data;
       } else {
         const payload = {
-          appointmentData: {
-            ...appointmentData,
-            billDetails: {
-              ...appointmentData.billDetails,
-              paymentType: 'Online'
-            }
-          },
+          appointmentData: updatedAppointmentData,
           appointmentType: collectionMethod === 'home' ? 'home' : 'lab'
         };
         
         const response = await axios.post(`${BASE_URL}/payment/initialize`, payload);
         
         if (response.data?.data?.paymentUrl) {
+          clearCart();
           window.location.href = response.data.data.paymentUrl;
           return null;
         }
@@ -399,11 +423,11 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
-      // Convert selected local time to UTC
+      // Convert selected time to Date object
       const [hours, minutes] = selectedTime.split(':');
       const appointmentDate = new Date(`${selectedDate}T${selectedTime}`);
       
-      // Create a UTC date by adjusting for the timezone offset
+      // Create UTC dates for start and end times
       const utcDate = new Date(Date.UTC(
         appointmentDate.getFullYear(),
         appointmentDate.getMonth(),
@@ -414,28 +438,18 @@ export default function Checkout() {
       
       const endAppointmentDate = new Date(utcDate.getTime() + 60 * 60 * 1000); // Add 1 hour
 
-      // Format dates in ISO string with 'Z' suffix as per API docs
-      const startDateTime = utcDate.toISOString().replace('.000Z', 'Z');
-      const endDateTime = endAppointmentDate.toISOString().replace('.000Z', 'Z');
+      // Format all dates in IST
+      const startDateTime = formatToIST(utcDate);
+      const endDateTime = formatToIST(endAppointmentDate);
+      const billDateTime = formatToIST(new Date()); // Current time in IST
       
-      // Format bill date with timezone as per API docs
-      const billDate = new Date().toISOString()
-        .replace('.000Z', '')
-        + '+05:30';
-
-        
-      // Map cart items to test list with correct test IDs
       const testList = cart.map(item => ({
-       
-        testID: item.basicInfo.testId  || "",
+        testID: item.basicInfo.testId || "",
         testCode: "",
         integrationCode: "",
         dictionaryId: ""
+      }));
 
-      }
-      ));
-
-     
       const appointmentData = {
         countryCode: "91",
         mobile: formatMobile(userDetails.phone),
@@ -476,7 +490,7 @@ export default function Checkout() {
           advance: "0",
           billConcession: "0",
           additionalAmount: "0",
-          billDate: billDate,
+          billDate: billDateTime,
           paymentType: paymentMethod === 'cash' ? 'Cash' : 'Online',
           referralName: "Self",
           otherReferral: "",
@@ -855,25 +869,29 @@ export default function Checkout() {
               </div>
             ))}
           </div>
-          <div className={styles.orderTotal}>
-            <strong>Total:</strong>
-            <strong>₹{totalPrice.toFixed(2)}</strong>
+                      <div className={styles.orderTotal}>
+              <strong>Total:</strong>
+              <strong>₹{totalPrice.toFixed(2)}</strong>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Authentication Modal */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-      
-      {/* Thank You Modal */}
-      <ThankYouModal 
-        isOpen={isThankYouModalOpen} 
-        onClose={() => {
-          setIsThankYouModalOpen(false);
-          router.push('/');  // Redirect to home page when modal is closed
-        }}
-        bookingDetails={bookingDetails}
-      />
-    </div>
+        {/* Authentication Modal */}
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+        />
+        
+        {/* Thank You Modal */}
+        <ThankYouModal 
+          isOpen={isThankYouModalOpen} 
+          onClose={() => {
+            setIsThankYouModalOpen(false);
+            router.push('/');  // Redirect to home page when modal is closed
+          }}
+          bookingDetails={bookingDetails}
+        />
+      </div>
+   
   );
 }
