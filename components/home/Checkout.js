@@ -73,7 +73,6 @@ export default function Checkout() {
   // Form processing states
   const [isProcessing, setIsProcessing] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  const [testId, setTestId] = useState(cart[0]?.test?.alldata?.[0]?.basic_info?.testId || '');
   const [labPatientId] = useState(`LAB${Date.now()}`);
   const [paymentMethod, setPaymentMethod] = useState('cash');
 
@@ -324,7 +323,7 @@ export default function Checkout() {
     }
 
     if (!userDetails.dob) {
-      errors.dob = 'Date of Birth is required (YYYY-MM-DD)';
+      errors.dob = 'Date of Birth is required';
     } else {
       const dobDate = new Date(userDetails.dob);
       const today = new Date();
@@ -424,6 +423,19 @@ export default function Checkout() {
         .replace('.000Z', '')
         + '+05:30';
 
+        
+      // Map cart items to test list with correct test IDs
+      const testList = cart.map(item => ({
+       
+        testID: item.basicInfo.testId  || "",
+        testCode: "",
+        integrationCode: "",
+        dictionaryId: ""
+
+      }
+      ));
+
+     
       const appointmentData = {
         countryCode: "91",
         mobile: formatMobile(userDetails.phone),
@@ -474,12 +486,7 @@ export default function Checkout() {
           organisationName: "",
           organizationIdLH: "598387",
           comments: "New Patient Registration",
-          testList: cart.map(item => ({
-            testID: item?.test?.alldata?.[0]?.basic_info?.testId || "3992066",
-            testCode: "",
-            integrationCode: "",
-            dictionaryId: ""
-          })),
+          testList: testList,
           paymentList: [{
             paymentType: paymentMethod === 'cash' ? 'Cash' : 'Online',
             paymentAmount: totalPrice.toString(),
@@ -858,6 +865,7 @@ export default function Checkout() {
       {/* Authentication Modal */}
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       
+      {/* Thank You Modal */}
       <ThankYouModal 
         isOpen={isThankYouModalOpen} 
         onClose={() => {
