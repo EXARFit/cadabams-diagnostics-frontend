@@ -443,13 +443,40 @@ export default function Checkout() {
       const endDateTime = formatToIST(endAppointmentDate);
       const billDateTime = formatToIST(new Date()); // Current time in IST
       
-      const testList = cart.map(item => ({
-        testID: item.basicInfo.testId || "",
-        testCode: "",
-        integrationCode: "",
-        dictionaryId: ""
-      }));
+   // Safely extract test ID with support for both lab and non-lab tests
+   const testList = cart.map(item => {
+    // First try to get testId from any of the possible basic_info locations
+    let testId = item.test?.alldata?.[0]?.basic_info?.testId ||
+                item.basicInfo?.testId ||
+                item.alldata?.[0]?.basic_info?.testId ||
+                item.basic_info?.testId;
 
+    // If still no testId found, then use fallback for non-lab tests
+    if (!testId && item.templateName === 'non-labtest') {
+      testId = item.test?._id || item._id;
+    }
+    
+    // Ensure testId is converted to string and is not undefined
+    testId = String(testId || "");
+    
+    console.log('Processing test item:', {
+      originalItem: item,
+      extractedTestId: testId,
+      templateName: item.templateName,
+      testPath: item.test?.alldata?.[0]?.basic_info?.testId ? 'test.alldata[0].basic_info.testId' :
+                item.basicInfo?.testId ? 'basicInfo.testId' :
+                item.alldata?.[0]?.basic_info?.testId ? 'alldata[0].basic_info.testId' :
+                item.basic_info?.testId ? 'basic_info.testId' : 
+                'fallback to _id'
+    });
+
+    return {
+      testID: testId,
+      testCode: "",
+      integrationCode: "",
+      dictionaryId: ""
+    };
+  });
       const appointmentData = {
         countryCode: "91",
         mobile: formatMobile(userDetails.phone),
