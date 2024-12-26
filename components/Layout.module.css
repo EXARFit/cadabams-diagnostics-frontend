@@ -1,3 +1,4 @@
+/* Layout.module.css */
 .container {
   min-height: 100vh;
   display: flex;
@@ -28,7 +29,7 @@
   z-index: 30;
 }
 
-/* Floating Call Button Styles */
+/* Enhanced Floating Call Button Styles */
 .floatingCall {
   position: fixed;
   bottom: 24px;
@@ -41,21 +42,61 @@
 }
 
 .callIcon {
-  background-color: #dc3545;
+  background-color: #9370DB; /* Light purple color */
   border-radius: 50%;
-  width: 56px;
-  height: 56px;
+  width: 72px; /* Increased size */
+  height: 72px; /* Increased size */
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 12px rgba(147, 112, 219, 0.3);
+  transition: transform 0.3s ease, background-color 0.3s ease;
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ripple animation */
+.rippleEffect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: ripple 1.5s infinite ease-out;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 .callIcon:hover {
   transform: scale(1.1);
-  background-color: #c82333;
+  background-color: #8A2BE2; /* Darker purple on hover */
+}
+
+/* Floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floatingCall {
+  animation: float 3s ease-in-out infinite;
 }
 
 .callTooltip {
@@ -70,7 +111,7 @@
   visibility: hidden;
   transition: opacity 0.2s, visibility 0.2s;
   position: absolute;
-  right: 70px;
+  right: 85px; /* Adjusted for larger button */
   white-space: nowrap;
 }
 
@@ -85,8 +126,7 @@
   }
 
   .main {
-    /* Accommodate fixed search bar */
-    padding-bottom: 80px; /* Space for bottom cart */
+    padding-bottom: 80px;
   }
 
   .footer {
@@ -96,10 +136,10 @@
   }
 
   .callTooltip {
-    display: none; /* Hide tooltip on mobile */
+    display: none;
   }
 
   .floatingCall {
-    bottom: 70px; /* Position above the mobile cart summary */
+    bottom: 85px; /* Adjusted for larger button */
   }
 }
