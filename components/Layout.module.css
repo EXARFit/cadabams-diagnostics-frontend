@@ -42,7 +42,7 @@
 }
 
 .callIcon {
-  background-color: #9370DB; /* Light purple color */
+  background-color: #663399; /* Darker purple color */
   border-radius: 50%;
   width: 72px; /* Increased size */
   height: 72px; /* Increased size */
@@ -79,7 +79,7 @@
 
 .callIcon:hover {
   transform: scale(1.1);
-  background-color: #8A2BE2; /* Darker purple on hover */
+  background-color: #4B0082; /* Even darker purple on hover */
 }
 
 /* Floating animation */
