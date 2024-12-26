@@ -5,7 +5,8 @@ import styles from './AuthModal.module.css';
 
 export default function AuthModal({ isOpen, onClose }) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
@@ -13,6 +14,16 @@ export default function AuthModal({ isOpen, onClose }) {
   const { login } = useAuth();
 
   const handleGetOTP = async () => {
+    if (!phone || phone.length !== 10) {
+      setMessage({ type: 'error', content: 'Please enter a valid 10-digit phone number.' });
+      return;
+    }
+
+    if (isSignUp && !firstName.trim()) {
+      setMessage({ type: 'error', content: 'Please enter your name.' });
+      return;
+    }
+
     try {
       const response = await fetch('https://cadabamsapi.exar.ai/api/v1/user/auth/get-otp', {
         method: 'POST',
@@ -32,27 +43,64 @@ export default function AuthModal({ isOpen, onClose }) {
     }
   };
 
+  const createFreshsalesContact = async () => {
+    try {
+      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/freshsales/create-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          mobile_number: phone
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        console.error('Error creating Freshsales contact:', data);
+      }
+    } catch (error) {
+      console.error('Error creating Freshsales contact:', error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!otpSent) {
       setMessage({ type: 'error', content: 'Please get OTP first.' });
       return;
     }
+
     try {
       const url = isSignUp
         ? 'https://cadabamsapi.exar.ai/api/v1/user/auth/signup'
         : 'https://cadabamsapi.exar.ai/api/v1/user/auth/signin';
-      const body = isSignUp ? { name, phone, otp } : { phone, otp };
+
+      const fullName = `${firstName}${lastName ? ' ' + lastName : ''}`;
+      
+      // Include name in signup payload
+      const requestBody = isSignUp
+        ? { 
+            name: fullName,
+            phone, 
+            otp,
+            role: 'user'
+          }
+        : { phone, otp };
+
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify(requestBody),
       });
       const data = await response.json();
+      
       if (data.success) {
+        if (isSignUp) {
+          // Create Freshsales contact only for signup
+          await createFreshsalesContact();
+        }
         login(data.user || data.updatedUser, data.accessToken);
         onClose();
-        setMessage({ type: 'success', content: data.message || (isSignUp ? 'Account created successfully' : 'User logged in successfully') });
       } else {
         setMessage({ type: 'error', content: data.message || 'Authentication failed. Please try again.' });
       }
@@ -60,6 +108,15 @@ export default function AuthModal({ isOpen, onClose }) {
       console.error('Error during authentication:', error);
       setMessage({ type: 'error', content: 'Authentication failed. Please try again.' });
     }
+  };
+
+  const resetForm = () => {
+    setFirstName('');
+    setLastName('');
+    setPhone('');
+    setOtp('');
+    setOtpSent(false);
+    setMessage({ type: '', content: '' });
   };
 
   if (!isOpen) return null;
@@ -91,36 +148,54 @@ export default function AuthModal({ isOpen, onClose }) {
         <button onClick={onClose} className={styles.closeButton}>
           <X />
         </button>
-        <h2 className={styles.modalTitle}>{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
-        <p className={styles.modalSubtitle}>This is to verify your mobile number.</p>
+        
+        <h2 className={styles.modalTitle}>
+          {isSignUp ? 'Sign Up' : 'Sign In'}
+        </h2>
+        <p className={styles.modalSubtitle}>
+          This is to verify your mobile number.
+        </p>
+
         {message.content && (
           <div className={`${styles.message} ${styles[message.type]}`}>
             {message.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
             <p>{message.content}</p>
           </div>
         )}
+
         <form onSubmit={handleSubmit} className={styles.form}>
           {isSignUp && (
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Name"
-              required
-              className={styles.input}
-            />
+            <>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First Name *"
+                required
+                className={styles.input}
+              />
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last Name (Optional)"
+                className={styles.input}
+              />
+            </>
           )}
+          
           <div className={styles.phoneInput}>
             <span className={styles.countryCode}>+91</span>
             <input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
               placeholder="Enter mobile number"
               required
               className={styles.input}
             />
           </div>
+
           {!otpSent ? (
             <button type="button" onClick={handleGetOTP} className={styles.button}>
               Get OTP
@@ -130,7 +205,7 @@ export default function AuthModal({ isOpen, onClose }) {
               <input
                 type="text"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="Enter OTP"
                 required
                 className={styles.input}
@@ -141,18 +216,19 @@ export default function AuthModal({ isOpen, onClose }) {
             </>
           )}
         </form>
+
         <p className={styles.infoText}>
           We will send order updates on this number via WhatsApp.
         </p>
         <p className={styles.termsText}>
-          By continuing you accept our <a href="#" className={styles.link}>T&C</a> and <a href="#" className={styles.link}>Privacy Policy</a>
+          By continuing you accept our <a href="#" className={styles.link}>T&C</a> and{' '}
+          <a href="#" className={styles.link}>Privacy Policy</a>
         </p>
+
         <button
           onClick={() => {
             setIsSignUp(!isSignUp);
-            setOtpSent(false);
-            setOtp('');
-            setMessage({ type: '', content: '' });
+            resetForm();
           }}
           className={styles.switchButton}
         >
