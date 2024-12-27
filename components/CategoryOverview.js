@@ -19,21 +19,15 @@ const getLocationFromPath = (path) => {
   
   const parts = path.split('/').filter(Boolean);
   
-  if (parts[0] === 'bangalore' && parts.length > 2) {
-    if (parts[1] && !['lab-test', 'center'].includes(parts[1])) {
-      const locationName = parts[1]
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-      return { name: locationName, value: parts[1] };
-    }
+  // If path includes bangalore as the first part
+  if (parts[0] === 'bangalore') {
+    return { name: 'Bangalore', value: 'bangalore' };
   }
   
   return { name: 'near me', value: 'near-me' };
 };
 
 const formatCategoryName = (name, categoryType) => {
-  // Convert categoryType to a display name (e.g., 'mri-scan' -> 'MRI')
   const typeMap = {
     'ct-scan': 'CT',
     'mri-scan': 'MRI',
@@ -43,7 +37,6 @@ const formatCategoryName = (name, categoryType) => {
     'pregnancy-scan': 'Pregnancy'
   };
 
-  // Get the base category name
   const baseType = typeMap[categoryType.toLowerCase()] || name;
   return `${baseType} Scans`;
 };
@@ -63,7 +56,6 @@ const CategoryOverview = ({ category }) => {
 
   const locationAwareTitle = useMemo(() => {
     const formattedName = formatCategoryName(name, categoryType);
-    // Use "near me" instead of "in near me" for non-Bangalore paths
     const locationText = currentLocation.value === 'near-me' 
       ? 'near me'
       : `in ${currentLocation.name}`;
@@ -83,7 +75,6 @@ const CategoryOverview = ({ category }) => {
 
   const displayImage = getDisplayImage();
 
-  // Apply location-aware text replacement to description
   const locationAwareDescription = useMemo(() => {
     if (!description) return '';
     return currentLocation.value === 'near-me'

@@ -9,22 +9,43 @@ import LabStats from './LabStats';
 import ScrollSpyNavigation from './ScrollSpyNavigation';
 import styles from './NonLabTestPage.module.css';
 
-const getLocationFromPath = (path) => {
-  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+const useLocation = () => {
+  const router = useRouter();
   
-  const parts = path.split('/').filter(Boolean);
-  
-  if (parts[0] === 'bangalore' && parts.length > 2) {
-    if (parts[1] && !['lab-test', 'center'].includes(parts[1])) {
-      const locationName = parts[1]
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-      return { name: locationName, value: parts[1] };
+  const getLocationFromPath = (path) => {
+    if (!path) return { name: 'near me', value: 'near-me' };
+    
+    const parts = path.split('/').filter(Boolean);
+    
+    // If path includes bangalore as the first part
+    if (parts[0] === 'bangalore') {
+      return { name: 'Bangalore', value: 'bangalore' };
     }
-  }
-  
-  return { name: 'Bangalore', value: 'bangalore' };
+    
+    return { name: 'near me', value: 'near-me' };
+  };
+
+  const currentLocation = getLocationFromPath(router.asPath);
+
+  const getLocationAwareContent = (content) => {
+    if (!content) return '';
+    
+    let updatedContent = content;
+    updatedContent = updatedContent.replace(/\{Location\}/g, currentLocation.name);
+    
+    if (currentLocation.value === 'near-me') {
+      updatedContent = updatedContent.replace(/Bangalore/g, 'near me');
+    } else if (currentLocation.value !== 'bangalore') {
+      updatedContent = updatedContent.replace(/Bangalore/g, currentLocation.name);
+    }
+    
+    return updatedContent;
+  };
+
+  return {
+    currentLocation,
+    getLocationAwareContent
+  };
 };
 
 const getCategoryFromPath = (path) => {
@@ -42,7 +63,7 @@ const getCategoryFromPath = (path) => {
 
 export default function NonLabTestPage1({ testInfo }) {
   const router = useRouter();
-  const currentLocation = getLocationFromPath(router.asPath);
+  const { currentLocation, getLocationAwareContent: locationContent } = useLocation();
   const category = getCategoryFromPath(router.asPath);
 
   if (!testInfo) {
@@ -85,17 +106,21 @@ export default function NonLabTestPage1({ testInfo }) {
   };
 
   const getSectionTitle = (content, sectionType) => {
+    const locationText = currentLocation.value === 'near-me' 
+      ? 'near me' 
+      : `in ${currentLocation.name}`;
+    
     switch (sectionType) {
       case 'types':
-        return `Types of ${category} Tests in ${currentLocation.name}`;
+        return `Types of ${category} Tests ${locationText}`;
       case 'parameters':
-        return `List of Parameters Considered During the ${category} Scan in ${currentLocation.name}`;
+        return `List of Parameters Considered During the ${category} Scan ${locationText}`;
       case 'benefits':
-        return `Benefits of Taking the ${category} Tests in ${currentLocation.name}`;
+        return `Benefits of Taking the ${category} Tests ${locationText}`;
       case 'preparing':
-        return `Preparing for ${category} Scan in ${currentLocation.name}`;
+        return `Preparing for ${category} Scan ${locationText}`;
       case 'risks':
-        return `Risks & Limitations of the ${category} Test in ${currentLocation.name}`;
+        return `Risks & Limitations of the ${category} Test ${locationText}`;
       default:
         return content;
     }
@@ -112,6 +137,13 @@ export default function NonLabTestPage1({ testInfo }) {
       modifiedContent = content.replace(h3Match[0], `<h3>${newTitle}</h3>`);
     } else {
       modifiedContent = `<h3>${newTitle}</h3>${content}`;
+    }
+    
+    // Replace location references
+    if (currentLocation.value === 'near-me') {
+      modifiedContent = modifiedContent.replace(/Bangalore/g, 'near me');
+    } else if (currentLocation.value !== 'bangalore') {
+      modifiedContent = modifiedContent.replace(/Bangalore/g, currentLocation.name);
     }
     
     return modifiedContent;
@@ -252,17 +284,25 @@ export default function NonLabTestPage1({ testInfo }) {
 
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>FAQ's</h2>
-            {faqs.map((item, index) => (
-              <div key={`faq-${index}`} className={styles.faqItem}>
-                <h3 className={styles.faqQuestion}>{item.question.replace(/Bangalore/g, currentLocation.name)}</h3>
-                <div
-                  className={styles.faqAnswer}
-                  dangerouslySetInnerHTML={sanitizeHTML(
-                    item.answer.replace(/Bangalore/g, currentLocation.name)
-                  )}
-                />
-              </div>
-            ))}
+            {faqs.map((item, index) => {
+              const questionContent = currentLocation.value === 'near-me' 
+                ? item.question.replace(/Bangalore/g, 'near me')
+                : item.question.replace(/Bangalore/g, currentLocation.name);
+              
+              const answerContent = currentLocation.value === 'near-me'
+                ? item.answer.replace(/Bangalore/g, 'near me')
+                : item.answer.replace(/Bangalore/g, currentLocation.name);
+
+              return (
+                <div key={`faq-${index}`} className={styles.faqItem}>
+                  <h3 className={styles.faqQuestion}>{questionContent}</h3>
+                  <div
+                    className={styles.faqAnswer}
+                    dangerouslySetInnerHTML={sanitizeHTML(answerContent)}
+                  />
+                </div>
+              );
+            })}
           </div>
         </ScrollSpyNavigation>
       </div>
