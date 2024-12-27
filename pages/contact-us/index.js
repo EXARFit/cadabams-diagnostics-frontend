@@ -42,15 +42,25 @@ export default function ContactPage() {
                 "contactPoint": [
                   {
                     "@type": "ContactPoint",
-                    "telephone": "+91-9741476476",
+                    "telephone": "+91-8050381444",
                     "contactType": "customer service",
+                    "contactDescription": "Cadabam's Megsan Indiranagar",
                     "areaServed": "IN",
                     "availableLanguage": ["English"]
                   },
                   {
                     "@type": "ContactPoint",
-                    "telephone": "+91-7353226622",
-                    "contactType": "emergency",
+                    "telephone": "+91-99006-64696",
+                    "contactType": "customer service",
+                    "contactDescription": "Cadabam's Diagnostic Centre Banshankari",
+                    "areaServed": "IN",
+                    "availableLanguage": ["English"]
+                  },
+                  {
+                    "@type": "ContactPoint",
+                    "telephone": "+91-8861821122",
+                    "contactType": "customer service",
+                    "contactDescription": "Cadabam's Diagnostic Centre Jayanagar",
                     "areaServed": "IN",
                     "availableLanguage": ["English"]
                   }
@@ -77,9 +87,17 @@ export default function ContactPage() {
           <div className={styles.contactGrid}>
             <div className={styles.contactInfo}>
               <div className={styles.infoCard}>
-                <h2>Emergency Contact</h2>
-                <p>24/7 Helpline: +91-80-2323-2323</p>
-                <p>Emergency: +91-9876543210</p>
+                <h2>Our Centers</h2>
+                <div className={styles.centerDetails}>
+                  <h3>Cadabam's Megsan Indiranagar</h3>
+                  <p>Call: +91 8050381444</p>
+                  
+                  <h3>Cadabam's Diagnostic Centre Banshankari</h3>
+                  <p>Call: +91 99006 64696</p>
+                  
+                  <h3>Cadabam's Diagnostic Centre Jayanagar</h3>
+                  <p>Call: +91 8861821122</p>
+                </div>
               </div>
 
               <div className={styles.infoCard}>
