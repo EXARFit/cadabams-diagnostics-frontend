@@ -15,7 +15,7 @@ const CATEGORY_IMAGES = {
 const DEFAULT_IMAGE = "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png";
 
 const getLocationFromPath = (path) => {
-  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  if (!path) return { name: 'near me', value: 'near-me' };
   
   const parts = path.split('/').filter(Boolean);
   
@@ -29,7 +29,7 @@ const getLocationFromPath = (path) => {
     }
   }
   
-  return { name: 'Bangalore', value: 'bangalore' };
+  return { name: 'near me', value: 'near-me' };
 };
 
 const formatCategoryName = (name, categoryType) => {
@@ -63,14 +63,18 @@ const CategoryOverview = ({ category }) => {
 
   const locationAwareTitle = useMemo(() => {
     const formattedName = formatCategoryName(name, categoryType);
-    return `${formattedName} in ${currentLocation.name}`;
+    // Use "near me" instead of "in near me" for non-Bangalore paths
+    const locationText = currentLocation.value === 'near-me' 
+      ? 'near me'
+      : `in ${currentLocation.name}`;
+    return `${formattedName} ${locationText}`;
   }, [name, categoryType, currentLocation]);
 
   const getDisplayImage = () => {
     if (image && categoryType.toLowerCase().includes('pregnancy')) {
       return image;
     }
-
+    
     const categoryKey = categoryType.toLowerCase();
     const selectedImage = CATEGORY_IMAGES[categoryKey];
     
@@ -79,13 +83,21 @@ const CategoryOverview = ({ category }) => {
 
   const displayImage = getDisplayImage();
 
+  // Apply location-aware text replacement to description
+  const locationAwareDescription = useMemo(() => {
+    if (!description) return '';
+    return currentLocation.value === 'near-me'
+      ? description.replace(/Bangalore/g, 'near me')
+      : description.replace(/Bangalore/g, currentLocation.name);
+  }, [description, currentLocation]);
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.leftContent}>
           <h1 className={styles.title}>{locationAwareTitle}</h1>
           <p className={styles.subtitle}>Category Overview</p>
-          <p className={styles.description}>{description}</p>
+          <p className={styles.description}>{locationAwareDescription}</p>
         </div>
         <div className={styles.rightContent}>
           <img
