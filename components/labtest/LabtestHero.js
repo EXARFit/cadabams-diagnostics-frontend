@@ -6,25 +6,18 @@ import { useRouter } from 'next/router';
 import styles from './LabtestHero.module.css';
 
 const getLocationFromPath = (path) => {
-  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  if (!path) return { name: 'near me', value: 'near-me' };
   
   // Split path into segments
   const parts = path.split('/').filter(Boolean);
   
-  // Check if it's a location-specific path
-  if (parts[0] === 'bangalore' && parts.length > 2) {
-    // If it's a route like /bangalore/banashankari/lab-test
-    if (parts[1] && parts[1] !== 'lab-test') {
-      const locationName = parts[1]
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-      return { name: locationName, value: parts[1] };
-    }
+  // If path includes bangalore as the first part
+  if (parts[0] === 'bangalore') {
+    return { name: 'Bangalore', value: 'bangalore' };
   }
   
-  // Default to Bangalore for /bangalore/lab-test
-  return { name: 'Bangalore', value: 'bangalore' };
+  // For non-bangalore paths
+  return { name: 'near me', value: 'near-me' };
 };
 
 export default function LabtestHero({ heroData = {} }) {
@@ -36,8 +29,9 @@ export default function LabtestHero({ heroData = {} }) {
   const currentLocation = getLocationFromPath(router.asPath);
 
   const locationAwareContent = useMemo(() => {
-    const title = `Lab Test Services in ${currentLocation.name}`;
-    const subtitle = `ACCURATE LAB RESULTS YOU CAN RELY ON. CERTIFIED CENTRES IN ${currentLocation.name.toUpperCase()}`;
+    const locationText = currentLocation.value === 'near-me' ? 'near me' : `in ${currentLocation.name}`;
+    const title = `Lab Test Services ${locationText}`;
+    const subtitle = `ACCURATE LAB RESULTS YOU CAN RELY ON. CERTIFIED CENTRES ${locationText.toUpperCase()}`;
 
     return { title, subtitle };
   }, [currentLocation]);
@@ -86,12 +80,20 @@ export default function LabtestHero({ heroData = {} }) {
   };
 
   const handleResultClick = (result) => {
-    // Maintain the current location in the URL if it exists
-    const locationPath = currentLocation.value !== 'bangalore' 
-      ? `/${currentLocation.value}` 
-      : '';
+    // Construct the route based on current location and result type
+    let baseRoute = '';
+    
+    // For non-bangalore paths, we'll use the root path
+    if (currentLocation.value === 'near-me') {
+      baseRoute = '';
+    } else {
+      // For bangalore paths, maintain the location structure
+      baseRoute = `/bangalore${currentLocation.value !== 'bangalore' ? `/${currentLocation.value}` : ''}`;
+    }
+    
     const routePrefix = result.isLabTest ? 'lab-test' : 'xray-scan';
-    const fullRoute = `/bangalore${locationPath}/${routePrefix}${result.route}`;
+    const fullRoute = baseRoute ? `${baseRoute}/${routePrefix}${result.route}` : `/${routePrefix}${result.route}`;
+    
     router.push(fullRoute);
     setSearchTerm('');
     setShowResults(false);

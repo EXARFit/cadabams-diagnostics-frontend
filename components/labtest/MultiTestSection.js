@@ -7,21 +7,17 @@ import { CartContext } from '@/contexts/CartContext';
 import styles from './MultiTestSection.module.css';
 
 const getLocationFromPath = (path) => {
-  if (!path) return { name: 'Bangalore', value: 'bangalore' };
+  if (!path) return { name: 'near me', value: 'near-me' };
   
   const parts = path.split('/').filter(Boolean);
   
-  if (parts[0] === 'bangalore' && parts.length > 2) {
-    if (parts[1] && parts[1] !== 'lab-test') {
-      const locationName = parts[1]
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-      return { name: locationName, value: parts[1] };
-    }
+  // If path includes bangalore as the first part
+  if (parts[0] === 'bangalore') {
+    return { name: 'Bangalore', value: 'bangalore' };
   }
   
-  return { name: 'Bangalore', value: 'bangalore' };
+  // For non-bangalore paths
+  return { name: 'near me', value: 'near-me' };
 };
 
 const TestCard = ({ test, onViewDetails }) => {
@@ -136,12 +132,15 @@ const TestSection = ({ section }) => {
 
   const locationAwareTitle = useMemo(() => {
     let title = section.title;
+    const locationText = currentLocation.value === 'near-me' ? 'near me' : `in ${currentLocation.name}`;
+    
+    // Replace existing location references
     if (title.includes('in Bangalore')) {
-      title = title.replace('in Bangalore', `in ${currentLocation.name}`);
+      title = title.replace('in Bangalore', locationText);
     } else if (title.includes('Bangalore')) {
       title = title.replace('Bangalore', currentLocation.name);
     } else {
-      title = `${title} in ${currentLocation.name}`;
+      title = `${title} ${locationText}`;
     }
     return title;
   }, [section.title, currentLocation]);
@@ -182,15 +181,18 @@ const TestSection = ({ section }) => {
 
   const handleViewDetails = (route) => {
     if (route) {
-      const currentPath = router.asPath;
-      const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
-      const specificLocation = locationMatch ? locationMatch[1] : null;
-
       let targetRoute;
-      if (specificLocation && specificLocation !== 'lab-test') {
-        targetRoute = `/bangalore/${specificLocation}/lab-test${route}`;
-      } else {
+      
+      // Handle routing based on current location
+      if (currentLocation.value === 'near-me') {
+        // For non-bangalore paths, use root path
+        targetRoute = `/lab-test${route}`;
+      } else if (currentLocation.value === 'bangalore') {
+        // For main bangalore path
         targetRoute = `/bangalore/lab-test${route}`;
+      } else {
+        // For specific bangalore locations
+        targetRoute = `/bangalore/${currentLocation.value}/lab-test${route}`;
       }
 
       router.push(targetRoute);
