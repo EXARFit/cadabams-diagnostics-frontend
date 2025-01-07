@@ -36,6 +36,20 @@ const nextConfig = {
 
     // Flatten array of redirect pairs
     return [
+      // Add new redirect for lab test pages without bangalore prefix
+      {
+        source: '/lab-test/:testSlug',
+        destination: '/bangalore/lab-test/:testSlug',
+        permanent: true,
+        statusCode: 301
+      },
+      {
+        source: '/lab-test/:testSlug/',
+        destination: '/bangalore/lab-test/:testSlug',
+        permanent: true,
+        statusCode: 301
+      },
+
       // New redirects from the spreadsheet
       ...createRedirectPair('/bangalore/lab-test/complete-blood-count-test-cbc', '/bangalore/lab-test/complete-blood-count-cbc'),
       ...createRedirectPair('/bangalore/lab-test/diabetes-test-dt', '/bangalore/lab-test/diabetes-sugar-test-dst'),
@@ -144,154 +158,120 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    return {
-      beforeFiles: [
-        // Default route
-        {
-          source: '/',
-          destination: '/bangalore',
-        },
-      ],
-      afterFiles: [
-        // Lab test routes - make both with and without bangalore work
-        {
-          source: '/lab-test/:testSlug*',
-          destination: '/bangalore/lab-test/:testSlug*',
-        },
-        {
-          source: '/bangalore/lab-test/:testSlug*',
-          destination: '/bangalore/lab-test/:testSlug*',
-        },
-        // Base routes without bangalore prefix
-        {
-          source: '/xray-scan',
-          destination: '/bangalore/xray-scan',
-        },
-        {
-          source: '/mri-scan',
-          destination: '/bangalore/mri-scan',
-        },
-        {
-          source: '/ct-scan',
-          destination: '/bangalore/ct-scan',
-        },
-        {
-          source: '/ultrasound-scan',
-          destination: '/bangalore/ultrasound-scan',
-        },
-        {
-          source: '/msk-scan',
-          destination: '/bangalore/msk-scan',
-        },
-        {
-          source: '/pregnancy-scan',
-          destination: '/bangalore/pregnancy-scan',
-        },
-        {
-          source: '/lab-test',
-          destination: '/bangalore/lab-test',
-        },
-        // Individual scan routes - make both with and without bangalore work
-        {
-          source: '/xray-scan/:testSlug*',
-          destination: '/bangalore/xray-scan/:testSlug*',
-        },
-        {
-          source: '/bangalore/xray-scan/:testSlug*',
-          destination: '/bangalore/xray-scan/:testSlug*',
-        },
-        {
-          source: '/mri-scan/:testSlug*',
-          destination: '/bangalore/mri-scan/:testSlug*',
-        },
-        {
-          source: '/bangalore/mri-scan/:testSlug*',
-          destination: '/bangalore/mri-scan/:testSlug*',
-        },
-        {
-          source: '/ct-scan/:testSlug*',
-          destination: '/bangalore/ct-scan/:testSlug*',
-        },
-        {
-          source: '/bangalore/ct-scan/:testSlug*',
-          destination: '/bangalore/ct-scan/:testSlug*',
-        },
-        {
-          source: '/ultrasound-scan/:testSlug*',
-          destination: '/bangalore/ultrasound-scan/:testSlug*',
-        },
-        {
-          source: '/bangalore/ultrasound-scan/:testSlug*',
-          destination: '/bangalore/ultrasound-scan/:testSlug*',
-        },
-        {
-          source: '/msk-scan/:testSlug*',
-          destination: '/bangalore/msk-scan/:testSlug*',
-        },
-        {
-          source: '/bangalore/msk-scan/:testSlug*',
-          destination: '/bangalore/msk-scan/:testSlug*',
-        },
-        {
-          source: '/pregnancy-scan/:testSlug*',
-          destination: '/bangalore/pregnancy-scan/:testSlug*',
-        },
-        {
-          source: '/bangalore/pregnancy-scan/:testSlug*',
-          destination: '/bangalore/pregnancy-scan/:testSlug*',
-        },
-        // Location-specific routes
-        {
-          source: '/:location/lab-test/:testSlug*',
-          destination: '/bangalore/lab-test/:testSlug*',
-        },
-        {
-          source: '/bangalore/:location/lab-test/:testSlug*',
-          destination: '/bangalore/lab-test/:testSlug*',
-        },
-        {
-          source: '/:location/xray-scan',
-          destination: '/bangalore/xray-scan',
-        },
-        {
-          source: '/:location/mri-scan',
-          destination: '/bangalore/mri-scan',
-        },
-        {
-          source: '/:location/ct-scan',
-          destination: '/bangalore/ct-scan',
-        },
-        {
-          source: '/:location/ultrasound-scan',
-          destination: '/bangalore/ultrasound-scan',
-        },
-        {
-          source: '/:location/msk-scan',
-          destination: '/bangalore/msk-scan',
-        },
-        {
-          source: '/:location/pregnancy-scan',
-          destination: '/bangalore/pregnancy-scan',
-        },
-        // Center pages
-        {
-          source: '/bangalore/:location/center/',
-          destination: '/bangalore/center',
-        },
-      ],
-      fallback: [
-        // Location routes - should show home page (must be last)
-        {
-          source: '/bangalore/:location',
-          destination: '/bangalore',
-        },
-        // Catch all other routes and show 404
-        {
-          source: '/:path*',
-          destination: '/404',
-        },
-      ],
-    };
+    return [
+      // Default route
+      {
+        source: '/',
+        destination: '/bangalore',
+      },
+      // Base routes without bangalore prefix
+      {
+        source: '/xray-scan',
+        destination: '/bangalore/xray-scan',
+      },
+      {
+        source: '/mri-scan',
+        destination: '/bangalore/mri-scan',
+      },
+      {
+        source: '/ct-scan',
+        destination: '/bangalore/ct-scan',
+      },
+      {
+        source: '/ultrasound-scan',
+        destination: '/bangalore/ultrasound-scan',
+      },
+      {
+        source: '/msk-scan',
+        destination: '/bangalore/msk-scan',
+      },
+      {
+        source: '/pregnancy-scan',
+        destination: '/bangalore/pregnancy-scan',
+      },
+      {
+        source: '/lab-test',
+        destination: '/bangalore/lab-test',
+      },
+      // Individual lab test routes (must be before the general lab-test routes)
+      {
+        source: '/bangalore/lab-test/:testSlug',
+        destination: '/bangalore/lab-test/:testSlug',
+      },
+      {
+        source: '/bangalore/:location/lab-test/:testSlug',
+        destination: '/bangalore/lab-test/:testSlug',
+      },
+      // Direct radiology pages
+      {
+        source: '/bangalore/xray-scan',
+        destination: '/bangalore/xray-scan',
+      },
+      {
+        source: '/bangalore/mri-scan',
+        destination: '/bangalore/mri-scan',
+      },
+      {
+        source: '/bangalore/ct-scan',
+        destination: '/bangalore/ct-scan',
+      },
+      {
+        source: '/bangalore/ultrasound-scan',
+        destination: '/bangalore/ultrasound-scan',
+      },
+      {
+        source: '/bangalore/msk-scan',
+        destination: '/bangalore/msk-scan',
+      },
+      {
+        source: '/bangalore/pregnancy-scan',
+        destination: '/bangalore/pregnancy-scan',
+      },
+      // Location-specific radiology pages
+      {
+        source: '/bangalore/:location/xray-scan',
+        destination: '/bangalore/xray-scan',
+      },
+      {
+        source: '/bangalore/:location/mri-scan',
+        destination: '/bangalore/mri-scan',
+      },
+      {
+        source: '/bangalore/:location/ct-scan',
+        destination: '/bangalore/ct-scan',
+      },
+      {
+        source: '/bangalore/:location/ultrasound-scan',
+        destination: '/bangalore/ultrasound-scan',
+      },
+      {
+        source: '/bangalore/:location/msk-scan',
+        destination: '/bangalore/msk-scan',
+      },
+      {
+        source: '/bangalore/:location/pregnancy-scan',
+        destination: '/bangalore/pregnancy-scan',
+      },
+      // Lab test pages
+      {
+        source: '/bangalore/lab-test',
+        destination: '/bangalore/lab-test',
+      },
+      {
+        source: '/bangalore/:location/lab-test',
+        destination: '/bangalore/lab-test',
+      },
+      // Center pages
+      {
+        source: '/bangalore/:location/center/',
+        destination: '/bangalore/center',
+      },
+      // Location routes - should show home page (must be last)
+      {
+        source: '/bangalore/:location',
+        destination: '/bangalore',
+      }
+    ];
   },
   reactStrictMode: true,
   poweredByHeader: false,
