@@ -51,6 +51,26 @@ const nextConfig = {
       },
 
       // New redirects from the spreadsheet
+      ...createRedirectPair('/bangalore/pregnancy-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound', '/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound'),
+      ...createRedirectPair('/bangalore/xray-scan/abdomen-and-lower-thorax-ct-scan', '/bangalore/ct-scan/abdomen-and-lower-thorax-ct-scan'),
+      ...createRedirectPair('/bangalore/xray-scan/brain-mri', '/bangalore/mri-scan/brain-mri'),
+      ...createRedirectPair('/bangalore/xray-scan/lumbar-lumbosacral-spine-without-contrast-mri', '/bangalore/mri-scan/lumbar-lumbosacral-spine-without-contrast-mri'),
+      ...createRedirectPair('/bangalore/xray-scan/pregnancy-dating-scan-ultrasound', '/bangalore/ultrasound-scan/pregnancy-dating-scan-ultrasound'),
+      ...createRedirectPair('/bangalore/xray-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound', '/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound'),
+      ...createRedirectPair('/bangalore/xray-scan/pregnancy-ultrasound', '/bangalore/ultrasound-scan/pregnancy-ultrasound'),
+      ...createRedirectPair('/bangalore/xray-scan/thyroid-scan', '/bangalore/ultrasound-scan/thyroid-scan'),
+      ...createRedirectPair('/fetal-interventional-in-bangalore', '/bangalore/ultrasound-scan/fetal-interventional-ultrasound-echo'),
+      ...createRedirectPair('/bangalore/ct-scan/ct-abdomen-and-lower-thorax', '/bangalore/ct-scan/abdomen-and-lower-thorax-ct-scan'),
+      ...createRedirectPair('/bangalore/pregnancy-scan/pregnancy-ultrasound-scan', '/bangalore/ultrasound-scan/pregnancy-ultrasound'),
+      ...createRedirectPair('/bangalore/ultrasound-scan/abdomen-and-pelvis-scans', '/bangalore/ultrasound-scan/abdomen-and-pelvis-ultrasound-scans'),
+      ...createRedirectPair('/bangalore/ultrasound-scan/elastography-test', '/bangalore/ultrasound-scan/elastography-ultrasound-test'),
+      ...createRedirectPair('/bangalore/ultrasound-scan/penile-doppler-scan', '/bangalore/ultrasound-scan/penile-doppler-ultrasound-scan'),
+      ...createRedirectPair('/bangalore/ultrasound-scan/sonomammography-scans', '/bangalore/ultrasound-scan/sonomammography-ultrasound-scan'),
+      ...createRedirectPair('/bangalore/ultrasound-scan/testis-scan', '/bangalore/ultrasound-scan/testis-ultrasound-scan'),
+      ...createRedirectPair('/bangalore/xray-scan/x-ray-bilateral-mammography', '/bangalore/xray-scan/bilateral-mammography-x-ray'),
+      ...createRedirectPair('/bangalore/xray-scan/xray-scan', '/bangalore/xray-scan'),
+
+      // Previous existing redirects
       ...createRedirectPair('/bangalore/lab-test/complete-blood-count-test-cbc', '/bangalore/lab-test/complete-blood-count-cbc'),
       ...createRedirectPair('/bangalore/lab-test/diabetes-test-dt', '/bangalore/lab-test/diabetes-sugar-test-dst'),
       ...createRedirectPair('/blog/page/2', '/'),
@@ -59,7 +79,7 @@ const nextConfig = {
       ...createRedirectPair('/pelvic-scan-bangalore', '/bangalore/ultrasound-scan/ultrasound-of-transvaginal-scan-tvs'),
       ...createRedirectPair('/x-ray-ultrasound', '/xray-scan'),
 
-      // Existing redirects
+      // Rest of existing redirects
       ...createRedirectPair('/pathology-lab-bangalore', '/'),
       ...createRedirectPair('/health-test-packages-bangalore', '/'),
       ...createRedirectPair('/laboratory', '/'),
