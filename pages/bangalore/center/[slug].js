@@ -197,7 +197,7 @@ const CenterDetailPage = ({ centerData, error }) => {
                 "https://www.facebook.com/CadabamsDiagnostics",
                 "https://www.youtube.com/CadabamsDiagnostics",
                 "https://www.linkedin.com/company/cadabams-diagnostics",
-                "https://www.cadabamsdiagnostics.com",
+                "https://cadabamsdiagnostics.com",
                 `https://www.google.com/maps?cid=${address.gmb_cid || ''}`
               ],
               "address": {

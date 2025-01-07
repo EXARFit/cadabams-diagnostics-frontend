@@ -1,3 +1,4 @@
+// pages/[location]/lab-test/[slug].js
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
@@ -7,8 +8,9 @@ import TestPage from '../../../components/TestPage';
 import NotFound from '../../../components/NotFound';
 import { fetchTestData } from '../../../utils/api';
 import styles from '../../../styles/TestPage.module.css';
+import { useAnalytics } from '../../../hooks/useAnalytics'; // Add this import
 
-// Schema Generator Function
+// Schema Generator Function - Keep existing implementation
 const generateSchemas = (data, baseUrl, slug) => {
   // Medical Webpage Schema
   const medicalWebpageSchema = {
@@ -117,7 +119,7 @@ const generateSchemas = (data, baseUrl, slug) => {
   return [medicalWebpageSchema, faqSchema, breadcrumbSchema];
 };
 
-// Helper function to capitalize location
+// Helper function to capitalize location - Keep existing implementation
 const capitalizeLocation = (loc) => {
   if (!loc) return 'Bangalore';
   return loc.split('-')
@@ -125,7 +127,7 @@ const capitalizeLocation = (loc) => {
     .join(' ');
 };
 
-// Breadcrumb Component
+// Breadcrumb Component - Keep existing implementation
 const Breadcrumb = ({ title }) => (
   <nav className={styles.breadcrumb} aria-label="breadcrumb">
     <div className={styles.breadcrumbContainer}>
@@ -186,6 +188,14 @@ export default function SlugPage({ testData, baseUrl, locationName, pageTitle, p
   const router = useRouter();
   const { location } = router.query;
   const [error, setError] = useState(null);
+  const analytics = useAnalytics(); // Add analytics hook
+
+  // Add GTM view_item event tracking
+  useEffect(() => {
+    if (testData) {
+      analytics.viewItem(testData);
+    }
+  }, [testData]);
 
   if (error) {
     return (
@@ -279,7 +289,10 @@ export default function SlugPage({ testData, baseUrl, locationName, pageTitle, p
 
       <div className={styles.container}>
         <Breadcrumb title={testData.testName} />
-        <TestPage testData={testData} />
+        <TestPage 
+          testData={testData}
+          analytics={analytics} // Pass analytics to TestPage component
+        />
       </div>
     </Layout>
   );
