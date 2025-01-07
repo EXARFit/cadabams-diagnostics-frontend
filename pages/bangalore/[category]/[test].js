@@ -8,35 +8,53 @@ import { fetchTestData } from '@/utils/api';
 import styles from '../../../styles/TestPage.module.css';
 
 // Improved helper function to determine test category from the route and basic info
-const getTestType = (test = '', basicInfo = null) => {
+const getTestType = (test = '', basicInfo = null, requestedCategory = '') => {
   if (!test) return null;
+  
+  let determinedType = null;
   
   // First check basic info if available
   if (basicInfo?.testCategory) {
     const category = basicInfo.testCategory.toLowerCase();
     if (category.includes('ultrasonography') || category.includes('ultrasound')) {
-      return 'ultrasound-scan';
+      determinedType = 'ultrasound-scan';
     }
-    if (category.includes('x-ray')) return 'xray-scan';
-    if (category.includes('mri')) return 'mri-scan';
-    if (category.includes('ct')) return 'ct-scan';
+    if (category.includes('x-ray')) determinedType = 'xray-scan';
+    if (category.includes('mri')) determinedType = 'mri-scan';
+    if (category.includes('ct')) determinedType = 'ct-scan';
   }
 
-  // Fallback to URL-based detection
-  const testLower = test.toLowerCase();
-  if (testLower.includes('x-ray') || testLower.includes('xray')) return 'xray-scan';
-  if (testLower.includes('msk') || testLower.includes('musculoskeletal')) return 'ultrasound-scan';
-  if (testLower.includes('ultrasound') || testLower.includes('doppler') || 
-      testLower.includes('sonography') || testLower.includes('elastography')) return 'ultrasound-scan';
-  if (testLower.includes('mri')) return 'mri-scan';
-  if (testLower.includes('ct')) return 'ct-scan';
-  if (testLower.includes('pregnancy')) return 'pregnancy-scan';
-  
-  // Check for specific scan types
-  const scanTypes = ['thyroid', 'breast', 'fetal', 'penile'];
-  if (scanTypes.some(type => testLower.includes(type))) return 'ultrasound-scan';
-  
-  return null;
+  // If no type determined from basic info, fallback to URL-based detection
+  if (!determinedType) {
+    const testLower = test.toLowerCase();
+    if (testLower.includes('x-ray') || testLower.includes('xray')) {
+      determinedType = 'xray-scan';
+    } else if (testLower.includes('msk') || testLower.includes('musculoskeletal')) {
+      determinedType = 'ultrasound-scan';
+    } else if (testLower.includes('ultrasound') || testLower.includes('doppler') || 
+        testLower.includes('sonography') || testLower.includes('elastography')) {
+      determinedType = 'ultrasound-scan';
+    } else if (testLower.includes('mri')) {
+      determinedType = 'mri-scan';
+    } else if (testLower.includes('ct')) {
+      determinedType = 'ct-scan';
+    } else if (testLower.includes('pregnancy')) {
+      determinedType = 'pregnancy-scan';
+    }
+    
+    // Check for specific scan types that should be ultrasound
+    const scanTypes = ['thyroid', 'breast', 'fetal', 'penile'];
+    if (scanTypes.some(type => testLower.includes(type))) {
+      determinedType = 'ultrasound-scan';
+    }
+  }
+
+  // If a category was requested in the URL, verify it matches the determined type
+  if (requestedCategory && determinedType && requestedCategory !== determinedType) {
+    return null; // Return null if categories don't match
+  }
+
+  return determinedType;
 };
 
 // Helper function to format test type for display in UI
@@ -120,7 +138,7 @@ const generateSchemas = (data, baseUrl, test) => {
       '@type': 'Person',
       name: 'Dr. Shreyas Cadabam',
       jobTitle: 'Consultant specialist in Radiology and Interventional Musculoskeletal imaging',
-      url: 'https://www.cadabamsdiagnostics.com/clinical-team',
+      url: 'https://cadabamsdiagnostics.com/clinical-team',
       sameAs: [
         'https://www.linkedin.com/in/shreyas-cadabam-30a2429a/',
         'https://www.instagram.com/cadabams_diagnostics/',
@@ -201,23 +219,30 @@ const generateSchemas = (data, baseUrl, test) => {
 export async function getServerSideProps({ params, req }) {
   const { test } = params;
   
+  // Extract the requested category from the URL
+  const urlParts = req.url.split('/');
+  const categoryIndex = urlParts.indexOf('bangalore') + 1;
+  const requestedCategory = categoryIndex < urlParts.length ? urlParts[categoryIndex] : '';
+  
   try {
-    // First fetch the test data
     const testData = await fetchTestData(test);
-    
-    // Get the test type using both URL and basic info
     const basicInfo = testData?.alldata?.[0]?.basic_info;
-    const testType = getTestType(test, basicInfo);
+    const testType = getTestType(test, basicInfo, requestedCategory);
     const hasBangalore = req.url.includes('/bangalore/');
 
-    // If we have data but no valid category, we should still show the page
-    // as the data exists but might need a different categorization
+    // If the requested category doesn't match the actual test type, return 404
+    if (requestedCategory && (!testType || testType !== requestedCategory)) {
+      return {
+        notFound: true
+      };
+    }
+
     return {
       props: {
         testData,
         testType,
         error: null,
-        invalidCategory: !testType, // Only invalid if we really can't determine the category
+        invalidCategory: !testType,
         hasBangalore
       }
     };
@@ -274,7 +299,6 @@ export default function TestDetailPage({ testData, testType: initialTestType, er
     );
   }
 
-  // Only show NotFound if we have no test data
   if (!testData) {
     return (
       <Layout title="Not Found">
