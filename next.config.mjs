@@ -50,7 +50,25 @@ const nextConfig = {
         statusCode: 301
       },
 
-      // New redirects from the spreadsheet
+      // New ultrasound scan redirects
+      ...createRedirectPair(
+        '/bangalore/ultrasound-scan/ultrasound-pregnancy-tiffa-anomaly-scan-level-2',
+        '/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound'
+      ),
+      ...createRedirectPair(
+        '/bangalore/ultrasound-scan/pregnancy-ultrasound-scan',
+        '/bangalore/ultrasound-scan/pregnancy-ultrasound'
+      ),
+      ...createRedirectPair(
+        '/bangalore/ultrasound-scan/us-pregnancy-dating-scan',
+        '/bangalore/ultrasound-scan/pregnancy-dating-scan-ultrasound'
+      ),
+      ...createRedirectPair(
+        '/bangalore/ultrasound-scan/ultrasound-pregnancy-interval-growth-scan-with-bpp-and-doppler',
+        '/bangalore/ultrasound-scan/pregnancy-interval-growth-scan-with-bpp-and-doppler-ultrasound'
+      ),
+
+      // Previous redirects from the spreadsheet
       ...createRedirectPair('/bangalore/pregnancy-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound', '/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound'),
       ...createRedirectPair('/bangalore/xray-scan/abdomen-and-lower-thorax-ct-scan', '/bangalore/ct-scan/abdomen-and-lower-thorax-ct-scan'),
       ...createRedirectPair('/bangalore/xray-scan/brain-mri', '/bangalore/mri-scan/brain-mri'),
@@ -122,7 +140,6 @@ const nextConfig = {
       ...createRedirectPair('/breast-biopsy-scan-bangalore', '/bangalore/ultrasound-scan/breast-biopsy-scan'),
       ...createRedirectPair('/diabetes-test-bangalore', '/bangalore/lab-test/diabetes-test-dt'),
       ...createRedirectPair('/fetal-imaging-in-bangalore', '/bangalore/pregnancy-scan/fetal-imaging'),
-      ...createRedirectPair('/fetal-interventional-in-bangalore', '/bangalore/pregnancy-scan/fetal-interventional-ultrasound-echo'),
       ...createRedirectPair('/penile-doppler-test-in-bangalore', '/bangalore/ultrasound-scan/penile-doppler-ultrasound-scan'),
       ...createRedirectPair('/sonomammography-scan-bangalore', '/bangalore/ultrasound-scan/sonomammography-ultrasound-scan'),
       ...createRedirectPair('/thyroid-scan-bangalore', '/bangalore/ultrasound-scan/thyroid-scan'),
