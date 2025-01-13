@@ -1,11 +1,78 @@
-import '../styles/globals.css';
-import { AuthProvider } from '../contexts/AuthContext';
-import { CartProvider } from '../contexts/CartContext';
-import Script from 'next/script';
+// pages/_app.js
+import '../styles/globals.css'
+import { AuthProvider } from '../contexts/AuthContext'
+import { CartProvider } from '../contexts/CartContext'
+import Script from 'next/script'
 
 function MyApp({ Component, pageProps }) {
   return (
     <>
+      {/* Heap Analytics Script with Heatmap Configuration */}
+      <Script
+        id="heap-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.heapReadyCb=window.heapReadyCb||[];
+            window.heap=window.heap||[];
+            heap.load=function(e,t){
+              window.heap.envId=e;
+              window.heap.clientConfig=t=t||{};
+              window.heap.clientConfig.shouldFetchServerConfig=!1;
+              
+              // Enable heatmap tracking
+              window.heap.clientConfig.disableTextCapture=false;
+              window.heap.clientConfig.captureClicks=true;
+              window.heap.clientConfig.captureMouseMovements=true;
+              window.heap.clientConfig.captureDomMutations=true;
+              window.heap.clientConfig.captureScrollState=true;
+              
+              var a=document.createElement("script");
+              a.type="text/javascript";
+              a.async=!0;
+              a.src="https://cdn.us.heap-api.com/config/"+e+"/heap_config.js";
+              var r=document.getElementsByTagName("script")[0];
+              r.parentNode.insertBefore(a,r);
+              
+              var n=["init","startTracking","stopTracking","track","resetIdentity",
+                     "identify","getSessionId","getUserId","getIdentity","addUserProperties",
+                     "addEventProperties","removeEventProperty","clearEventProperties",
+                     "addAccountProperties","addAdapter","addTransformer","addTransformerFn",
+                     "onReady","addPageviewProperties","removePageviewProperty",
+                     "clearPageviewProperties","trackPageview"];
+              var i=function(e){
+                return function(){
+                  var t=Array.prototype.slice.call(arguments,0);
+                  window.heapReadyCb.push({
+                    name:e,
+                    fn:function(){heap[e]&&heap[e].apply(heap,t)}
+                  })
+                }
+              };
+              for(var p=0;p<n.length;p++)heap[n[p]]=i(n[p])
+            };
+            
+            // Initialize Heap with your environment ID
+            heap.load("1306967079");
+            
+            // Configure additional heatmap settings after initialization
+            heap.onReady(function() {
+              // Enable session replay (if needed)
+              heap.addEventProperties({
+                enableSessionReplay: true,
+                recordScreenView: true
+              });
+              
+              // Configure click tracking
+              heap.addEventProperties({
+                trackClicks: true,
+                clickSelector: '*' // Track clicks on all elements
+              });
+            });
+          `
+        }}
+      />
+
       {/* Google Tag Manager Script */}
       <Script
         id="gtm-script"
@@ -17,18 +84,6 @@ function MyApp({ Component, pageProps }) {
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','GTM-TMTNG6X');
-          `
-        }}
-      />
-
-      {/* Heap Analytics Script */}
-      <Script
-        id="heap-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.heapReadyCb=window.heapReadyCb||[],window.heap=window.heap||[],heap.load=function(e,t){window.heap.envId=e,window.heap.clientConfig=t=t||{},window.heap.clientConfig.shouldFetchServerConfig=!1;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://cdn.us.heap-api.com/config/"+e+"/heap_config.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r);var n=["init","startTracking","stopTracking","track","resetIdentity","identify","getSessionId","getUserId","getIdentity","addUserProperties","addEventProperties","removeEventProperty","clearEventProperties","addAccountProperties","addAdapter","addTransformer","addTransformerFn","onReady","addPageviewProperties","removePageviewProperty","clearPageviewProperties","trackPageview"],i=function(e){return function(){var t=Array.prototype.slice.call(arguments,0);window.heapReadyCb.push({name:e,fn:function(){heap[e]&&heap[e].apply(heap,t)}})}};for(var p=0;p<n.length;p++)heap[n[p]]=i(n[p])};
-            heap.load("1306967079");
           `
         }}
       />
@@ -49,7 +104,7 @@ function MyApp({ Component, pageProps }) {
         </CartProvider>
       </AuthProvider>
     </>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp
