@@ -282,7 +282,7 @@ export default function LabtestPage({
         <LabtestHero heroData={pageData?.hero} />
         <FeatureSection features={pageData?.features} />
         <MultiTestSection testData={pageData?.test_card} />
-        <DiscountBanner offer={pageData?.discountOffer} />
+        {/* <DiscountBanner offer={pageData?.discountOffer} /> */}
         <HealthCheckupSlider healthData={pageData?.healthMonitoring} />
         <MultiTestSection sections={pageData?.multiTestSection} />
         <BannerCarousel banners={pageData?.banner} />
