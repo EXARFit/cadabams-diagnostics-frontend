@@ -21,7 +21,6 @@ const formatCategoryTitle = (category) => {
   return titles[category] || 'Diagnostic Centre';
 };
 
-// Helper function to format category descriptions
 const formatCategoryDescription = (category) => {
   const descriptions = {
     'mri-scan': 'Get accurate imaging with MRI scans',
@@ -33,7 +32,6 @@ const formatCategoryDescription = (category) => {
   return descriptions[category] || 'Book diagnostic scans';
 };
 
-// Helper function to capitalize location
 const capitalizeLocation = (loc) => {
   if (!loc) return 'Bangalore';
   return loc.split('-')
@@ -45,38 +43,34 @@ export async function getServerSideProps({ params, query, res, req }) {
   const { category } = params;
   const location = query.location || null;
   const baseUrl = 'https://cadabamsdiagnostics.com';
-  
-  // Check if the URL includes bangalore
   const hasBangalore = req.url.includes('/bangalore/');
 
   try {
     const response = await axios.get(`${API_BASE_URL}/${category}`);
     
     if (!response.data.success || !response.data.data?.[0]) {
-      return {
-        notFound: true
-      };
+      return { notFound: true };
     }
 
     const categoryData = response.data.data[0];
-    
-    // SEO data preparation
     const locationName = capitalizeLocation(location || '');
     const categoryTitle = formatCategoryTitle(category);
     const categoryDesc = formatCategoryDescription(category);
+    
+    // Update title and description based on route
+    const seoLocation = hasBangalore ? `in ${locationName}` : 'near you';
     const currentUrl = hasBangalore 
       ? `${baseUrl}/bangalore${location ? `/${location}` : ''}/${category}`
       : `${baseUrl}/${category}`;
 
     const seoData = {
-      title: `${categoryTitle} in ${locationName} | Cadabam's Diagnostics`,
-      description: `${categoryDesc} in ${locationName}. Trusted diagnostic centers with quick results.`,
-      keywords: `${categoryTitle}, diagnostic center, ${locationName}, medical testing, health checkup, diagnostic scan`,
+      title: `${categoryTitle} ${seoLocation} | Cadabam's Diagnostics`,
+      description: `${categoryDesc} ${seoLocation}. Trusted diagnostic centers with quick results.`,
+      keywords: `${categoryTitle}, diagnostic center, ${hasBangalore ? locationName : 'near you'}, medical testing, health checkup, diagnostic scan`,
       url: currentUrl,
       imageUrl: `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`
     };
 
-    // Set cache headers
     if (res) {
       res.setHeader(
         'Cache-Control',
@@ -116,11 +110,9 @@ export default function CategoryPage({ categoryData, seoData, category, location
     ? `${baseUrl}/bangalore${location ? `/${location}` : ''}/${category}`
     : `${baseUrl}/${category}`;
 
-  // Generate schemas for the page
   const generateSchemas = (seoData, categoryData, location) => {
-    const locationName = capitalizeLocation(location);
+    const locationName = hasBangalore ? capitalizeLocation(location) : 'Near Me';
 
-    // Medical Webpage Schema
     const medicalWebpageSchema = {
       '@context': 'https://schema.org',
       '@type': 'MedicalWebPage',
@@ -174,7 +166,7 @@ export default function CategoryPage({ categoryData, seoData, category, location
         ratingValue: '4.5',
         reviewCount: '100'
       },
-      alternativeHeadline: `${categoryData.name} in ${locationName}`,
+      alternativeHeadline: `${categoryData.name} ${hasBangalore ? `in ${locationName}` : 'near me'}`,
       dateCreated: categoryData.createdAt || new Date().toISOString(),
       dateModified: categoryData.updatedAt || new Date().toISOString(),
       copyrightHolder: {
@@ -184,7 +176,6 @@ export default function CategoryPage({ categoryData, seoData, category, location
       keywords: seoData.keywords
     };
 
-    // FAQ Schema
     const faqSchema = {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
@@ -198,7 +189,6 @@ export default function CategoryPage({ categoryData, seoData, category, location
       })) || []
     };
 
-    // Breadcrumb Schema
     const breadcrumbSchema = {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
@@ -283,7 +273,7 @@ export default function CategoryPage({ categoryData, seoData, category, location
         <meta property="og:email" content="info@cadabamsdiagnostics.com" />
         <meta property="og:phone_number" content="+918050381444" />
         <meta property="og:street-address" content="Bangalore" />
-        <meta property="og:locality" content={capitalizeLocation(location)} />
+        <meta property="og:locality" content={hasBangalore ? capitalizeLocation(location) : 'Near Me'} />
         <meta property="og:region" content="Karnataka" />
         <meta property="og:postal-code" content="560001" />
         <meta property="og:country-name" content="India" />
