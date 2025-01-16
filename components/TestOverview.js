@@ -1,7 +1,8 @@
-// TestOverview.js
+// components/TestOverview.js
 import React, { useEffect, useRef, useContext, useState } from 'react';
 import { Users, ChevronRight, Info, Check } from 'lucide-react';
 import { CartContext } from '@/contexts/CartContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import styles from './TestOverview.module.css';
 
 const TestOverview = ({ basicInfo, templateName }) => {
@@ -9,6 +10,7 @@ const TestOverview = ({ basicInfo, templateName }) => {
   const rightBallRef = useRef(null);
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const analytics = useAnalytics();
 
   useEffect(() => {
     const isInCart = cart?.some(item => item.route === basicInfo.route);
@@ -53,8 +55,19 @@ const TestOverview = ({ basicInfo, templateName }) => {
       price: basicInfo.price,
       quantity: 1,
       templateName: templateName || 'labtest',
-      basicInfo // Store complete basicInfo for future reference
+      basicInfo
     };
+
+    // Track GTM event
+    analytics.trackAddToCart({
+      _id: basicInfo.route,
+      testName: basicInfo.name,
+      basicInfo: {
+        ...basicInfo,
+        category: templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      }
+    });
+
     addToCart(cartItem);
     setIsAdded(true);
   };

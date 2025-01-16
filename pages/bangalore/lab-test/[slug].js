@@ -188,16 +188,70 @@ export default function SlugPage({ testData, baseUrl, locationName, pageTitle, p
   const router = useRouter();
   const { location } = router.query;
   const [error, setError] = useState(null);
-  const analytics = useAnalytics(); // Add analytics hook
+  const [isPageVisible, setIsPageVisible] = useState(true);
+  const analytics = useAnalytics();
 
-  // Add GTM view_item event tracking
+  // Track page visibility
   useEffect(() => {
-    if (testData) {
-      analytics.viewItem(testData);
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Track view_item event when the test data is loaded
+  useEffect(() => {
+    if (testData && isPageVisible) {
+      analytics.trackViewItem({
+        ...testData,
+        viewTimestamp: new Date().toISOString(),
+        location: location || 'bangalore'
+      });
+
+      // Also track any related tests if they exist
+      if (testData.alldata?.relative_test?.tests?.length > 0) {
+        analytics.trackViewItemList(
+          testData.alldata.relative_test.tests,
+          'Related Tests'
+        );
+      }
     }
-  }, [testData]);
+  }, [testData, analytics, location, isPageVisible]);
+
+  // Track test interactions
+  const handleTestInteraction = (test, interactionType) => {
+    if (!isPageVisible) return;
+
+    switch (interactionType) {
+      case 'select':
+        analytics.trackSelectItem(test, 'Test Details');
+        break;
+      case 'add_to_cart':
+        analytics.trackAddToCart(test);
+        break;
+      case 'remove_from_cart':
+        analytics.trackRemoveFromCart(test);
+        break;
+      default:
+        break;
+    }
+  };
 
   if (error) {
+    // Track error event
+    if (typeof window !== 'undefined' && window.dataLayer) {
+      window.dataLayer.push({
+        event: 'page_error',
+        error_type: 'test_page_error',
+        error_message: error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     return (
       <Layout title="Error">
         <div className={styles.errorContainer}>
@@ -259,7 +313,7 @@ export default function SlugPage({ testData, baseUrl, locationName, pageTitle, p
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@CadabamsDX" />  
+        <meta name="twitter:site" content="@CadabamsDX" />
         <meta name="twitter:creator" content="@CadabamsDX" />
         <meta name="twitter:title" content={testData.seo?.title || pageTitle} />
         <meta name="twitter:description" content={testData.seo?.description || pageDescription} />
@@ -291,7 +345,7 @@ export default function SlugPage({ testData, baseUrl, locationName, pageTitle, p
         <Breadcrumb title={testData.testName} />
         <TestPage 
           testData={testData}
-          analytics={analytics} // Pass analytics to TestPage component
+          onTestInteraction={handleTestInteraction}
         />
       </div>
     </Layout>

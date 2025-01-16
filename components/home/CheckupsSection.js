@@ -1,15 +1,17 @@
-// CheckupsSlider.js
+// components/CheckupsSlider.js
 import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import styles from './CheckupsSlider.module.css';
 
 const CheckupCard = ({ test }) => {
   const router = useRouter();
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const analytics = useAnalytics();
   const basicInfo = test?.alldata?.[0]?.basic_info;
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
 
@@ -34,6 +36,16 @@ const CheckupCard = ({ test }) => {
       location: specificLocation !== 'lab-test' ? specificLocation : null
     };
 
+    // Track GTM add_to_cart event
+    analytics.trackAddToCart({
+      _id: test._id,
+      testName: basicInfo?.name,
+      basicInfo: {
+        ...basicInfo,
+        category: test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      }
+    });
+
     addToCart(cartItem);
     setIsAdded(true);
   };
@@ -43,6 +55,20 @@ const CheckupCard = ({ test }) => {
       const currentPath = router.asPath;
       const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
       const specificLocation = locationMatch ? locationMatch[1] : null;
+
+      // Track GTM select_item event
+      analytics.trackSelectItem(
+        {
+          _id: test._id,
+          testName: basicInfo?.name,
+          basicInfo: {
+            ...basicInfo,
+            category: test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+          }
+        },
+        'Health Checkups',
+        test.index
+      );
 
       let targetRoute;
       if (specificLocation && specificLocation !== 'lab-test') {
@@ -123,6 +149,7 @@ export default function CheckupsSection({ test_card }) {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const analytics = useAnalytics();
   const tests = test_card?.tests || [];
   const cardsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(tests.length / cardsPerSlide);
@@ -134,8 +161,17 @@ export default function CheckupsSection({ test_card }) {
 
     handleResize();
     window.addEventListener('resize', handleResize);
+
+    // Track view_item_list event when component mounts
+    if (tests?.length > 0) {
+      analytics.trackViewItemList(tests.map((test, index) => ({
+        ...test,
+        index
+      })), test_card?.title || 'Health Checkups');
+    }
+
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [tests, test_card?.title, analytics]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides);

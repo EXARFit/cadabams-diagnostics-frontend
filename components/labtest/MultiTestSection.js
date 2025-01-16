@@ -1,9 +1,10 @@
-// components/labtest/MultiTestSection.js
+// components/MultiTestSection.js
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CartContext } from '@/contexts/CartContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import styles from './MultiTestSection.module.css';
 
 const getLocationFromPath = (path) => {
@@ -11,18 +12,17 @@ const getLocationFromPath = (path) => {
   
   const parts = path.split('/').filter(Boolean);
   
-  // If path includes bangalore as the first part
   if (parts[0] === 'bangalore') {
     return { name: 'Bangalore', value: 'bangalore' };
   }
   
-  // For non-bangalore paths
   return { name: 'near me', value: 'near-me' };
 };
 
-const TestCard = ({ test, onViewDetails }) => {
+const TestCard = ({ test, onViewDetails, index, listName }) => {
   const router = useRouter();
   const { cart, addToCart } = useContext(CartContext);
+  const analytics = useAnalytics();
   const basicInfo = test?.alldata?.[0]?.basic_info;
   const [isAdded, setIsAdded] = useState(false);
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
@@ -47,8 +47,34 @@ const TestCard = ({ test, onViewDetails }) => {
       test: test,
       location: specificLocation !== 'lab-test' ? specificLocation : null
     };
+
+    // Track GTM add_to_cart event
+    analytics.trackAddToCart({
+      _id: test._id,
+      testName: basicInfo?.name,
+      basicInfo: {
+        ...basicInfo,
+        category: test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      },
+      index
+    }, 1, listName);
+
     addToCart(cartItem);
     setIsAdded(true);
+  };
+
+  const handleViewDetails = () => {
+    // Track GTM select_item event
+    analytics.trackSelectItem({
+      _id: test._id,
+      testName: basicInfo?.name,
+      basicInfo: {
+        ...basicInfo,
+        category: test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      }
+    }, listName, index);
+
+    onViewDetails(basicInfo?.route);
   };
 
   return (
@@ -83,7 +109,7 @@ const TestCard = ({ test, onViewDetails }) => {
         <div className={styles.actions}>
           <motion.button
             className={styles.viewButton}
-            onClick={() => onViewDetails(basicInfo?.route)}
+            onClick={handleViewDetails}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -115,6 +141,7 @@ const TestSection = ({ section }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const analytics = useAnalytics();
   
   useEffect(() => {
     const handleResize = () => {
@@ -123,8 +150,20 @@ const TestSection = ({ section }) => {
     
     handleResize();
     window.addEventListener('resize', handleResize);
+
+    // Track view_item_list event when component mounts
+    if (section.tests?.length > 0) {
+      analytics.trackViewItemList(
+        section.tests.map((test, index) => ({
+          ...test,
+          index
+        })),
+        section.title
+      );
+    }
+
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [section, analytics]);
 
   const cardsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(section.tests.length / cardsPerSlide);
@@ -134,7 +173,6 @@ const TestSection = ({ section }) => {
     let title = section.title;
     const locationText = currentLocation.value === 'near-me' ? 'near me' : `in ${currentLocation.name}`;
     
-    // Replace existing location references
     if (title.includes('in Bangalore')) {
       title = title.replace('in Bangalore', locationText);
     } else if (title.includes('Bangalore')) {
@@ -183,15 +221,11 @@ const TestSection = ({ section }) => {
     if (route) {
       let targetRoute;
       
-      // Handle routing based on current location
       if (currentLocation.value === 'near-me') {
-        // For non-bangalore paths, use root path
         targetRoute = `/lab-test${route}`;
       } else if (currentLocation.value === 'bangalore') {
-        // For main bangalore path
         targetRoute = `/bangalore/lab-test${route}`;
       } else {
-        // For specific bangalore locations
         targetRoute = `/bangalore/${currentLocation.value}/lab-test${route}`;
       }
 
@@ -240,11 +274,13 @@ const TestSection = ({ section }) => {
                 '--cards-per-slide': cardsPerSlide
               }}
             >
-              {visibleTests.map((test) => (
+              {visibleTests.map((test, index) => (
                 <TestCard
                   key={test._id}
                   test={test}
                   onViewDetails={handleViewDetails}
+                  index={currentSlide * cardsPerSlide + index}
+                  listName={locationAwareTitle}
                 />
               ))}
             </motion.div>
@@ -285,7 +321,7 @@ const TestSection = ({ section }) => {
   );
 };
 
-export default function MultiTestSection({ sections }) {
+const MultiTestSection = ({ sections }) => {
   if (!sections || sections.length === 0) return null;
 
   return (
@@ -300,4 +336,6 @@ export default function MultiTestSection({ sections }) {
       </div>
     </section>
   );
-}
+};
+
+export default MultiTestSection;

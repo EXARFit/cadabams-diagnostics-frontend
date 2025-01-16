@@ -1,8 +1,10 @@
+// components/RelatedTests.js
 import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import DOMPurify from 'isomorphic-dompurify';
 import styles from './RelatedTests.module.css';
 
@@ -10,6 +12,7 @@ const TestCard = ({ test, currentCategory }) => {
   const router = useRouter();
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const analytics = useAnalytics();
   
   const basicInfo = test.alldata?.[0]?.basic_info || {};
   const aboutTest = test.alldata?.find(item => item.about_test)?.about_test || {};
@@ -34,11 +37,36 @@ const TestCard = ({ test, currentCategory }) => {
         route: basicInfo?.route
       }
     };
+
+    // Track GTM add_to_cart event
+    analytics.trackAddToCart({
+      _id: test._id,
+      testName: basicInfo?.name,
+      basicInfo: {
+        ...basicInfo,
+        category: test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      }
+    });
+
     addToCart(cartItem);
     setIsAdded(true);
   };
 
   const handleViewDetails = () => {
+    // Track GTM select_item event
+    analytics.trackSelectItem(
+      {
+        _id: test._id,
+        testName: basicInfo?.name,
+        basicInfo: {
+          ...basicInfo,
+          category: test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+        }
+      },
+      'Related Tests',
+      test.index
+    );
+
     router.push(`/bangalore/${currentCategory}${basicInfo?.route}`);
   };
 
@@ -128,6 +156,7 @@ const RelatedTests = ({ tests, currentCategory }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const analytics = useAnalytics();
 
   const cardsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(tests?.length / cardsPerSlide);
@@ -139,8 +168,17 @@ const RelatedTests = ({ tests, currentCategory }) => {
 
     handleResize();
     window.addEventListener('resize', handleResize);
+    
+    // Track view_item_list event when component mounts
+    if (tests?.length > 0) {
+      analytics.trackViewItemList(tests.map((test, index) => ({
+        ...test,
+        index
+      })), 'Related Tests');
+    }
+
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [tests, analytics]);
 
   if (!tests || tests.length === 0) return null;
 
@@ -207,55 +245,55 @@ const RelatedTests = ({ tests, currentCategory }) => {
         )}
 
         <div 
-          className={styles.cardsContainer}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+        className={styles.cardsContainer}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <AnimatePresence mode="wait">
+          {visibleTests.map((test, index) => (
+            <TestCard 
+              key={test._id} 
+              test={{...test, index}} // Pass index for GTM tracking
+              currentCategory={currentCategory}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {!isMobile && (
+        <motion.button
+          className={`${styles.navButton} ${styles.nextButton}`}
+          onClick={nextSlide}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          disabled={currentSlide === totalSlides - 1}
         >
-          <AnimatePresence mode="wait">
-            {visibleTests.map((test) => (
-              <TestCard 
-                key={test._id} 
-                test={test}
-                currentCategory={currentCategory}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
+          <FaChevronRight />
+        </motion.button>
+      )}
+    </div>
 
-        {!isMobile && (
-          <motion.button
-            className={`${styles.navButton} ${styles.nextButton}`}
-            onClick={nextSlide}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            disabled={currentSlide === totalSlides - 1}
-          >
-            <FaChevronRight />
-          </motion.button>
-        )}
-      </div>
-
-      <div className={styles.pagination}>
-        {currentSlide + 1}/{totalSlides}
-      </div>
-      <div className={styles.dots}>
-        {[...Array(totalSlides)].map((_, index) => (
-          <motion.span
-            key={index}
-            className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ''}`}
-            initial={{ scale: 1 }}
-            animate={{ 
-              scale: index === currentSlide ? 1.2 : 1,
-              backgroundColor: index === currentSlide ? '#0047ab' : '#ccc'
-            }}
-            transition={{ duration: 0.3 }}
-            onClick={() => setCurrentSlide(index)}
-          />
-        ))}
-      </div>
-    </section>
-  );
+    <div className={styles.pagination}>
+      {currentSlide + 1}/{totalSlides}
+    </div>
+    <div className={styles.dots}>
+      {[...Array(totalSlides)].map((_, index) => (
+        <motion.span
+          key={index}
+          className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ''}`}
+          initial={{ scale: 1 }}
+          animate={{ 
+            scale: index === currentSlide ? 1.2 : 1,
+            backgroundColor: index === currentSlide ? '#0047ab' : '#ccc'
+          }}
+          transition={{ duration: 0.3 }}
+          onClick={() => setCurrentSlide(index)}
+        />
+      ))}
+    </div>
+  </section>
+);
 };
 
 export default RelatedTests;

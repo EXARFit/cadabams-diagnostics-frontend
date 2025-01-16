@@ -1,15 +1,18 @@
+// components/HealthCheckupSlider.js
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaShieldAlt, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import styles from './HealthCheckupSlider.module.css';
 
-const CheckupCard = ({ content }) => {
+const CheckupCard = ({ content, index }) => {
   const router = useRouter();
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const analytics = useAnalytics();
   const basicInfo = content?.test?.alldata?.[0]?.basic_info;
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
 
@@ -40,6 +43,17 @@ const CheckupCard = ({ content }) => {
       location: specificLocation !== 'lab-test' ? specificLocation : null
     };
 
+    // Track GTM add_to_cart event
+    analytics.trackAddToCart({
+      _id: content.test._id,
+      testName: basicInfo.name,
+      basicInfo: {
+        ...basicInfo,
+        category: content.test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      },
+      index
+    });
+
     addToCart(cartItem);
     setIsAdded(true);
   };
@@ -47,12 +61,37 @@ const CheckupCard = ({ content }) => {
   const handleRemoveFromCart = () => {
     if (!basicInfo?.route) return;
     
+    // Track GTM remove_from_cart event
+    analytics.trackRemoveFromCart({
+      _id: content.test._id,
+      testName: basicInfo.name,
+      basicInfo: {
+        ...basicInfo,
+        category: content.test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+      },
+      index
+    });
+    
     removeFromCart(basicInfo.route);
     setIsAdded(false);
   };
 
   const handleViewDetails = () => {
     if (basicInfo?.route) {
+      // Track GTM select_item event
+      analytics.trackSelectItem(
+        {
+          _id: content.test._id,
+          testName: basicInfo.name,
+          basicInfo: {
+            ...basicInfo,
+            category: content.test.templateName === 'non-labtest' ? 'Center Visit' : 'Lab Test'
+          }
+        },
+        'Health Checkups',
+        index
+      );
+
       const currentPath = router.asPath;
       const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
       const specificLocation = locationMatch ? locationMatch[1] : null;
@@ -99,7 +138,6 @@ const CheckupCard = ({ content }) => {
       <div className={styles.cardBody}>
         <div className={styles.infoItem}>
           <FaFlask className={styles.icon} />
-          {/* <span>{basicInfo?.parameters || '107 parameters included'}</span> */}
         </div>
         <div className={styles.infoItem}>
           <FaClock className={styles.icon} />
@@ -145,9 +183,10 @@ const HealthCheckupSlider = ({ healthData }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const touchStart = useRef(null);
+  const analytics = useAnalytics();
   const content = healthData?.content || [];
   const totalSlides = content.length;
-  const touchStart = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -158,8 +197,19 @@ const HealthCheckupSlider = ({ healthData }) => {
     setIsLoading(false);
     window.addEventListener('resize', handleResize);
     
+    // Track view_item_list event when component mounts
+    if (content.length > 0) {
+      analytics.trackViewItemList(
+        content.map((item, index) => ({
+          ...item.test,
+          index
+        })),
+        'Health Checkups'
+      );
+    }
+    
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [content, analytics]);
 
   const nextSlide = () => {
     if (currentSlide < totalSlides - 1) {
@@ -234,7 +284,11 @@ const HealthCheckupSlider = ({ healthData }) => {
           <div className={styles.content}>
             <div className={styles.checkupCard}>
               <AnimatePresence mode="wait">
-                <CheckupCard key={currentSlide} content={currentContent} />
+                <CheckupCard 
+                  key={currentSlide} 
+                  content={currentContent}
+                  index={currentSlide}
+                />
               </AnimatePresence>
             </div>
 
