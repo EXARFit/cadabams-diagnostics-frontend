@@ -67,9 +67,7 @@ const MobileSearchBar = () => {
           />
         </div>
       </form>
-      <div className={styles.discountBanner}>
-        Get <span className={styles.highlight}>15% OFF*</span> | Use code: <span className={styles.highlight}>CADABAM15</span>
-      </div>
+    
     </motion.div>
   );
 };
