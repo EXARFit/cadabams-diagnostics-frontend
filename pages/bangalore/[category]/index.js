@@ -319,7 +319,7 @@ export async function getServerSideProps({ params, query, res, req }) {
     const categoryTitle = formatCategoryTitle(category);
     const categoryDesc = formatCategoryDescription(category);
     
-    const seoLocation = hasBangalore ? `in ${locationName}` : 'near you';
+    const seoLocation = hasBangalore ? `in ${locationName}` : 'Near You';
     const currentUrl = hasBangalore 
       ? `${baseUrl}/bangalore${location ? `/${location}` : ''}/${category}`
       : `${baseUrl}/${category}`;
@@ -327,7 +327,7 @@ export async function getServerSideProps({ params, query, res, req }) {
     const seoData = {
       title: `${categoryTitle} ${seoLocation} | Cadabam's Diagnostics`,
       description: `${categoryDesc} ${seoLocation}. Trusted diagnostic centers with quick results.`,
-      keywords: `${categoryTitle}, diagnostic center, ${hasBangalore ? locationName : 'near you'}, medical testing, health checkup, diagnostic scan`,
+      keywords: `${categoryTitle}, diagnostic center, ${hasBangalore ? locationName : 'Near You'}, medical testing, health checkup, diagnostic scan`,
       url: currentUrl,
       imageUrl: `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`
     };

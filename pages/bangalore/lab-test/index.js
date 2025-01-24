@@ -53,8 +53,8 @@ const generateSchemas = (locationName, baseUrl, location, hasBangalore, pageData
   const currentUrl = generateLocationUrl(baseUrl, location, hasBangalore, 'lab-test');
   
   const pageTitle = location 
-    ? `Reliable Lab Tests  ${hasBangalore ? `in ${locationName}` : 'near you'} | Cadabams Diagnostics`
-    : `Reliable Lab Tests  ${hasBangalore ? `in ${locationName}` : 'near you'} | Cadabams Diagnostics`;
+    ? `Reliable Lab Tests  ${hasBangalore ? `in ${locationName}` : 'Near You'} | Cadabams Diagnostics`
+    : `Reliable Lab Tests  ${hasBangalore ? `in ${locationName}` : 'Near You'} | Cadabams Diagnostics`;
     
   const pageDescription = location
     ? `Get accurate and reliable lab test services in ${locationName} at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!`
@@ -291,8 +291,8 @@ export async function getServerSideProps({ query, req, res }) {
     const pageData = response.data.success ? response.data.data : null;
 
     const pageTitle = location 
-      ? `Reliable Lab Tests  ${hasBangalore ? `in ${locationName}` : 'near you'} | Cadabams Diagnostics`
-      : `Reliable Lab Tests ${hasBangalore ? `in ${locationName}` : 'near you'} | Cadabams Diagnostics`
+      ? `Reliable Lab Tests  ${hasBangalore ? `in ${locationName}` : 'Near You'} | Cadabams Diagnostics`
+      : `Reliable Lab Tests ${hasBangalore ? `in ${locationName}` : 'Near You'} | Cadabams Diagnostics`
     
     const pageDescription = location
       ? `Get accurate and reliable lab test services in ${locationName} at Cadabams Diagnostics. From routine blood tests to advanced diagnostics, we ensure precise results with state-of-the-art technology and expert care. Book your test today!`
@@ -590,7 +590,7 @@ export default function LabtestPage({
         <Head>
           <title>{pageTitle}</title>
           <meta name="description" content={pageDescription} />
-          <meta name="keywords" content={`lab tests, medical tests, diagnostic tests, blood tests, pathology lab, ${hasBangalore ? locationName : 'near you'}, healthcare`} />
+          <meta name="keywords" content={`lab tests, medical tests, diagnostic tests, blood tests, pathology lab, ${hasBangalore ? locationName : 'Near You'}, healthcare`} />
           
           <meta name="robots" content="index, follow" />
           <link rel="canonical" href={currentUrl} />
