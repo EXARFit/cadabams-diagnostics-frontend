@@ -1,4 +1,3 @@
-// components/NonLabTestPage1.js
 import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import DOMPurify from 'isomorphic-dompurify';
@@ -17,9 +16,14 @@ const useLocation = () => {
     
     const parts = path.split('/').filter(Boolean);
     
-    // If path includes bangalore as the first part
-    if (parts[0] === 'bangalore') {
+    // If path has exactly 2 parts and first part is bangalore
+    if (parts.length === 2 && parts[0] === 'bangalore') {
       return { name: 'Bangalore', value: 'bangalore' };
+    }
+    
+    // If path has more than 2 parts (indicating a specific location)
+    if (parts.length > 2) {
+      return { name: 'near me', value: 'near-me' };
     }
     
     return { name: 'near me', value: 'near-me' };

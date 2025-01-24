@@ -1,4 +1,3 @@
-// components/CategoryOverview.js
 import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styles from './CategoryOverview.module.css';
@@ -19,9 +18,14 @@ const getLocationFromPath = (path) => {
   
   const parts = path.split('/').filter(Boolean);
   
-  // If path includes bangalore as the first part
-  if (parts[0] === 'bangalore') {
+  // If path has exactly 2 parts and first part is bangalore
+  if (parts.length === 2 && parts[0] === 'bangalore') {
     return { name: 'Bangalore', value: 'bangalore' };
+  }
+  
+  // If path has more than 2 parts (indicating a specific location)
+  if (parts.length > 2) {
+    return { name: 'near me', value: 'near-me' };
   }
   
   return { name: 'near me', value: 'near-me' };
@@ -36,32 +40,32 @@ const formatCategoryName = (name, categoryType) => {
     'xray-scan': 'X-Ray',
     'pregnancy-scan': 'Pregnancy'
   };
-
+  
   const baseType = typeMap[categoryType.toLowerCase()] || name;
   return `${baseType} Scans`;
 };
 
 const CategoryOverview = ({ category }) => {
   if (!category) return null;
-
+  
   const router = useRouter();
   const currentLocation = getLocationFromPath(router.asPath);
-
+  
   const {
     name = '',
     description = '',
     image = '',
     categoryType = ''
   } = category;
-
+  
   const locationAwareTitle = useMemo(() => {
     const formattedName = formatCategoryName(name, categoryType);
-    const locationText = currentLocation.value === 'near-me' 
+    const locationText = currentLocation.value === 'near-me'
       ? 'near me'
       : `in ${currentLocation.name}`;
     return `${formattedName} ${locationText}`;
   }, [name, categoryType, currentLocation]);
-
+  
   const getDisplayImage = () => {
     if (image && categoryType.toLowerCase().includes('pregnancy')) {
       return image;
@@ -72,16 +76,16 @@ const CategoryOverview = ({ category }) => {
     
     return selectedImage || DEFAULT_IMAGE;
   };
-
+  
   const displayImage = getDisplayImage();
-
+  
   const locationAwareDescription = useMemo(() => {
     if (!description) return '';
     return currentLocation.value === 'near-me'
       ? description.replace(/Bangalore/g, 'near me')
       : description.replace(/Bangalore/g, currentLocation.name);
   }, [description, currentLocation]);
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.card}>

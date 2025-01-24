@@ -12,8 +12,14 @@ const getLocationFromPath = (path) => {
   
   const parts = path.split('/').filter(Boolean);
   
-  if (parts[0] === 'bangalore') {
+  // If path has exactly 2 parts and first part is bangalore
+  if (parts.length === 2 && parts[0] === 'bangalore') {
     return { name: 'Bangalore', value: 'bangalore' };
+  }
+  
+  // If path has more than 2 parts (indicating a specific location)
+  if (parts.length > 2) {
+    return { name: 'near me', value: 'near-me' };
   }
   
   return { name: 'near me', value: 'near-me' };

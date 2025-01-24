@@ -1,4 +1,3 @@
-// components/labtest/LabtestHero.js
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -8,15 +7,18 @@ import styles from './LabtestHero.module.css';
 const getLocationFromPath = (path) => {
   if (!path) return { name: 'near me', value: 'near-me' };
   
-  // Split path into segments
   const parts = path.split('/').filter(Boolean);
   
-  // If path includes bangalore as the first part
-  if (parts[0] === 'bangalore') {
+  // If path has exactly 2 parts and first part is bangalore
+  if (parts.length === 2 && parts[0] === 'bangalore') {
     return { name: 'Bangalore', value: 'bangalore' };
   }
   
-  // For non-bangalore paths
+  // If path has more than 2 parts (indicating a specific location)
+  if (parts.length > 2) {
+    return { name: 'near me', value: 'near-me' };
+  }
+  
   return { name: 'near me', value: 'near-me' };
 };
 
@@ -80,14 +82,11 @@ export default function LabtestHero({ heroData = {} }) {
   };
 
   const handleResultClick = (result) => {
-    // Construct the route based on current location and result type
     let baseRoute = '';
     
-    // For non-bangalore paths, we'll use the root path
     if (currentLocation.value === 'near-me') {
       baseRoute = '';
     } else {
-      // For bangalore paths, maintain the location structure
       baseRoute = `/bangalore${currentLocation.value !== 'bangalore' ? `/${currentLocation.value}` : ''}`;
     }
     
