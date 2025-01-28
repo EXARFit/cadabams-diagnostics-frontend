@@ -189,57 +189,12 @@ const generateSchemas = (locationName, baseUrl, location, hasBangalore, pageData
     ]
   };
 
-  // LocalBusiness Schema
-  const localBusinessSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'DiagnosticLab',
-    name: `Cadabams Diagnostics - ${locationName}`,
-    image: [
-      `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`
-    ],
-    '@id': currentUrl,
-    url: currentUrl,
-    telephone: '+918050381444',
-    priceRange: '₹₹',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '123 Healthcare Street',
-      addressLocality: locationName,
-      addressRegion: 'Karnataka',
-      postalCode: '560001',
-      addressCountry: 'IN'
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 12.9716,
-      longitude: 77.5946
-    },
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
-      ],
-      opens: '00:00',
-      closes: '23:59'
-    },
-    sameAs: [
-      'https://www.facebook.com/cadabamsdiagnostics',
-      'https://twitter.com/CadabamsDX',
-      'https://www.instagram.com/cadabams_diagnostics/'
-    ]
-  };
+
 
   return [
     medicalWebpageSchema,
     organizationSchema,
     breadcrumbSchema,
-    localBusinessSchema
   ];
 };
 
