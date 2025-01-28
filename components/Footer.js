@@ -155,7 +155,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/ct-scan/chest-x-ray">
+                <Link href="/bangalore/xray-scan/chest-x-ray">
                   Chest XRay
                 </Link>
               </li>
