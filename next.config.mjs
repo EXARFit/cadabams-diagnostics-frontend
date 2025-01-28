@@ -77,6 +77,8 @@ const nextConfig = {
       ...createRedirectPair('/bangalore/xray-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound', '/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound'),
       ...createRedirectPair('/bangalore/xray-scan/pregnancy-ultrasound', '/bangalore/ultrasound-scan/pregnancy-ultrasound'),
       ...createRedirectPair('/bangalore/xray-scan/thyroid-scan', '/bangalore/ultrasound-scan/thyroid-scan'),
+      ...createRedirectPair('/bangalore/xray-scan/chest-ct-scans', '/bangalore/ct-scan/chest-ct-scans'),
+
       ...createRedirectPair('/fetal-interventional-in-bangalore', '/bangalore/ultrasound-scan/fetal-interventional-ultrasound-echo'),
       ...createRedirectPair('/bangalore/ct-scan/ct-abdomen-and-lower-thorax', '/bangalore/ct-scan/abdomen-and-lower-thorax-ct-scan'),
       ...createRedirectPair('/bangalore/pregnancy-scan/pregnancy-ultrasound-scan', '/bangalore/ultrasound-scan/pregnancy-ultrasound'),
@@ -87,6 +89,8 @@ const nextConfig = {
       ...createRedirectPair('/bangalore/ultrasound-scan/testis-scan', '/bangalore/ultrasound-scan/testis-ultrasound-scan'),
       ...createRedirectPair('/bangalore/xray-scan/x-ray-bilateral-mammography', '/bangalore/xray-scan/bilateral-mammography-x-ray'),
       ...createRedirectPair('/bangalore/xray-scan/xray-scan', '/bangalore/xray-scan'),
+      ...createRedirectPair('/bangalore/xray-scan/x-rays', '/bangalore/xray-scan'),
+
 
       // Previous existing redirects
       ...createRedirectPair('/bangalore/lab-test/complete-blood-count-test-cbc', '/bangalore/lab-test/complete-blood-count-cbc'),
@@ -143,6 +147,8 @@ const nextConfig = {
       ...createRedirectPair('/penile-doppler-test-in-bangalore', '/bangalore/ultrasound-scan/penile-doppler-ultrasound-scan'),
       ...createRedirectPair('/sonomammography-scan-bangalore', '/bangalore/ultrasound-scan/sonomammography-ultrasound-scan'),
       ...createRedirectPair('/thyroid-scan-bangalore', '/bangalore/ultrasound-scan/thyroid-scan'),
+      ...createRedirectPair('/chest-ct-scan-bangalore', '/bangalore/ct-scan/chest-ct-scans'),
+
       ...createRedirectPair('/echocardiography-test-in-bangalore', '/bangalore/ultrasound-scan/echocardiogram-testing'),
       ...createRedirectPair('/elastography-test-in-bangalore', '/bangalore/ultrasound-scan/elastography-ultrasound-test'),
       ...createRedirectPair('/kidney-blood-test-bangalore', '/bangalore/lab-test/kidney-function-test-kft'),
