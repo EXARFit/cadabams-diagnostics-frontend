@@ -30,6 +30,57 @@
   z-index: 30;
 }
 
+/* WhatsApp Button Styles */
+.floatingWhatsapp {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  animation: float 3s ease-in-out infinite;
+}
+
+.whatsappButton {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #25D366;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.whatsappButton:hover {
+  transform: scale(1.1);
+}
+
+.whatsappTooltip {
+  background-color: white;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-left: 12px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  position: absolute;
+  left: 85px;
+  white-space: nowrap;
+}
+
+.floatingWhatsapp:hover .whatsappTooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Enhanced Floating Call Button Styles */
 .floatingCall {
   position: fixed;
@@ -42,25 +93,11 @@
   cursor: pointer;
 }
 
-/* WhatsApp specific styles */
-.floatingWhatsapp {
-  right: auto;
-  left: 24px;
-}
-
-.whatsappIcon {
-  background-color: #25D366; /* WhatsApp green */
-}
-
-.whatsappIcon:hover {
-  background-color: #128C7E; /* Darker WhatsApp green */
-}
-
 .callIcon {
-  background-color: #663399; /* Darker purple color */
+  background-color: #663399;
   border-radius: 50%;
-  width: 72px; /* Increased size */
-  height: 72px; /* Increased size */
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +131,7 @@
 
 .callIcon:hover {
   transform: scale(1.1);
-  background-color: #4B0082; /* Even darker purple on hover */
+  background-color: #4B0082;
 }
 
 /* Floating animation */
@@ -110,10 +147,6 @@
   }
 }
 
-.floatingCall {
-  animation: float 3s ease-in-out infinite;
-}
-
 .callTooltip {
   background-color: white;
   color: #333;
@@ -126,14 +159,8 @@
   visibility: hidden;
   transition: opacity 0.2s, visibility 0.2s;
   position: absolute;
-  right: 85px; /* Adjusted for larger button */
+  right: 85px;
   white-space: nowrap;
-}
-
-/* Adjust tooltip position for WhatsApp */
-.floatingWhatsapp .callTooltip {
-  right: auto;
-  left: 85px;
 }
 
 .floatingCall:hover .callTooltip {
@@ -156,11 +183,13 @@
     z-index: 1;
   }
 
-  .callTooltip {
+  .callTooltip,
+  .whatsappTooltip {
     display: none;
   }
 
-  .floatingCall {
-    bottom: 85px; /* Adjusted for larger button */
+  .floatingCall,
+  .floatingWhatsapp {
+    bottom: 85px;
   }
 }
