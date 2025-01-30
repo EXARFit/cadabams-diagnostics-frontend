@@ -22,11 +22,52 @@ const seededShuffle = (array, seed) => {
   return newArray;
 };
 
+// Determine test type based on category and name
+const determineTestType = (test, basicInfo) => {
+  let determinedType = null;
+
+  // First check basic info if available
+  if (basicInfo?.testCategory) {
+    const category = basicInfo.testCategory.toLowerCase();
+    if (category.includes('ultrasonography') || category.includes('ultrasound')) {
+      determinedType = 'ultrasound-scan';
+    }
+    if (category.includes('x-ray')) determinedType = 'xray-scan';
+    if (category.includes('mri')) determinedType = 'mri-scan';
+    if (category.includes('ct')) determinedType = 'ct-scan';
+  }
+
+  // If no type determined from basic info, fallback to URL-based detection
+  if (!determinedType) {
+    const testLower = test.toLowerCase();
+    if (testLower.includes('x-ray') || testLower.includes('xray')) {
+      determinedType = 'xray-scan';
+    } else if (testLower.includes('msk') || testLower.includes('musculoskeletal')) {
+      determinedType = 'ultrasound-scan';
+    } else if (testLower.includes('ultrasound') || testLower.includes('doppler') ||
+               testLower.includes('sonography') || testLower.includes('elastography')) {
+      determinedType = 'ultrasound-scan';
+    } else if (testLower.includes('mri')) {
+      determinedType = 'mri-scan';
+    } else if (testLower.includes('ct')) {
+      determinedType = 'ct-scan';
+    } else if (testLower.includes('pregnancy')) {
+      determinedType = 'pregnancy-scan';
+    }
+
+    // Check for specific scan types that should be ultrasound
+    const scanTypes = ['thyroid', 'breast', 'fetal', 'penile'];
+    if (scanTypes.some(type => testLower.includes(type))) {
+      determinedType = 'ultrasound-scan';
+    }
+  }
+
+  return determinedType;
+};
+
 // Generate consistent numeric seed from URL
 const generateSeedFromUrl = (url) => {
-  // Remove protocol and domain from URL
   const path = url.replace('https://cadabamsdiagnostics.com', '');
-  // Convert path to numeric seed
   return path.split('').reduce((acc, char, index) => {
     return acc + (char.charCodeAt(0) * (index + 1));
   }, 0);
@@ -41,7 +82,6 @@ export default function CommonSections() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Generate deterministic seed from current URL
         const currentUrl = `https://cadabamsdiagnostics.com${router.asPath}`;
         const seed = generateSeedFromUrl(currentUrl);
 
@@ -68,17 +108,14 @@ export default function CommonSections() {
           .filter(test => test.alldata?.[0]?.basic_info?.name)
           .map(test => {
             const basicInfo = test.alldata[0].basic_info;
-            const testType = basicInfo.testCategory?.toLowerCase().includes('ultrasound') ? 'ultrasound-scan' :
-                           basicInfo.testCategory?.toLowerCase().includes('x-ray') ? 'xray-scan' :
-                           basicInfo.testCategory?.toLowerCase().includes('mri') ? 'mri-scan' :
-                           basicInfo.testCategory?.toLowerCase().includes('ct') ? 'ct-scan' : 'radiology';
-            return {
+            const testType = determineTestType(basicInfo.name, basicInfo);
+            return testType ? {
               name: basicInfo.name,
               route: `/bangalore/${testType}${basicInfo.route}`
-            };
-          });
+            } : null;
+          })
+          .filter(test => test !== null); // Remove any tests where type couldn't be determined
 
-        // Use consistent seeded shuffle for each page
         setLabTests(seededShuffle(processedLabTests, seed).slice(0, 20));
         setRadiologyTests(seededShuffle(processedRadiologyTests, seed + 1).slice(0, 20));
         setLoading(false);
