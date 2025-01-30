@@ -1,3 +1,4 @@
+
 /* Layout.module.css */
 .container {
   min-height: 100vh;
@@ -39,6 +40,20 @@
   align-items: center;
   text-decoration: none;
   cursor: pointer;
+}
+
+/* WhatsApp specific styles */
+.floatingWhatsapp {
+  right: auto;
+  left: 24px;
+}
+
+.whatsappIcon {
+  background-color: #25D366; /* WhatsApp green */
+}
+
+.whatsappIcon:hover {
+  background-color: #128C7E; /* Darker WhatsApp green */
 }
 
 .callIcon {
@@ -113,6 +128,12 @@
   position: absolute;
   right: 85px; /* Adjusted for larger button */
   white-space: nowrap;
+}
+
+/* Adjust tooltip position for WhatsApp */
+.floatingWhatsapp .callTooltip {
+  right: auto;
+  left: 85px;
 }
 
 .floatingCall:hover .callTooltip {
