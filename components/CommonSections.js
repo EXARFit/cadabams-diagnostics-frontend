@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from './CommonSections.module.css';
 
-// Simple seeded random number generator
+// Seeded random number generator for consistent shuffling
 const seededRandom = (seed) => {
   const x = Math.sin(seed++) * 10000;
   return x - Math.floor(x);
 };
 
-// Fisher-Yates shuffle with seed
+// Fisher-Yates shuffle with seed for consistent randomization
 const seededShuffle = (array, seed) => {
   const newArray = [...array];
   let currentSeed = seed;
@@ -22,10 +22,10 @@ const seededShuffle = (array, seed) => {
   return newArray;
 };
 
-// Category ID mapping
+// Category ID mapping for test types
 const CATEGORY_ID_MAP = {
   '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
-  '671b5102ad9bf8d210384d1d': 'preventive-health',
+  '671b5102ad9bf8d210384d1d': 'preventive-health', 
   '671b5102ad9bf8d210384d1f': 'msk-scan',
   '671b5102ad9bf8d210384d1b': 'ct-scan',
   '671b5102ad9bf8d210384d1a': 'mri-scan',
@@ -37,12 +37,10 @@ const CATEGORY_ID_MAP = {
 const determineTestType = (test, basicInfo) => {
   let determinedType = null;
 
-  // First check category ID if available
   if (basicInfo?.categoryId) {
     determinedType = CATEGORY_ID_MAP[basicInfo.categoryId];
   }
 
-  // Then check test category if no type determined from ID
   if (!determinedType && basicInfo?.testCategory) {
     const category = basicInfo.testCategory.toLowerCase();
     if (category.includes('ultrasonography') || category.includes('ultrasound')) {
@@ -53,7 +51,6 @@ const determineTestType = (test, basicInfo) => {
     if (category.includes('ct')) determinedType = 'ct-scan';
   }
 
-  // If still no type determined, fallback to URL-based detection
   if (!determinedType) {
     const testLower = test.toLowerCase();
     if (testLower.includes('x-ray') || testLower.includes('xray')) {
@@ -61,7 +58,7 @@ const determineTestType = (test, basicInfo) => {
     } else if (testLower.includes('msk') || testLower.includes('musculoskeletal')) {
       determinedType = 'ultrasound-scan';
     } else if (testLower.includes('ultrasound') || testLower.includes('doppler') ||
-               testLower.includes('sonography') || testLower.includes('elastography')) {
+               testLower.includes('sonography')) {
       determinedType = 'ultrasound-scan';
     } else if (testLower.includes('mri')) {
       determinedType = 'mri-scan';
@@ -71,7 +68,6 @@ const determineTestType = (test, basicInfo) => {
       determinedType = 'pregnancy-scan';
     }
 
-    // Check for specific scan types that should be ultrasound
     const scanTypes = ['thyroid', 'breast', 'fetal', 'penile'];
     if (scanTypes.some(type => testLower.includes(type))) {
       determinedType = 'ultrasound-scan';
@@ -81,7 +77,7 @@ const determineTestType = (test, basicInfo) => {
   return determinedType;
 };
 
-// Generate consistent numeric seed from URL
+// Generate seed from URL
 const generateSeedFromUrl = (url) => {
   const path = url.replace('https://cadabamsdiagnostics.com', '');
   return path.split('').reduce((acc, char, index) => {
@@ -92,6 +88,7 @@ const generateSeedFromUrl = (url) => {
 export default function CommonSections() {
   const [labTests, setLabTests] = useState([]);
   const [radiologyTests, setRadiologyTests] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -101,28 +98,35 @@ export default function CommonSections() {
         const currentUrl = `https://cadabamsdiagnostics.com${router.asPath}`;
         const seed = generateSeedFromUrl(currentUrl);
 
-        const [labResponse, radiologyResponse] = await Promise.all([
+        // Fetch all data in parallel
+        const [labResponse, radiologyResponse, blogsResponse] = await Promise.all([
           fetch('https://cadabamsapi.exar.ai/api/v1/cms/component/get-all/pagetemplate/labtest'),
-          fetch('https://cadabamsapi.exar.ai/api/v1/cms/component/get-all/pagetemplate/non-labtest')
+          fetch('https://cadabamsapi.exar.ai/api/v1/cms/component/get-all/pagetemplate/non-labtest'),
+          fetch('https://cadabamsapi.exar.ai/api/v1/cms/blog/')
         ]);
 
-        const [labData, radiologyData] = await Promise.all([
+        if (!labResponse.ok || !radiologyResponse.ok || !blogsResponse.ok) {
+          throw new Error('One or more network responses were not ok');
+        }
+
+        const [labData, radiologyData, blogsData] = await Promise.all([
           labResponse.json(),
-          radiologyResponse.json()
+          radiologyResponse.json(),
+          blogsResponse.json()
         ]);
 
-        // Process lab tests data
-        const processedLabTests = labData.data
-          .filter(test => test.alldata?.[0]?.basic_info?.name)
-          .map(test => ({
+        // Process lab tests
+        const processedLabTests = labData?.data
+          ?.filter(test => test?.alldata?.[0]?.basic_info?.name)
+          ?.map(test => ({
             name: test.alldata[0].basic_info.name,
             route: `/bangalore/lab-test${test.alldata[0].basic_info.route}`
-          }));
+          })) || [];
 
-        // Process radiology tests data
-        const processedRadiologyTests = radiologyData.data
-          .filter(test => test.alldata?.[0]?.basic_info?.name)
-          .map(test => {
+        // Process radiology tests
+        const processedRadiologyTests = radiologyData?.data
+          ?.filter(test => test?.alldata?.[0]?.basic_info?.name)
+          ?.map(test => {
             const basicInfo = test.alldata[0].basic_info;
             const testType = determineTestType(basicInfo.name, basicInfo);
             return testType ? {
@@ -130,10 +134,20 @@ export default function CommonSections() {
               route: `/bangalore/${testType}${basicInfo.route}`
             } : null;
           })
-          .filter(test => test !== null); // Remove any tests where type couldn't be determined
+          ?.filter(Boolean) || [];
 
+        // Process blogs
+        const processedBlogs = blogsData
+          ?.filter(blog => blog.title && blog.route)
+          ?.map(blog => ({
+            title: blog.title,
+            route: `/blogs${blog.route}`
+          })) || [];
+
+        // Set state with shuffled and limited data
         setLabTests(seededShuffle(processedLabTests, seed).slice(0, 20));
         setRadiologyTests(seededShuffle(processedRadiologyTests, seed + 1).slice(0, 20));
+        setBlogs(seededShuffle(processedBlogs, seed + 2).slice(0, 25)); // Changed from 3 to 25
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -182,6 +196,24 @@ export default function CommonSections() {
         </div>
       </section>
 
+      {/* Health Insights Blog Section */}
+      {blogs.length > 0 && (
+        <section className={styles.section}>
+          <h2>Blogs</h2>
+          <div className={styles.testLinks}>
+            {blogs.map((blog, index) => (
+              <a 
+                key={`blog-${index}`} 
+                href={blog.route} 
+                className={styles.testLink}
+              >
+                {blog.title}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Centers Section */}
       <section className={styles.section}>
         <h2>Our Top Diagnostic Centres</h2>
@@ -198,6 +230,7 @@ export default function CommonSections() {
         </div>
       </section>
 
+      {/* About Section */}
       <section className={styles.section}>
         <h2>Cadabam's Diagnostics: What Defines Us</h2>
         <p>
