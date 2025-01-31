@@ -22,12 +22,28 @@ const seededShuffle = (array, seed) => {
   return newArray;
 };
 
+// Category ID mapping
+const CATEGORY_ID_MAP = {
+  '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
+  '671b5102ad9bf8d210384d1d': 'preventive-health',
+  '671b5102ad9bf8d210384d1f': 'msk-scan',
+  '671b5102ad9bf8d210384d1b': 'ct-scan',
+  '671b5102ad9bf8d210384d1a': 'mri-scan',
+  '671b5102ad9bf8d210384d19': 'xray-scan',
+  '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
+};
+
 // Determine test type based on category and name
 const determineTestType = (test, basicInfo) => {
   let determinedType = null;
 
-  // First check basic info if available
-  if (basicInfo?.testCategory) {
+  // First check category ID if available
+  if (basicInfo?.categoryId) {
+    determinedType = CATEGORY_ID_MAP[basicInfo.categoryId];
+  }
+
+  // Then check test category if no type determined from ID
+  if (!determinedType && basicInfo?.testCategory) {
     const category = basicInfo.testCategory.toLowerCase();
     if (category.includes('ultrasonography') || category.includes('ultrasound')) {
       determinedType = 'ultrasound-scan';
@@ -37,7 +53,7 @@ const determineTestType = (test, basicInfo) => {
     if (category.includes('ct')) determinedType = 'ct-scan';
   }
 
-  // If no type determined from basic info, fallback to URL-based detection
+  // If still no type determined, fallback to URL-based detection
   if (!determinedType) {
     const testLower = test.toLowerCase();
     if (testLower.includes('x-ray') || testLower.includes('xray')) {
@@ -168,7 +184,7 @@ export default function CommonSections() {
 
       {/* Centers Section */}
       <section className={styles.section}>
-        <h2> Our Top Diagnostic Centres</h2>
+        <h2>Our Top Diagnostic Centres</h2>
         <div className={styles.centerLinks}>
           {[
             { name: 'Indiranagar', route: '/bangalore/center/indiranagar' },

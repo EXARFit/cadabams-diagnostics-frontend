@@ -7,14 +7,30 @@ import NotFound from '@/components/NotFound';
 import { fetchTestData } from '@/utils/api';
 import styles from '../../../styles/TestPage.module.css';
 
+// Category ID to test type mapping
+const CATEGORY_ID_MAP = {
+  '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
+  '671b5102ad9bf8d210384d1d': 'preventive-health',
+  '671b5102ad9bf8d210384d1f': 'msk-scan',
+  '671b5102ad9bf8d210384d1b': 'ct-scan',
+  '671b5102ad9bf8d210384d1a': 'mri-scan',
+  '671b5102ad9bf8d210384d19': 'xray-scan',
+  '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
+};
+
 // Improved helper function to determine test category from the route and basic info
 const getTestType = (test = '', basicInfo = null, requestedCategory = '') => {
   if (!test) return null;
   
   let determinedType = null;
   
-  // First check basic info if available
-  if (basicInfo?.testCategory) {
+  // First check category ID if available in basic info
+  if (basicInfo?.categoryId) {
+    determinedType = CATEGORY_ID_MAP[basicInfo.categoryId];
+  }
+
+  // If no type determined from category ID, fallback to test category string matching
+  if (!determinedType && basicInfo?.testCategory) {
     const category = basicInfo.testCategory.toLowerCase();
     if (category.includes('ultrasonography') || category.includes('ultrasound')) {
       determinedType = 'ultrasound-scan';
@@ -24,7 +40,7 @@ const getTestType = (test = '', basicInfo = null, requestedCategory = '') => {
     if (category.includes('ct')) determinedType = 'ct-scan';
   }
 
-  // If no type determined from basic info, fallback to URL-based detection
+  // If still no type determined, fallback to URL-based detection
   if (!determinedType) {
     const testLower = test.toLowerCase();
     if (testLower.includes('x-ray') || testLower.includes('xray')) {
