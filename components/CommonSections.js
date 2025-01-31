@@ -168,7 +168,7 @@ export default function CommonSections() {
 
       {/* Centers Section */}
       <section className={styles.section}>
-        <h2>Our Diagnostic Centers</h2>
+        <h2> Our Top Diagnostic Centres</h2>
         <div className={styles.centerLinks}>
           {[
             { name: 'Indiranagar', route: '/bangalore/center/indiranagar' },
