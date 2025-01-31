@@ -52,10 +52,6 @@ const CheckupCard = ({ test }) => {
 
   const handleViewDetails = () => {
     if (basicInfo?.route) {
-      const currentPath = router.asPath;
-      const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
-      const specificLocation = locationMatch ? locationMatch[1] : null;
-
       // Track GTM select_item event
       analytics.trackSelectItem(
         {
@@ -70,13 +66,8 @@ const CheckupCard = ({ test }) => {
         test.index
       );
 
-      let targetRoute;
-      if (specificLocation && specificLocation !== 'lab-test') {
-        targetRoute = `/bangalore/${specificLocation}/lab-test${basicInfo.route}`;
-      } else {
-        targetRoute = `/bangalore/lab-test${basicInfo.route}`;
-      }
-
+      // Always redirect to /bangalore/lab-test route without sublocation
+      const targetRoute = `/bangalore/lab-test${basicInfo.route}`;
       router.push(targetRoute);
     }
   };
