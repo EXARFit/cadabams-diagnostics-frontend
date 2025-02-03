@@ -8,27 +8,36 @@ import LabStats from './LabStats';
 import ScrollSpyNavigation from './ScrollSpyNavigation';
 import styles from './NonLabTestPage.module.css';
 
+const getLocationFromPath = (path) => {
+  if (!path) return { name: 'near me', value: 'near-me' };
+  
+  const parts = path.split('/').filter(Boolean);
+  
+  // Check if it's a main route without location
+  if (parts.length === 1) {
+    return { name: 'near me', value: 'near-me' };
+  }
+  
+  // If path has bangalore and a sublocation
+  if (parts.length >= 3 && parts[0] === 'bangalore') {
+    const sublocation = parts[1];
+    const displayLocation = sublocation
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    return { name: displayLocation, value: sublocation };
+  }
+  
+  // If path has only bangalore
+  if (parts.length === 2 && parts[0] === 'bangalore') {
+    return { name: 'Bangalore', value: 'bangalore' };
+  }
+  
+  return { name: 'near me', value: 'near-me' };
+};
+
 const useLocation = () => {
   const router = useRouter();
-  
-  const getLocationFromPath = (path) => {
-    if (!path) return { name: 'near me', value: 'near-me' };
-    
-    const parts = path.split('/').filter(Boolean);
-    
-    // If path has exactly 2 parts and first part is bangalore
-    if (parts.length === 2 && parts[0] === 'bangalore') {
-      return { name: 'Bangalore', value: 'bangalore' };
-    }
-    
-    // If path has more than 2 parts (indicating a specific location)
-    if (parts.length > 2) {
-      return { name: 'near me', value: 'near-me' };
-    }
-    
-    return { name: 'near me', value: 'near-me' };
-  };
-
   const currentLocation = getLocationFromPath(router.asPath);
 
   const getLocationAwareContent = (content) => {
@@ -39,7 +48,7 @@ const useLocation = () => {
     
     if (currentLocation.value === 'near-me') {
       updatedContent = updatedContent.replace(/Bangalore/g, 'near me');
-    } else if (currentLocation.value !== 'bangalore') {
+    } else {
       updatedContent = updatedContent.replace(/Bangalore/g, currentLocation.name);
     }
     
@@ -146,7 +155,7 @@ export default function NonLabTestPage1({ testInfo }) {
     // Replace location references
     if (currentLocation.value === 'near-me') {
       modifiedContent = modifiedContent.replace(/Bangalore/g, 'near me');
-    } else if (currentLocation.value !== 'bangalore') {
+    } else {
       modifiedContent = modifiedContent.replace(/Bangalore/g, currentLocation.name);
     }
     

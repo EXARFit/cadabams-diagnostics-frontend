@@ -18,14 +18,24 @@ const getLocationFromPath = (path) => {
   
   const parts = path.split('/').filter(Boolean);
   
-  // If path has exactly 2 parts and first part is bangalore
-  if (parts.length === 2 && parts[0] === 'bangalore') {
-    return { name: 'Bangalore', value: 'bangalore' };
+  // Check if it's a main route without location
+  if (parts.length === 1) {
+    return { name: 'near me', value: 'near-me' };
   }
   
-  // If path has more than 2 parts (indicating a specific location)
-  if (parts.length > 2) {
-    return { name: 'near me', value: 'near-me' };
+  // If path has bangalore and a sublocation
+  if (parts.length >= 3 && parts[0] === 'bangalore') {
+    const sublocation = parts[1];
+    const displayLocation = sublocation
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    return { name: displayLocation, value: sublocation };
+  }
+  
+  // If path has only bangalore
+  if (parts.length === 2 && parts[0] === 'bangalore') {
+    return { name: 'Bangalore', value: 'bangalore' };
   }
   
   return { name: 'near me', value: 'near-me' };
