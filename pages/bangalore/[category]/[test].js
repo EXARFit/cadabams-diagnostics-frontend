@@ -358,7 +358,7 @@ export default function TestDetailPage({ testData, testType: initialTestType, er
         <NonLabTestPage testData={testData} />
 
         {/* Related Tests Section */}
-        {relatedTests.length > 0 && (
+        {/* {relatedTests.length > 0 && (
           <section className={styles.relatedTestsSection}>
             <div className={styles.sectionContainer}>
               <div className={styles.sectionTitle}>
@@ -384,7 +384,7 @@ export default function TestDetailPage({ testData, testType: initialTestType, er
               </div>
             </div>
           </section>
-        )}
+        )} */}
       </div>
     </Layout>
   );

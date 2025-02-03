@@ -354,12 +354,12 @@ export default function CategoryPage({
       }
 
       // Track related tests
-      if (categoryData.allData?.relative_test?.tests?.length > 0) {
-        trackViewItemList(
-          categoryData.allData.relative_test.tests,
-          'Related Tests'
-        );
-      }
+      // if (categoryData.allData?.relative_test?.tests?.length > 0) {
+      //   trackViewItemList(
+      //     categoryData.allData.relative_test.tests,
+      //     'Related Tests'
+      //   );
+      // }
 
       // Track any additional test sections
       categoryData.allData?.additionalSections?.forEach((section, index) => {
@@ -567,7 +567,7 @@ export default function CategoryPage({
             />
           </section>
 
-          {categoryData.allData?.relative_test?.tests?.length > 0 && (
+          {/* {categoryData.allData?.relative_test?.tests?.length > 0 && (
             <section 
               className={styles.relatedTestsSection} 
               data-section-name="Related Tests"
@@ -578,7 +578,7 @@ export default function CategoryPage({
                 onTestSelect={(test, index) => handleTestSelect(test, 'Related Tests', index)}
               />
             </section>
-          )}
+          )} */}
         </main>
       </div>
     </Layout>
