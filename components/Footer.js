@@ -160,7 +160,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/ultrasound-scan/musculoskeletal-ultrasound-msk">
+                <Link href="/bangalore/msk-scan/musculoskeletal-ultrasound-msk">
                   Musculoskeletal Ultrasound
                 </Link>
               </li>
