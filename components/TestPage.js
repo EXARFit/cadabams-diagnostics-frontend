@@ -244,7 +244,7 @@ export default function TestPage({ testData }) {
             ))}
           </div>
         </ScrollSpyNavigation>
-        <RelativeLinks relativeTests={relativeTest} />
+        {/* <RelativeLinks relativeTests={relativeTest} /> */}
       </div>
     </div>
   );
