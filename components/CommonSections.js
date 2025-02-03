@@ -33,48 +33,10 @@ const CATEGORY_ID_MAP = {
   '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
 };
 
-// Determine test type based on category and name
+// Determine test type based on category ID only
 const determineTestType = (test, basicInfo) => {
-  let determinedType = null;
-
-  if (basicInfo?.categoryId) {
-    determinedType = CATEGORY_ID_MAP[basicInfo.categoryId];
-  }
-
-  if (!determinedType && basicInfo?.testCategory) {
-    const category = basicInfo.testCategory.toLowerCase();
-    if (category.includes('ultrasonography') || category.includes('ultrasound')) {
-      determinedType = 'ultrasound-scan';
-    }
-    if (category.includes('x-ray')) determinedType = 'xray-scan';
-    if (category.includes('mri')) determinedType = 'mri-scan';
-    if (category.includes('ct')) determinedType = 'ct-scan';
-  }
-
-  if (!determinedType) {
-    const testLower = test.toLowerCase();
-    if (testLower.includes('x-ray') || testLower.includes('xray')) {
-      determinedType = 'xray-scan';
-    } else if (testLower.includes('msk') || testLower.includes('musculoskeletal')) {
-      determinedType = 'ultrasound-scan';
-    } else if (testLower.includes('ultrasound') || testLower.includes('doppler') ||
-               testLower.includes('sonography')) {
-      determinedType = 'ultrasound-scan';
-    } else if (testLower.includes('mri')) {
-      determinedType = 'mri-scan';
-    } else if (testLower.includes('ct')) {
-      determinedType = 'ct-scan';
-    } else if (testLower.includes('pregnancy')) {
-      determinedType = 'pregnancy-scan';
-    }
-
-    const scanTypes = ['thyroid', 'breast', 'fetal', 'penile'];
-    if (scanTypes.some(type => testLower.includes(type))) {
-      determinedType = 'ultrasound-scan';
-    }
-  }
-
-  return determinedType;
+  if (!basicInfo?.categoryId) return null;
+  return CATEGORY_ID_MAP[basicInfo.categoryId] || null;
 };
 
 // Generate seed from URL
@@ -147,7 +109,7 @@ export default function CommonSections() {
         // Set state with shuffled and limited data
         setLabTests(seededShuffle(processedLabTests, seed).slice(0, 20));
         setRadiologyTests(seededShuffle(processedRadiologyTests, seed + 1).slice(0, 20));
-        setBlogs(seededShuffle(processedBlogs, seed + 2).slice(0, 25)); // Changed from 3 to 25
+        setBlogs(seededShuffle(processedBlogs, seed + 2).slice(0, 25));
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);

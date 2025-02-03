@@ -18,53 +18,12 @@ const CATEGORY_ID_MAP = {
   '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
 };
 
-// Improved helper function to determine test category from the route and basic info
+// Helper function to determine test category from category ID
 const getTestType = (test = '', basicInfo = null, requestedCategory = '') => {
-  if (!test) return null;
+  if (!test || !basicInfo?.categoryId) return null;
   
-  let determinedType = null;
+  const determinedType = CATEGORY_ID_MAP[basicInfo.categoryId];
   
-  // First check category ID if available in basic info
-  if (basicInfo?.categoryId) {
-    determinedType = CATEGORY_ID_MAP[basicInfo.categoryId];
-  }
-
-  // If no type determined from category ID, fallback to test category string matching
-  if (!determinedType && basicInfo?.testCategory) {
-    const category = basicInfo.testCategory.toLowerCase();
-    if (category.includes('ultrasonography') || category.includes('ultrasound')) {
-      determinedType = 'ultrasound-scan';
-    }
-    if (category.includes('x-ray')) determinedType = 'xray-scan';
-    if (category.includes('mri')) determinedType = 'mri-scan';
-    if (category.includes('ct')) determinedType = 'ct-scan';
-  }
-
-  // If still no type determined, fallback to URL-based detection
-  if (!determinedType) {
-    const testLower = test.toLowerCase();
-    if (testLower.includes('x-ray') || testLower.includes('xray')) {
-      determinedType = 'xray-scan';
-    } else if (testLower.includes('msk') || testLower.includes('musculoskeletal')) {
-      determinedType = 'ultrasound-scan';
-    } else if (testLower.includes('ultrasound') || testLower.includes('doppler') || 
-        testLower.includes('sonography') || testLower.includes('elastography')) {
-      determinedType = 'ultrasound-scan';
-    } else if (testLower.includes('mri')) {
-      determinedType = 'mri-scan';
-    } else if (testLower.includes('ct')) {
-      determinedType = 'ct-scan';
-    } else if (testLower.includes('pregnancy')) {
-      determinedType = 'pregnancy-scan';
-    }
-    
-    // Check for specific scan types that should be ultrasound
-    const scanTypes = ['thyroid', 'breast', 'fetal', 'penile'];
-    if (scanTypes.some(type => testLower.includes(type))) {
-      determinedType = 'ultrasound-scan';
-    }
-  }
-
   // If a category was requested in the URL, verify it matches the determined type
   if (requestedCategory && determinedType && requestedCategory !== determinedType) {
     return null; // Return null if categories don't match
@@ -120,7 +79,7 @@ const Breadcrumb = ({ title, testType }) => (
 
 // Schema Generator Function
 const generateSchemas = (data, baseUrl, test) => {
-  const testType = getTestType(test);
+  const testType = getTestType(test, data?.alldata?.[0]?.basic_info);
   
   if (!testType) return [];
   
