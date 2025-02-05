@@ -89,18 +89,29 @@ export default function MostBooked({ mostBookedData }) {
 
   const { title, description, checkups } = mostBookedData;
 
+  const getCategoryBasedRoute = (categoryId, testRoute) => {
+    // Remove any leading/trailing slashes from testRoute
+    const cleanTestRoute = testRoute?.replace(/^\/+|\/+$/g, '') || '';
+    
+    // Get category type from mapping
+    const categoryType = CATEGORY_ID_MAP[categoryId];
+    
+    if (!categoryType) {
+      console.error('Invalid category ID:', categoryId);
+      return '';
+    }
+
+    // Construct the full route
+    return `/bangalore/${categoryType}/${cleanTestRoute}`;
+  };
+
   const handleCardClick = (checkup) => {
     try {
       if (checkup?.catid && checkup?.href) {
-        // Get the category type from the mapping
-        const categoryType = CATEGORY_ID_MAP[checkup.catid];
-        
-        if (categoryType) {
-          // Construct the route
-          const route = `/bangalore/${categoryType}/${checkup.href}`;
-          router.push(route);
-        } else {
-          console.error('Invalid category type for catid:', checkup.catid);
+        // Get the full route using category ID
+        const fullRoute = getCategoryBasedRoute(checkup.catid, checkup.href);
+        if (fullRoute) {
+          router.push(fullRoute);
         }
       } else {
         console.error('Missing required checkup data:', checkup);
