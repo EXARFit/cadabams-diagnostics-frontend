@@ -90,6 +90,8 @@ export default function MostBooked({ mostBookedData }) {
   const { title, description, checkups } = mostBookedData;
 
   const handleCardClick = (checkup) => {
+    // In the data structure, checkup.href is the ID directly
+    // and checkup.catid is the category ID directly
     if (checkup?.href && checkup?.catid) {
       const categoryType = CATEGORY_ID_MAP[checkup.catid];
       if (categoryType) {
