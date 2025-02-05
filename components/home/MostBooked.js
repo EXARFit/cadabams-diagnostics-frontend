@@ -4,7 +4,16 @@ import { FaChevronRight, FaUserMd } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import styles from './MostBooked.module.css';
 
-// Category ID to route mapping
+const backgroundImages = [
+  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506598235-412479478.png',
+  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506711722-29739745.png',
+  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506768205-315056070.png',
+  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506792016-518174806.png',
+  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506819136-683046439.png',
+  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506846479-855597516.png'
+];
+
+// Category ID to test type mapping
 const CATEGORY_ID_MAP = {
   '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
   '671b5102ad9bf8d210384d1d': 'preventive-health',
@@ -14,15 +23,6 @@ const CATEGORY_ID_MAP = {
   '671b5102ad9bf8d210384d19': 'xray-scan',
   '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
 };
-
-const backgroundImages = [
-  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506598235-412479478.png',
-  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506711722-29739745.png',
-  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506768205-315056070.png',
-  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506792016-518174806.png',
-  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506819136-683046439.png',
-  'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506846479-855597516.png'
-];
 
 const BackgroundCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -89,35 +89,24 @@ export default function MostBooked({ mostBookedData }) {
 
   const { title, description, checkups } = mostBookedData;
 
-  const getCategoryBasedRoute = (categoryId, testRoute) => {
-    // Remove any leading/trailing slashes from testRoute
-    const cleanTestRoute = testRoute?.replace(/^\/+|\/+$/g, '') || '';
+  const getCategoryBasedRoute = (categoryId, testId) => {
+    // Get the category type from the mapping
+    const categoryType = CATEGORY_ID_MAP[categoryId] || '';
     
-    // Get category type from mapping
-    const categoryType = CATEGORY_ID_MAP[categoryId];
-    
-    if (!categoryType) {
-      console.error('Invalid category ID:', categoryId);
+    if (!categoryType || !testId) {
       return '';
     }
-
+    
     // Construct the full route
-    return `/bangalore/${categoryType}/${cleanTestRoute}`;
+    return `/bangalore/${categoryType}/${testId}`;
   };
 
   const handleCardClick = (checkup) => {
-    try {
-      if (checkup?.catid && checkup?.href) {
-        // Get the full route using category ID
-        const fullRoute = getCategoryBasedRoute(checkup.catid, checkup.href);
-        if (fullRoute) {
-          router.push(fullRoute);
-        }
-      } else {
-        console.error('Missing required checkup data:', checkup);
+    if (checkup?.href && checkup?.catid) {
+      const fullRoute = getCategoryBasedRoute(checkup.catid, checkup.href);
+      if (fullRoute) {
+        router.push(fullRoute);
       }
-    } catch (error) {
-      console.error('Error handling card click:', error);
     }
   };
 
@@ -137,7 +126,7 @@ export default function MostBooked({ mostBookedData }) {
           whileTap={{ scale: 0.95 }}
           onClick={handleViewAllClick}
         >
-          View all Radiology
+         View all Radiology
         </motion.button>
       </div>
       <div className={styles.cardsContainer}>
