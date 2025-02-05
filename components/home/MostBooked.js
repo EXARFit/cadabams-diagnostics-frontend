@@ -13,15 +13,14 @@ const backgroundImages = [
   'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506846479-855597516.png'
 ];
 
-// Category ID to test type mapping
-const CATEGORY_ID_MAP = {
-  '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
-  '671b5102ad9bf8d210384d1d': 'preventive-health',
-  '671b5102ad9bf8d210384d1f': 'msk-scan',
-  '671b5102ad9bf8d210384d1b': 'ct-scan',
-  '671b5102ad9bf8d210384d1a': 'mri-scan',
-  '671b5102ad9bf8d210384d19': 'xray-scan',
-  '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
+// Direct URL mapping for each card
+const CARD_URLS = {
+  'Brain MRI': '/bangalore/mri-scan/brain-mri',
+  'Fetal ultrasound': '/bangalore/pregnancy-scan/fetal-ultrasound',
+  'CT-Abdomen': '/bangalore/ct-scan/abdomen-and-lower-thorax-ct-scan',
+  'Hand X-ray': '/bangalore/xray-scan/hand-x-ray',
+  'Fetal Imaging': '/bangalore/pregnancy-scan/fetal-imaging',
+  'Abdomen & Pelvis scan': '/bangalore/ultrasound-scan/abdomen-and-pelvis-ultrasound-scans'
 };
 
 const BackgroundCarousel = () => {
@@ -89,24 +88,10 @@ export default function MostBooked({ mostBookedData }) {
 
   const { title, description, checkups } = mostBookedData;
 
-  const getCategoryBasedRoute = (categoryId, testId) => {
-    // Get the category type from the mapping
-    const categoryType = CATEGORY_ID_MAP[categoryId] || '';
-    
-    if (!categoryType || !testId) {
-      return '';
-    }
-    
-    // Construct the full route
-    return `/bangalore/${categoryType}/${testId}`;
-  };
-
-  const handleCardClick = (checkup) => {
-    if (checkup?.href && checkup?.catid) {
-      const fullRoute = getCategoryBasedRoute(checkup.catid, checkup.href);
-      if (fullRoute) {
-        router.push(fullRoute);
-      }
+  const handleCardClick = (checkupTitle) => {
+    const url = CARD_URLS[checkupTitle];
+    if (url) {
+      router.push(url);
     }
   };
 
@@ -137,7 +122,7 @@ export default function MostBooked({ mostBookedData }) {
             iconUrl={checkup.icon}
             color={index % 2 === 0 ? "red" : "blue"}
             size={index === 0 ? "large" : index === 3 ? "medium" : "small"}
-            onClick={() => handleCardClick(checkup)}
+            onClick={() => handleCardClick(checkup.title)}
           />
         ))}
       </div>
