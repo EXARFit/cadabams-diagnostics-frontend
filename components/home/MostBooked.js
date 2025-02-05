@@ -13,6 +13,17 @@ const backgroundImages = [
   'https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1732506846479-855597516.png'
 ];
 
+// Category ID mapping
+const CATEGORY_ID_MAP = {
+  '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
+  '671b5102ad9bf8d210384d1d': 'preventive-health',
+  '671b5102ad9bf8d210384d1f': 'msk-scan',
+  '671b5102ad9bf8d210384d1b': 'ct-scan',
+  '671b5102ad9bf8d210384d1a': 'mri-scan',
+  '671b5102ad9bf8d210384d19': 'xray-scan',
+  '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
+};
+
 const BackgroundCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -78,35 +89,13 @@ export default function MostBooked({ mostBookedData }) {
 
   const { title, description, checkups } = mostBookedData;
 
-  const getCategoryBasedRoute = (categoryName, testRoute) => {
-    // Remove any leading/trailing slashes from testRoute
-    const cleanTestRoute = testRoute.replace(/^\/+|\/+$/g, '');
-    
-    // Get base category route
-    let categoryRoute = '';
-    const lowerCategoryName = categoryName.toLowerCase();
-    
-    if (lowerCategoryName.includes('mri')) {
-      categoryRoute = 'mri-scan';
-    } else if (lowerCategoryName.includes('xray')) {
-      categoryRoute = 'xray-scan';
-    } else if (lowerCategoryName.includes('ct')) {
-      categoryRoute = 'ct-scan';
-    } else if (lowerCategoryName.includes('ultrasound')) {
-      categoryRoute = 'ultrasound-scan';
-    } else {
-      // Default case or other categories
-      categoryRoute = `${lowerCategoryName.replace(/\s+/g, '-')}-scan`;
-    }
-
-    // Construct the full route
-    return `/bangalore/${categoryRoute}/${cleanTestRoute}`;
-  };
-
   const handleCardClick = (checkup) => {
-    if (checkup?.href?.route && checkup?.catid?.name) {
-      const fullRoute = getCategoryBasedRoute(checkup.catid.name, checkup.href.route);
-      router.push(fullRoute);
+    if (checkup?.href && checkup?.catid) {
+      const categoryType = CATEGORY_ID_MAP[checkup.catid];
+      if (categoryType) {
+        const route = `/bangalore/${categoryType}/${checkup.href}`;
+        router.push(route);
+      }
     }
   };
 
@@ -126,7 +115,7 @@ export default function MostBooked({ mostBookedData }) {
           whileTap={{ scale: 0.95 }}
           onClick={handleViewAllClick}
         >
-         View all Radiology
+          View all Radiology
         </motion.button>
       </div>
       <div className={styles.cardsContainer}>
