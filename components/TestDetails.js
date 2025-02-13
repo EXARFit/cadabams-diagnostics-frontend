@@ -14,7 +14,7 @@ const TestDetails = ({ basicInfo }) => {
             </div>
             <div className={styles.content}>
               <h3>Certified Labs</h3>
-              <p>NABL Accredited</p>
+              <p>NABH Accredited</p>
             </div>
           </div>
 
