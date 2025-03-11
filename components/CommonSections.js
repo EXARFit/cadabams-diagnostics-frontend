@@ -77,17 +77,23 @@ export default function CommonSections() {
           blogsResponse.json()
         ]);
 
-        // Process lab tests
+        // Process lab tests - filter for published tests only
         const processedLabTests = labData?.data
-          ?.filter(test => test?.alldata?.[0]?.basic_info?.name)
+          ?.filter(test => 
+            test?.alldata?.[0]?.basic_info?.name && 
+            test.pageState === 'publish'  // Only include published tests
+          )
           ?.map(test => ({
             name: test.alldata[0].basic_info.name,
             route: `/bangalore/lab-test${test.alldata[0].basic_info.route}`
           })) || [];
 
-        // Process radiology tests
+        // Process radiology tests - filter for published tests only
         const processedRadiologyTests = radiologyData?.data
-          ?.filter(test => test?.alldata?.[0]?.basic_info?.name)
+          ?.filter(test => 
+            test?.alldata?.[0]?.basic_info?.name && 
+            test.pageState === 'publish'  // Only include published tests
+          )
           ?.map(test => {
             const basicInfo = test.alldata[0].basic_info;
             const testType = determineTestType(basicInfo.name, basicInfo);
@@ -98,9 +104,13 @@ export default function CommonSections() {
           })
           ?.filter(Boolean) || [];
 
-        // Process blogs
+        // Process blogs - filter for published blogs only
         const processedBlogs = blogsData
-          ?.filter(blog => blog.title && blog.route)
+          ?.filter(blog => 
+            blog.title && 
+            blog.route && 
+            blog.publishStatus === 'publish'  // Only include published blogs
+          )
           ?.map(blog => ({
             title: blog.title,
             route: `/blogs${blog.route}`
@@ -127,36 +137,40 @@ export default function CommonSections() {
   return (
     <div className={styles.commonSections}>
       {/* Related Lab Tests Section */}
-      <section className={styles.section}>
-        <h2>Related Lab Tests</h2>
-        <div className={styles.testLinks}>
-          {labTests.map((test, index) => (
-            <a 
-              key={`lab-${index}`} 
-              href={test.route} 
-              className={styles.testLink}
-            >
-              {test.name}
-            </a>
-          ))}
-        </div>
-      </section>
+      {labTests.length > 0 && (
+        <section className={styles.section}>
+          <h2>Related Lab Tests</h2>
+          <div className={styles.testLinks}>
+            {labTests.map((test, index) => (
+              <a 
+                key={`lab-${index}`} 
+                href={test.route} 
+                className={styles.testLink}
+              >
+                {test.name}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Popular Radiology Scans Section */}
-      <section className={styles.section}>
-        <h2>Popular Radiology Scans</h2>
-        <div className={styles.testLinks}>
-          {radiologyTests.map((test, index) => (
-            <a 
-              key={`rad-${index}`} 
-              href={test.route} 
-              className={styles.testLink}
-            >
-              {test.name}
-            </a>
-          ))}
-        </div>
-      </section>
+      {radiologyTests.length > 0 && (
+        <section className={styles.section}>
+          <h2>Popular Radiology Scans</h2>
+          <div className={styles.testLinks}>
+            {radiologyTests.map((test, index) => (
+              <a 
+                key={`rad-${index}`} 
+                href={test.route} 
+                className={styles.testLink}
+              >
+                {test.name}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Health Insights Blog Section */}
       {blogs.length > 0 && (
