@@ -14,8 +14,8 @@ const generateSchemas = (data, baseUrl, slug) => {
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    headline: data.title,
-    description: data.metaDescription || `Read about ${data.title}`,
+    headline: data.seo?.title || data.title,
+    description: data.seo?.description || `Read about ${data.title}`,
     image: data.imageUrl ? [data.imageUrl] : [],
     author: {
       '@type': 'Person',
@@ -31,15 +31,15 @@ const generateSchemas = (data, baseUrl, slug) => {
         url: `${baseUrl}/logo.png`
       }
     },
-    datePublished: data.publishedDate || new Date().toISOString(),
-    dateModified: data.updatedDate || new Date().toISOString(),
+    datePublished: data.publishedDate || data.createdAt || new Date().toISOString(),
+    dateModified: data.updatedDate || data.updatedAt || new Date().toISOString(),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${baseUrl}/blogs/${slug}`
     },
-    keywords: data.keywords || [data.categoryName].filter(Boolean),
+    keywords: data.seo?.keywords || data.keywords || [data.categoryName].filter(Boolean),
     articleSection: data.categoryName || 'Health',
-    url: `${baseUrl}/blogs/${slug}`
+    url: data.seo?.canonicalUrl || `${baseUrl}/blogs/${slug}`
   };
 
   const breadcrumbSchema = {
@@ -451,26 +451,26 @@ export default function BlogPost({ blogData, baseUrl, slug }) {
       <Layout title={blogData.title || 'Blog Post'}>
         <Head>
           <title>{`${blogData.title} | Cadabams Diagnostics`}</title>
-          <meta name="description" content={blogData.metaDescription || `Read about ${blogData.title}`} />
-          <meta name="keywords" content={blogData.keywords || blogData.categoryName || 'healthcare, mental health, therapy'} />
-          <meta name="robots" content="index, follow" />
+          <meta name="description" content={blogData.seo?.description || `Read about ${blogData.title}`} />
+          <meta name="keywords" content={blogData.seo?.keywords || blogData.keywords || blogData.categoryName || 'healthcare, mental health, therapy'} />
+          <meta name="robots" content={blogData.seo?.robotsMeta || "index, follow"} />
           <meta name="googlebot" content="index, follow" />
-          <link rel="canonical" href={`${baseUrl}/blogs/${slug}`} />
+          <link rel="canonical" href={blogData.seo?.canonicalUrl || `${baseUrl}/blogs/${slug}`} />
           <meta property="og:type" content="article" />
-          <meta property="og:title" content={blogData.title} />
-          <meta property="og:description" content={blogData.metaDescription || `Read about ${blogData.title}`} />
-          <meta property="og:image" content={blogData.imageUrl || `${baseUrl}/default-og-image.jpg`} />
+          <meta property="og:title" content={blogData.seo?.ogTitle || blogData.title} />
+          <meta property="og:description" content={blogData.seo?.ogDescription || blogData.seo?.description || `Read about ${blogData.title}`} />
+          <meta property="og:image" content={blogData.seo?.ogImage || blogData.imageUrl || `${baseUrl}/default-og-image.jpg`} />
           <meta property="og:url" content={`${baseUrl}/blogs/${slug}`} />
           <meta property="og:site_name" content="Cadabams Diagnostics" />
-          <meta property="article:published_time" content={blogData.publishedDate || new Date().toISOString()} />
-          <meta property="article:modified_time" content={blogData.updatedDate || new Date().toISOString()} />
+          <meta property="article:published_time" content={blogData.publishedDate || blogData.createdAt || new Date().toISOString()} />
+          <meta property="article:modified_time" content={blogData.updatedAt || blogData.updatedDate || new Date().toISOString()} />
           <meta property="article:author" content={getDoctorName(blogData.verifiedBy) || 'Cadabams Team'} />
           <meta property="article:section" content={blogData.categoryName || 'Health'} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@CadabamsGroup" />
-          <meta name="twitter:title" content={blogData.title} />
-          <meta name="twitter:description" content={blogData.metaDescription || `Read about ${blogData.title}`} />
-          <meta name="twitter:image" content={blogData.imageUrl || `${baseUrl}/default-og-image.jpg`} />
+          <meta name="twitter:title" content={blogData.seo?.ogTitle || blogData.title} />
+          <meta name="twitter:description" content={blogData.seo?.ogDescription || blogData.seo?.description || `Read about ${blogData.title}`} />
+          <meta name="twitter:image" content={blogData.seo?.ogImage || blogData.imageUrl || `${baseUrl}/default-og-image.jpg`} />
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
