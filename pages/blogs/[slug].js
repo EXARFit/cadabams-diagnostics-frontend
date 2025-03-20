@@ -67,28 +67,33 @@ const generateSchemas = (data, baseUrl, slug) => {
     ]
   };
 
-  let faqSchema = null;
+  const schemas = [articleSchema, breadcrumbSchema];
+
+  // Only add FAQ schema if FAQs are present
   if (data.faqs && data.faqs.length > 0) {
     try {
       const parsedFaqs = JSON.parse(data.faqs[0]);
-      faqSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: parsedFaqs.map(faq => ({
-          '@type': 'Question',
-          name: faq.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.answer
-          }
-        }))
-      };
+      if (parsedFaqs && parsedFaqs.length > 0) {
+        const faqSchema = {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: parsedFaqs.map(faq => ({
+            '@type': 'Question',
+            name: faq.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: faq.answer
+            }
+          }))
+        };
+        schemas.push(faqSchema);
+      }
     } catch (error) {
       console.error('Error parsing FAQs for schema:', error);
     }
   }
 
-  return [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
+  return schemas;
 };
 
 const Breadcrumb = ({ title }) => (
