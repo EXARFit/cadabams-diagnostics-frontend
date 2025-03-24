@@ -20,16 +20,7 @@ const generateSchemas = (data, baseUrl, slug) => {
     description: data.seo?.description || `Learn about ${data.testName} test at Cadabams`,
     url: `${baseUrl}/bangalore/lab-test/${slug}`,
     image: data.imageUrl || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
-    citation: 'https://',
-    audio: {
-      '@type': 'AudioObject',
-      contentUrl: '',
-      description: '',
-      duration: 'T0M15S',
-      encodingFormat: 'audio/mpeg',
-      name: ''
-    },
-    hasMap: 'https://www.google.com/maps',
+   
     audience: {
       '@type': 'MedicalAudience',
       audienceType: 'Patients',
@@ -61,11 +52,7 @@ const generateSchemas = (data, baseUrl, slug) => {
       '@type': 'MedicalCondition',
       name: 'Laboratory Testing'
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.5',
-      reviewCount: '100'
-    },
+   
     alternativeHeadline: `${data.testName} - Medical Laboratory Test`,
     dateCreated: data.createdAt || new Date().toISOString(),
     dateModified: data.updatedAt || new Date().toISOString(),

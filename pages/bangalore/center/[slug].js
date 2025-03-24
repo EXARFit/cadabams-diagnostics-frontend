@@ -230,8 +230,6 @@ const CenterDetailPage = ({ centerData, error }) => {
               "description": seoData.description,
               "url": seoData.url,
               "image": seoData.imageUrl,
-              "citation": "https://cadabamsdiagnostics.com",
-              "hasMap": `https://www.google.com/maps?cid=${address.gmb_cid || ''}`,
               "audience": {
                 "@type": "MedicalAudience",
                 "audienceType": "Patients",

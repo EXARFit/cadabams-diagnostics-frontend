@@ -68,16 +68,7 @@ const generateSchemas = (locationName, baseUrl, location, hasBangalore, pageData
     description: pageDescription,
     url: currentUrl,
     image: `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
-    citation: 'https://',
-    audio: {
-      '@type': 'AudioObject',
-      contentUrl: '',
-      description: '',
-      duration: 'T0M15S',
-      encodingFormat: 'audio/mpeg',
-      name: ''
-    },
-    hasMap: 'https://google.com/maps',
+    
     audience: {
       '@type': 'MedicalAudience',
       audienceType: 'Patients',
@@ -109,11 +100,7 @@ const generateSchemas = (locationName, baseUrl, location, hasBangalore, pageData
       '@type': 'MedicalCondition',
       name: 'Laboratory Testing'
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.5',
-      reviewCount: '100'
-    },
+   
     alternativeHeadline: `Comprehensive Lab Tests in ${locationName}`,
     dateCreated: formatDate(pageData?.createdAt || new Date()),
     dateModified: formatDate(pageData?.updatedAt || new Date()),

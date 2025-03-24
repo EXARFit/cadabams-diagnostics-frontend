@@ -50,16 +50,6 @@ const generateMedicalWebpageSchema = (data, locationName, currentUrl) => ({
   description: data.description,
   url: currentUrl,
   image: data.imageUrl,
-  citation: 'https://',
-  audio: {
-    '@type': 'AudioObject',
-    contentUrl: '',
-    description: '',
-    duration: 'T0M15S',
-    encodingFormat: 'audio/mpeg',
-    name: ''
-  },
-  hasMap: 'https://www.google.com/maps',
   audience: {
     '@type': 'MedicalAudience',
     audienceType: 'Patients',
@@ -91,11 +81,7 @@ const generateMedicalWebpageSchema = (data, locationName, currentUrl) => ({
     '@type': 'MedicalCondition',
     name: 'Medical Testing'
   },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.5',
-    reviewCount: '100'
-  },
+ 
   alternativeHeadline: `Diagnostic Tests in ${locationName}`,
   dateCreated: new Date().toISOString(),
   dateModified: new Date().toISOString(),
