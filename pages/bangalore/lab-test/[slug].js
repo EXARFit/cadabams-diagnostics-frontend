@@ -10,7 +10,7 @@ import { fetchTestData } from '../../../utils/api';
 import styles from '../../../styles/TestPage.module.css';
 import { useAnalytics } from '../../../hooks/useAnalytics'; // Add this import
 
-// Schema Generator Function - Keep existing implementation
+// Schema Generator Function - Updated to include Product Schema
 const generateSchemas = (data, baseUrl, slug) => {
   // Medical Webpage Schema
   const medicalWebpageSchema = {
@@ -103,7 +103,27 @@ const generateSchemas = (data, baseUrl, slug) => {
     ]
   };
 
-  return [medicalWebpageSchema, faqSchema, breadcrumbSchema];
+  // Product Schema - New addition
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: data.rating || '3.5',
+      reviewCount: data.reviewCount || '11'
+    },
+    description: data.seo?.description || `Learn about ${data.testName} test at Cadabams`,
+    name: data.testName || 'Lab Test',
+    image: data.imageUrl || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
+    offers: {
+      '@type': 'Offer',
+      availability: 'https://schema.org/InStock',
+      price: data.alldata && data.alldata[0]?.basic_info?.price ? data.alldata[0].basic_info.price : '',
+      priceCurrency: 'INR'
+    }
+  };
+
+  return [medicalWebpageSchema, faqSchema, breadcrumbSchema, productSchema];
 };
 
 // Helper function to capitalize location - Keep existing implementation
