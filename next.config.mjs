@@ -56,8 +56,8 @@ const nextConfig = {
         '/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound'
       ),
       ...createRedirectPair(
-        '/bangalore/ultrasound-scan/pregnancy-ultrasound-scan',
-        '/bangalore/ultrasound-scan/pregnancy-ultrasound'
+        '/bangalore/pregnancy-scan/pregnancy-ultrasound-scan',
+        '/bangalore/pregnancy-scan/pregnancy-ultrasound'
       ),
       ...createRedirectPair(
         '/bangalore/ultrasound-scan/us-pregnancy-dating-scan',
