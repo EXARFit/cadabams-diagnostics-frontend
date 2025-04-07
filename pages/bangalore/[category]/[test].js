@@ -173,7 +173,27 @@ const generateSchemas = (data, baseUrl, test) => {
     ]
   };
 
-  return [medicalWebpageSchema, faqSchema, breadcrumbSchema];
+  // Product Schema - New addition
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: data.rating || '3.5',
+      reviewCount: data.reviewCount || '11'
+    },
+    description: data.seo?.description || `Learn about ${data.testName} at Cadabams`,
+    name: data.testName || 'Diagnostic Test',
+    image: data.imageUrl || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`,
+    offers: {
+      '@type': 'Offer',
+      availability: 'https://schema.org/InStock',
+      price: data.alldata && data.alldata[0]?.basic_info?.price ? data.alldata[0].basic_info.price : '',
+      priceCurrency: 'INR'
+    }
+  };
+
+  return [medicalWebpageSchema, faqSchema, breadcrumbSchema, productSchema];
 };
 
 // Get server-side props
