@@ -6,7 +6,7 @@ import CenterPage from './CenterPage';
 import styles from './DynamicCenterPage.module.css';
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
 // Helper function to transform center data
 const transformCenterData = (data) => {
