@@ -17,7 +17,7 @@ import FeatureSection from '@/components/labtest/FeatureSection';
 import DiscountBanner from '@/components/labtest/DiscountBanner';
 import HealthCheckupSlider from '@/components/home/HeathcheckupSlider';
 
-const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/labtest-home/671dcc88de80dea24f266179';
+const API_BASE_URL = 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/labtest-home/671dcc88de80dea24f266179';
 
 // Helper function to capitalize location names
 const capitalizeLocation = (loc) => {
