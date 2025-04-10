@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
+const API_BASE_URL = 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
 export const fetchTestData = async (slug) => {
   try {
