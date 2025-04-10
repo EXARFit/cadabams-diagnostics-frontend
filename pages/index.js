@@ -13,7 +13,7 @@ import LocationPopup from '@/components/home/LocationPopup';
 import BannerCarousel from '@/components/home/BannerCarousel';
 import CustomContactForm from '@/components/home/CustomContactForm';
 
-const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
+const API_BASE_URL = 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
 // Head Component with proper schema structure
 const PageHead = ({ pageTitle, pageDescription, currentUrl, faqData }) => {
