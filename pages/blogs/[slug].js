@@ -353,7 +353,7 @@ export async function getServerSideProps(context) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cadabamsdiagnostics.com';
 
   try {
-    const response = await fetch(`https://cadabamsapi.exar.ai/api/v1/cms/blog/${slug}`);
+    const response = await fetch(`https://api-prod.cadabamsdiagnostics.com/api/v1/cms/blog/${slug}`);
     
     if (response.status === 404) {
       return { notFound: true };
