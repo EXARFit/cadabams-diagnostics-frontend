@@ -10,7 +10,7 @@ import RelatedTests from '@/components/RelatedTests';
 import { useCart } from '@/contexts/CartContext';
 import styles from '../Category.module.css';
 
-const API_BASE_URL = 'https://cadabamsapi.exar.ai/api/v1/cms/component/pagetemplate';
+const API_BASE_URL = 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
 // Helper Functions
 const formatCategoryTitle = (category) => {
