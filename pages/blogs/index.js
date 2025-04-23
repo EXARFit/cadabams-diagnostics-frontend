@@ -45,7 +45,7 @@ const BlogImage = ({ src, alt }) => {
 
 export async function getServerSideProps() {
   try {
-    const response = await fetch('https://cadabamsapi.exar.ai/api/v1/cms/blog/');
+    const response = await fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/cms/blog/');
     if (!response.ok) {
       throw new Error('Failed to fetch blog posts');
     }
