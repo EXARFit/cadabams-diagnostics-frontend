@@ -62,9 +62,9 @@ export default function CommonSections() {
 
         // Fetch all data in parallel
         const [labResponse, radiologyResponse, blogsResponse] = await Promise.all([
-          fetch('https://cadabamsapi.exar.ai/api/v1/cms/component/get-all/pagetemplate/labtest'),
-          fetch('https://cadabamsapi.exar.ai/api/v1/cms/component/get-all/pagetemplate/non-labtest'),
-          fetch('https://cadabamsapi.exar.ai/api/v1/cms/blog/')
+          fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/get-all/pagetemplate/labtest'),
+          fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/get-all/pagetemplate/non-labtest'),
+          fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/cms/blog/')
         ]);
 
         if (!labResponse.ok || !radiologyResponse.ok || !blogsResponse.ok) {
