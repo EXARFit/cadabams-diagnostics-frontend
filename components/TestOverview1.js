@@ -3,6 +3,9 @@ import { Users, ChevronRight, Info, Check } from 'lucide-react';
 import { CartContext } from '@/contexts/CartContext';
 import styles from './TestOverview.module.css';
 
+// Fallback image if no image is provided
+const FALLBACK_IMAGE = "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png";
+
 const TestOverview = ({ basicInfo, templateName }) => {
   const leftBallRef = useRef(null);
   const rightBallRef = useRef(null);
@@ -48,6 +51,14 @@ const TestOverview = ({ basicInfo, templateName }) => {
   };
 
   const showDiscount = basicInfo.price !== basicInfo.discountedPrice;
+  
+  // Get the image source, using the uploaded image if available or fallback to the static image
+  const imageSource = basicInfo.imageSrc && basicInfo.imageSrc.trim() !== '' 
+    ? basicInfo.imageSrc 
+    : FALLBACK_IMAGE;
+
+  // Alt text for the image
+  const imageAlt = `${basicInfo.name || 'Lab Test'} Image`;
 
   return (
     <div className={styles.container}>
@@ -114,9 +125,13 @@ const TestOverview = ({ basicInfo, templateName }) => {
           </div>
           <div className={styles.rightContent}>
             <img
-              src="https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png"
-              alt="Lab Test"
+              src={imageSource}
+              alt={imageAlt}
               className={styles.image}
+              onError={(e) => {
+                e.target.onerror = null; // Prevent infinite loop
+                e.target.src = FALLBACK_IMAGE; // Set fallback if image fails to load
+              }}
             />
           </div>
         </div>
