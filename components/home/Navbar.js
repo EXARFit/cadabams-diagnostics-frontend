@@ -88,7 +88,7 @@ export default function Navbar() {
     
     setIsLoading(true);
     try {
-      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/user/search/test', {
+      const response = await fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/user/search/test', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
