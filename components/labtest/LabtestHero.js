@@ -4,6 +4,23 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import styles from './LabtestHero.module.css';
 
+// Category ID to test type mapping
+const CATEGORY_ID_MAP = {
+  '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
+  '671b5102ad9bf8d210384d1d': 'preventive-health',
+  '671b5102ad9bf8d210384d1f': 'msk-scan',
+  '671b5102ad9bf8d210384d1b': 'ct-scan',
+  '671b5102ad9bf8d210384d1a': 'mri-scan',
+  '671b5102ad9bf8d210384d19': 'xray-scan',
+  '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
+};
+
+// Helper function to determine test category from category ID
+const getTestTypeFromCategoryId = (categoryId) => {
+  if (!categoryId) return null;
+  return CATEGORY_ID_MAP[categoryId] || null;
+};
+
 const getLocationFromPath = (path) => {
   if (!path) return { name: 'near me', value: 'near-me' };
   
@@ -69,7 +86,8 @@ export default function LabtestHero({ heroData = {} }) {
         const transformedResults = data.map(test => ({
           name: test.testName || test.name,
           route: test.route,
-          isLabTest: test.templateName === 'labtest'
+          isLabTest: test.templateName === 'labtest',
+          categoryId: test.categoryId // Store the categoryId for category mapping
         }));
         setSearchResults(transformedResults);
         setShowResults(true);
@@ -90,7 +108,17 @@ export default function LabtestHero({ heroData = {} }) {
       baseRoute = `/bangalore${currentLocation.value !== 'bangalore' ? `/${currentLocation.value}` : ''}`;
     }
     
-    const routePrefix = result.isLabTest ? 'lab-test' : 'xray-scan';
+    // Determine the correct route prefix based on test type
+    let routePrefix;
+    
+    if (result.isLabTest) {
+      routePrefix = 'lab-test';
+    } else {
+      // For non-lab tests, use the category mapping
+      const testType = getTestTypeFromCategoryId(result.categoryId);
+      routePrefix = testType || 'xray-scan'; // Default to xray-scan only if mapping fails
+    }
+    
     const fullRoute = baseRoute ? `${baseRoute}/${routePrefix}${result.route}` : `/${routePrefix}${result.route}`;
     
     router.push(fullRoute);
