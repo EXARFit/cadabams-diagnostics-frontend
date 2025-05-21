@@ -70,7 +70,12 @@ export default function NonLabTestPage({ testData }) {
         <ScrollSpyNavigation tabs={tabs}>
           <SectionWithImage
             title="About The Test"
-            content={`<h3>${aboutTest.title || ''}</h3>${aboutTest.desc || ''}`}
+            content={`
+              <h3>${aboutTest.title || ''}</h3>
+              ${aboutTest.desc || ''}
+              ${risksLimitations.title ? `<h3>${risksLimitations.title}</h3>` : ''}
+              ${risksLimitations.desc || ''}
+            `}
             image={aboutTest.imageSrc}
             imageAlt="About the test"
           />
