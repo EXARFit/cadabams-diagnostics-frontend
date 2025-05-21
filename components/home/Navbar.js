@@ -120,7 +120,10 @@ export default function Navbar() {
           route: test.route,
           isLabTest: test.templateName === 'labtest',
           price: test.price,
-          categoryId: test.categoryId // Store the categoryId for category mapping
+          // Extract categoryId from the correct location
+          categoryId: test.alldata && test.alldata[0] && test.alldata[0].basic_info 
+            ? test.alldata[0].basic_info.categoryId 
+            : null
         }));
         setSearchResults(transformedResults);
         setShowResults(true);
