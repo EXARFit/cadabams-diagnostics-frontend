@@ -4,6 +4,23 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import styles from './Hero.module.css';
 
+// Category ID to test type mapping - copied from the second file
+const CATEGORY_ID_MAP = {
+  '671b5102ad9bf8d210384d1e': 'pregnancy-scan',
+  '671b5102ad9bf8d210384d1d': 'preventive-health',
+  '671b5102ad9bf8d210384d1f': 'msk-scan',
+  '671b5102ad9bf8d210384d1b': 'ct-scan',
+  '671b5102ad9bf8d210384d1a': 'mri-scan',
+  '671b5102ad9bf8d210384d19': 'xray-scan',
+  '671b5102ad9bf8d210384d1c': 'ultrasound-scan'
+};
+
+// Helper function to determine test category from category ID
+const getTestTypeFromCategoryId = (categoryId) => {
+  if (!categoryId) return null;
+  return CATEGORY_ID_MAP[categoryId] || null;
+};
+
 export default function Hero({ heroData = {} }) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,7 +59,8 @@ export default function Hero({ heroData = {} }) {
         const transformedResults = data.map(test => ({
           name: test.testName || test.name,
           route: test.route,
-          isLabTest: test.templateName === 'labtest'
+          isLabTest: test.templateName === 'labtest',
+          categoryId: test.categoryId // Store the categoryId for category mapping
         }));
         setSearchResults(transformedResults);
         setShowResults(true);
@@ -56,7 +74,18 @@ export default function Hero({ heroData = {} }) {
 
   const handleResultClick = (result) => {
     const baseUrl = '/bangalore';
-    const routePrefix = result.isLabTest ? 'lab-test' : 'xray-scan';
+    
+    // Determine the correct route prefix based on test type
+    let routePrefix;
+    
+    if (result.isLabTest) {
+      routePrefix = 'lab-test';
+    } else {
+      // For non-lab tests, use the category mapping
+      const testType = getTestTypeFromCategoryId(result.categoryId);
+      routePrefix = testType || 'xray-scan'; // Default to xray-scan only if mapping fails
+    }
+    
     const fullRoute = `${baseUrl}/${routePrefix}${result.route}`;
     router.push(fullRoute);
     setSearchTerm('');
