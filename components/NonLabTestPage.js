@@ -1,5 +1,6 @@
 import React from 'react';
 import DOMPurify from 'isomorphic-dompurify';
+import { marked } from 'marked'; // Import marked for markdown parsing
 import TestOverview from './TestOverview1';
 import TestDetails from './TestDetails';
 import TestMeasures from './TestMeasures';
@@ -13,6 +14,7 @@ export default function NonLabTestPage({ testData }) {
   }
 
   const alldata = testData.alldata;
+  console.log('Test Data:', alldata);
 
   const findData = (key) => {
     const item = alldata.find(item => item[key]);
@@ -41,10 +43,49 @@ export default function NonLabTestPage({ testData }) {
     'FAQs'
   ];
 
+  const isMarkdown = (text) => {
+    if (!text || typeof text !== 'string') return false;
+    // Check for common markdown patterns
+    const markdownPatterns = [
+      /^#\s+/m,      // Headers
+      /\*\*.*?\*\*/,  // Bold
+      /\*.*?\*/,      // Italic
+      /\[.*?\]\(.*?\)/, // Links
+      /^\s*[\*\-\+]\s+/m, // Unordered lists
+      /^\s*\d+\.\s+/m, // Ordered lists
+      /^\s*```/m,    // Code blocks
+      /^\s*>/m,      // Blockquotes
+    ];
+    return markdownPatterns.some(pattern => pattern.test(text));
+  };
+
+  const isHTML = (text) => {
+    if (!text || typeof text !== 'string') return false;
+    return /<\/?[a-z][\s\S]*>/i.test(text);
+  };
+
+  const processContent = (content) => {
+    if (!content || typeof content !== 'string') return '';
+    
+    // If content is already HTML, return it as is
+    if (isHTML(content)) {
+      return content;
+    }
+    
+    // If content is in markdown format, convert it to HTML
+    if (isMarkdown(content)) {
+      return marked.parse(content);
+    }
+    
+    // If it's plain text, return it as is
+    return content;
+  };
+
   const sanitizeHTML = (html) => {
     if (!html || typeof html !== 'string') return { __html: '' };
     try {
-      return { __html: DOMPurify.sanitize(html || '') };
+      const processedContent = processContent(html);
+      return { __html: DOMPurify.sanitize(processedContent || '') };
     } catch (error) {
       console.error('Sanitization error:', error);
       return { __html: '' };
@@ -70,33 +111,30 @@ export default function NonLabTestPage({ testData }) {
         <ScrollSpyNavigation tabs={tabs}>
           <SectionWithImage
             title="About The Test"
-            content={`
-              <h3>${aboutTest.title || ''}</h3>
-              ${aboutTest.desc || ''}
-              ${risksLimitations.title ? `<h3>${risksLimitations.title}</h3>` : ''}
-              ${risksLimitations.desc || ''}
-            `}
+            content={aboutTest.desc || ''}
             image={aboutTest.imageSrc}
             imageAlt="About the test"
           />
           <SectionWithImage
             title="List of Parameters"
-            content={`<h3>${testParameter.title || ''}</h3>${testParameter.desc || ''}`}
+            content={testParameter.desc || ''}
             image={testParameter.imageSrc}
             imageAlt="Test parameters"
             isReversed
           />
           <SectionWithImage
             title="Why This Test"
-            content={`<h3>${whoNeedTest.title || ''}</h3>${whoNeedTest.desc || ''}`}
+            content={whoNeedTest.desc || ''}
             image={whoNeedTest.imageSrc}
             imageAlt="Who needs this test"
           />
           <SectionWithImage
             title="Benefits"
             content={`
-              <h3>${benifitTest.title || ''}</h3>${benifitTest.desc || ''}
-              <h3>${diseasesDiagnosed.title || ''}</h3>${diseasesDiagnosed.desc || ''}
+              <h3>${benifitTest.title || ''}</h3>
+              ${benifitTest.desc || ''}
+              <h3>${diseasesDiagnosed.title || ''}</h3>
+              ${diseasesDiagnosed.desc || ''}
             `}
             image={benifitTest.imageSrc || diseasesDiagnosed.imageSrc}
             imageAlt="Benefits of the test"
@@ -104,7 +142,7 @@ export default function NonLabTestPage({ testData }) {
           />
           <SectionWithImage
             title="Preparing for test"
-            content={`<h3>${testPreparation.title || ''}</h3>${testPreparation.desc || ''}`}
+            content={testPreparation.desc || ''}
             image={testPreparation.imageSrc}
             imageAlt="Test preparation"
           />
