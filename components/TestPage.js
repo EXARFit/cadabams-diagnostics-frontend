@@ -1,5 +1,6 @@
 import React from 'react';
 import DOMPurify from 'isomorphic-dompurify';
+import { marked } from 'marked'; // Import marked for markdown parsing
 import TestOverview from './TestOverview';
 import TestDetails from './TestDetails';
 import TestMeasures from './TestMeasures';
@@ -9,15 +10,29 @@ import RelativeLinks from './Relativelinks';
 import CommonSections from './CommonSections';
 import styles from './TestPage.module.css';
 
-// Configure DOMPurify to allow list-related tags and styles
+// Configure DOMPurify to allow all the necessary tags for both markdown and HTML content
 const purifyConfig = {
-  ALLOWED_TAGS: ['ul', 'ol', 'li', 'p', 'div', 'span', 'br', 'strong', 'em', 'b', 'i'],
-  ALLOWED_ATTR: ['style', 'class'],
+  ALLOWED_TAGS: [
+    // Basic formatting
+    'p', 'div', 'span', 'br', 'hr',
+    // Headings
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    // Lists
+    'ul', 'ol', 'li',
+    // Text formatting
+    'strong', 'em', 'b', 'i', 'u', 'strike', 'del', 'code', 'pre',
+    // Links and images
+    'a', 'img',
+    // Tables
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    // Blockquotes
+    'blockquote'
+  ],
+  ALLOWED_ATTR: ['style', 'class', 'href', 'src', 'alt', 'title', 'target'],
   ALLOWED_STYLES: [
-    'margin-left',
-    'padding-left',
-    'list-style-type',
-    'text-indent'
+    'margin', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom',
+    'padding', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom',
+    'list-style-type', 'text-indent', 'text-align', 'font-weight'
   ]
 };
 
@@ -58,13 +73,58 @@ export default function TestPage({ testData }) {
     'FAQs'
   ];
 
-  const sanitizeHTML = (html) => {
-    if (!html) return { __html: '' };
+  // Function to check if content is in markdown format
+  const isMarkdown = (text) => {
+    if (!text || typeof text !== 'string') return false;
+    // Check for common markdown patterns
+    const markdownPatterns = [
+      /^#+\s+/m,      // Headers
+      /\*\*.*?\*\*/,  // Bold
+      /\*.*?\*/,      // Italic
+      /\[.*?\]\(.*?\)/, // Links
+      /^\s*[\*\-\+]\s+/m, // Unordered lists
+      /^\s*\d+\.\s+/m, // Ordered lists
+      /^\s*```/m,    // Code blocks
+      /^\s*>/m,      // Blockquotes
+    ];
+    return markdownPatterns.some(pattern => pattern.test(text));
+  };
+
+  // Function to check if content is in HTML format
+  const isHTML = (text) => {
+    if (!text || typeof text !== 'string') return false;
+    return /<\/?[a-z][\s\S]*>/i.test(text);
+  };
+
+  // Process content based on its format
+  const processContent = (content) => {
+    if (!content || typeof content !== 'string') return '';
+    
+    // If content is already HTML, return it as is
+    if (isHTML(content)) {
+      return content;
+    }
+    
+    // If content is in markdown format, convert it to HTML
+    if (isMarkdown(content)) {
+      return marked.parse(content);
+    }
+    
+    // If it's plain text, return it as is
+    return content;
+  };
+
+  // Sanitize HTML after processing content
+  const sanitizeHTML = (content) => {
+    if (!content) return { __html: '' };
     try {
-      return { __html: DOMPurify.sanitize(html, purifyConfig) };
+      // Process content based on its format
+      const processedContent = processContent(content);
+      // Sanitize the processed content
+      return { __html: DOMPurify.sanitize(processedContent, purifyConfig) };
     } catch (error) {
-      console.error('Sanitization error:', error);
-      return { __html: html };
+      console.error('Content processing error:', error);
+      return { __html: '' };
     }
   };
 
@@ -99,6 +159,51 @@ export default function TestPage({ testData }) {
         }
         .content ol > li > ol > li > ol > li {
           list-style-type: lower-roman;
+        }
+        
+        /* Add styles for markdown rendered content */
+        .content h1, .content h2, .content h3, 
+        .content h4, .content h5, .content h6 {
+          margin-top: 1.5rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+        .content h3 {
+          font-size: 1.25rem;
+        }
+        .content h4 {
+          font-size: 1.125rem;
+        }
+        .content p {
+          margin-bottom: 1rem;
+        }
+        .content strong, .content b {
+          font-weight: 600;
+        }
+        .content em, .content i {
+          font-style: italic;
+        }
+        .content blockquote {
+          border-left: 4px solid #e5e7eb;
+          padding-left: 1rem;
+          margin: 1rem 0;
+          color: #4b5563;
+        }
+        .content pre {
+          background-color: #f3f4f6;
+          padding: 1rem;
+          border-radius: 0.25rem;
+          overflow-x: auto;
+        }
+        .content code {
+          background-color: #f3f4f6;
+          padding: 0.2rem 0.4rem;
+          border-radius: 0.25rem;
+          font-family: monospace;
+        }
+        .content a {
+          color: #2563eb;
+          text-decoration: underline;
         }
       `}</style>
       <div className={styles.navbar}></div>
@@ -233,7 +338,7 @@ export default function TestPage({ testData }) {
           </div>
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>FAQs</h2>
-            {faq.map((item, index) => (
+            {Array.isArray(faq) && faq.map((item, index) => (
               <div key={index} className={styles.faqItem}>
                 <h3 className={styles.faqQuestion}>{item.question}</h3>
                 <div
