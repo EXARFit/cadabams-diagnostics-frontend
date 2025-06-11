@@ -92,6 +92,24 @@ export default function NonLabTestPage({ testData }) {
     }
   };
 
+  // Helper function to process and combine content sections
+  const processCombinedContent = (sections) => {
+    let combinedHTML = '';
+    
+    sections.forEach(section => {
+      if (section.title) {
+        combinedHTML += `<h3>${section.title}</h3>`;
+      }
+      if (section.desc) {
+        // Process each description separately to handle markdown properly
+        const processedDesc = processContent(section.desc);
+        combinedHTML += processedDesc;
+      }
+    });
+    
+    return combinedHTML;
+  };
+
   const SectionWithImage = ({ title, content, image, imageAlt, isReversed = false }) => (
     <div className={styles.section}>
       <h2 className={styles.sectionTitle}>{title}</h2>
@@ -130,12 +148,10 @@ export default function NonLabTestPage({ testData }) {
           />
           <SectionWithImage
             title="Benefits"
-            content={`
-              <h3>${benifitTest.title || ''}</h3>
-              ${benifitTest.desc || ''}
-              <h3>${diseasesDiagnosed.title || ''}</h3>
-              ${diseasesDiagnosed.desc || ''}
-            `}
+            content={processCombinedContent([
+              { title: benifitTest.title, desc: benifitTest.desc },
+              { title: diseasesDiagnosed.title, desc: diseasesDiagnosed.desc }
+            ])}
             image={benifitTest.imageSrc || diseasesDiagnosed.imageSrc}
             imageAlt="Benefits of the test"
             isReversed
