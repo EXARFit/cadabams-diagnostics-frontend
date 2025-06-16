@@ -1,3 +1,4 @@
+// File: pages/bangalore/center/[slug].js
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
@@ -8,48 +9,79 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
-// Helper function to transform center data
+// Helper function to transform center data with better error handling
 const transformCenterData = (data) => {
-  if (!data) return null;
+  if (!data) {
+    console.log('transformCenterData: No data provided');
+    return null;
+  }
   
   try {
-    return {
+    console.log('transformCenterData: Processing data for', data.basic_info?.center_name);
+    
+    const transformed = {
       ...data,
-      services: data.services?.map(service => ({
+      // Ensure services is always an array
+      services: Array.isArray(data.services) ? data.services.map(service => ({
         ...service,
-        image: service.image || '/placeholder.jpg',
-        tests: service.tests?.map(test =>
-          typeof test === 'object' ? test.testName : test
-        )
-      })) || []
+        image: service.icon || service.image || '/placeholder.jpg', // Handle both icon and image fields
+        tests: Array.isArray(service.tests) ? service.tests.map(test => {
+          if (typeof test === 'object' && test !== null) {
+            return test.testName || test.name || test;
+          }
+          return test;
+        }) : []
+      })) : [],
+      // Ensure other required fields exist
+      basic_info: data.basic_info || {},
+      center_info: data.center_info || {},
+      working_hours: data.working_hours || {},
+      team: Array.isArray(data.team) ? data.team : [],
+      testimonials: Array.isArray(data.testimonials) ? data.testimonials : [],
+      faq: Array.isArray(data.faq) ? data.faq : []
     };
+    
+    console.log('transformCenterData: Successfully transformed data');
+    return transformed;
   } catch (error) {
-    console.error('Error transforming center data:', error);
+    console.error('transformCenterData: Error transforming data:', error);
     return null;
   }
 };
 
 // SEO data preparation function
 const getSEOData = (centerData) => {
-  if (!centerData) return null;
+  if (!centerData || !centerData.basic_info) return {
+    title: 'Diagnostic Center | Cadabam\'s Diagnostics Bangalore',
+    description: 'Comprehensive diagnostic services in Bangalore',
+    keywords: 'diagnostic center bangalore, medical tests, health checkup',
+    url: 'https://cadabamsdiagnostics.com/bangalore',
+    imageUrl: 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+  };
 
-  const center = centerData.basic_info || {};
+  const center = centerData.basic_info;
   const centerInfo = centerData.center_info || {};
 
   return {
     title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
-    description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.center_description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
+    description: `Visit ${center.center_name} for comprehensive medical testing and diagnostic services. ${(center.center_description || '').substring(0, 150)}...`,
     keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${center.area || 'bangalore'}, diagnostic services`,
-    url: `https://cadabamsdiagnostics.com/bangalore/center/${center.slug || ''}`,
-    imageUrl: center.center_image || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+    url: `https://cadabamsdiagnostics.com/bangalore/center/${center.location || ''}`,
+    imageUrl: center.center_image || centerData.gallery?.reception || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
   };
 };
 
-// Server-side props
-export async function getServerSideProps({ params, res }) {
+// Server-side props with comprehensive error handling
+export async function getServerSideProps(context) {
+  const { params, res, req } = context;
   const { slug } = params;
 
+  // Log the incoming request
+  console.log('getServerSideProps called with slug:', slug);
+  console.log('Request URL:', req.url);
+
   if (!slug) {
+    console.log('No slug provided, redirecting to bangalore');
     return {
       redirect: {
         destination: '/bangalore',
@@ -65,26 +97,48 @@ export async function getServerSideProps({ params, res }) {
       'public, s-maxage=10, stale-while-revalidate=59'
     );
 
-    // Convert slug to lowercase for API consistency
-    const normalizedSlug = Array.isArray(slug) ? slug[0].toLowerCase() : slug.toLowerCase();
+    // Normalize slug: handle both string and array, convert to lowercase
+    const normalizedSlug = Array.isArray(slug) ? slug[0].toLowerCase().trim() : slug.toLowerCase().trim();
     
-    console.log('Fetching data for slug:', normalizedSlug);
+    console.log('Normalized slug:', normalizedSlug);
     
-    const response = await axios.get(`${API_BASE_URL}/center/${normalizedSlug}`, {
-      timeout: 10000, // 10 second timeout
+    // Map common variations to correct slug
+    const slugMap = {
+      'kanakapura': 'kanakapura',
+      'kanakpura': 'kanakapura',  // Common misspelling
+      'kanakapura-road': 'kanakapura',
+      'jayanagar': 'jayanagar',
+      'banashankari': 'banashankari',
+      'indiranagar': 'indiranagar',
+      'kalyan-nagar': 'kalyannagar',
+      'kalyannagar': 'kalyannagar'
+    };
+    
+    const finalSlug = slugMap[normalizedSlug] || normalizedSlug;
+    console.log('Final slug for API call:', finalSlug);
+    
+    const apiUrl = `${API_BASE_URL}/center/${finalSlug}`;
+    console.log('Making API call to:', apiUrl);
+    
+    // Make API request with proper error handling
+    const response = await axios.get(apiUrl, {
+      timeout: 15000, // 15 second timeout
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'User-Agent': 'Next.js/Cadabams-Website'
+      },
+      validateStatus: function (status) {
+        return status < 500; // Resolve only if the status code is less than 500
       }
     });
 
     console.log('API Response status:', response.status);
-    console.log('API Response data structure:', response.data ? 'Data exists' : 'No data');
+    console.log('API Response headers:', response.headers);
 
-    const centerData = response.data?.data;
-
-    if (!centerData) {
-      console.log('No center data found in response');
+    // Handle different response statuses
+    if (response.status === 404) {
+      console.log('Center not found (404), redirecting to bangalore');
       return {
         redirect: {
           destination: '/bangalore',
@@ -93,6 +147,32 @@ export async function getServerSideProps({ params, res }) {
       };
     }
 
+    if (response.status !== 200) {
+      console.log('API returned non-200 status:', response.status);
+      throw new Error(`API returned status ${response.status}: ${response.statusText}`);
+    }
+
+    const responseData = response.data;
+    console.log('API Response data structure:', {
+      hasData: !!responseData,
+      hasDataField: !!responseData?.data,
+      dataKeys: responseData ? Object.keys(responseData) : [],
+      centerName: responseData?.data?.basic_info?.center_name
+    });
+
+    const centerData = responseData?.data;
+
+    if (!centerData) {
+      console.log('No center data found in API response');
+      return {
+        props: {
+          centerData: null,
+          error: 'Center data not found'
+        }
+      };
+    }
+
+    // Transform the data
     const transformedData = transformCenterData(centerData);
 
     if (!transformedData) {
@@ -105,53 +185,64 @@ export async function getServerSideProps({ params, res }) {
       };
     }
 
-    console.log('Successfully transformed data for:', transformedData.basic_info?.center_name);
+    console.log('Successfully processed center data for:', transformedData.basic_info?.center_name);
 
     return {
       props: {
         centerData: transformedData,
-        error: null
+        error: null,
+        slug: finalSlug
       }
     };
+
   } catch (error) {
-    console.error('Error fetching center data:', {
+    console.error('getServerSideProps Error Details:', {
       message: error.message,
       status: error.response?.status,
       statusText: error.response?.statusText,
-      url: `${API_BASE_URL}/center/${slug}`
+      url: error.config?.url,
+      stack: error.stack
     });
     
-    // Return more specific error information
-    const errorMessage = error.response?.status === 404 
-      ? 'Center not found' 
-      : error.response?.status 
-        ? `API Error: ${error.response.status}` 
-        : 'Network connection failed';
+    // Determine error type and message
+    let errorMessage = 'Failed to load center data';
+    
+    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      errorMessage = 'Network connection failed';
+    } else if (error.response?.status === 404) {
+      errorMessage = 'Center not found';
+    } else if (error.response?.status === 500) {
+      errorMessage = 'Server error';
+    } else if (error.code === 'ECONNABORTED') {
+      errorMessage = 'Request timeout';
+    }
 
     return {
       props: {
         centerData: null,
-        error: errorMessage
+        error: errorMessage,
+        slug: slug
       }
     };
   }
 }
 
-const CenterDetailPage = ({ centerData, error }) => {
+const CenterDetailPage = ({ centerData, error, slug }) => {
   const router = useRouter();
 
-  // Loading state
+  // Handle loading state
   if (router.isFallback) {
     return (
       <Layout title="Loading...">
         <div className={styles.loadingContainer}>
+          <div className={styles.loader}></div>
           <h2>Loading center information...</h2>
         </div>
       </Layout>
     );
   }
 
-  // Error state
+  // Handle error state
   if (!centerData && error) {
     return (
       <Layout title="Error">
@@ -160,11 +251,12 @@ const CenterDetailPage = ({ centerData, error }) => {
           <meta name="robots" content="noindex, follow" />
         </Head>
         <div className={styles.errorContainer}>
-          <h2>Error: {error}</h2>
-          <p>We're having trouble loading the center information.</p>
+          <div className={styles.errorIcon}>⚠️</div>
+          <h2>Oops! Something went wrong</h2>
+          <p className={styles.errorMessage}>{error}</p>
           <div className={styles.errorActions}>
             <button 
-              onClick={() => router.reload()}
+              onClick={() => window.location.reload()}
               className={styles.retryButton}
             >
               Try Again
@@ -173,7 +265,7 @@ const CenterDetailPage = ({ centerData, error }) => {
               onClick={() => router.push('/bangalore')}
               className={styles.backButton}
             >
-              Go Back to Centers
+              View All Centers
             </button>
           </div>
         </div>
@@ -181,7 +273,7 @@ const CenterDetailPage = ({ centerData, error }) => {
     );
   }
 
-  // Redirect if no data and no error (shouldn't happen, but just in case)
+  // Handle case where no data and no error (shouldn't happen)
   if (!centerData) {
     if (typeof window !== 'undefined') {
       router.push('/bangalore');
@@ -191,52 +283,52 @@ const CenterDetailPage = ({ centerData, error }) => {
 
   const seoData = getSEOData(centerData);
   const { center_info = {}, basic_info = {} } = centerData;
-  const { slug } = router.query;
 
   return (
     <Layout title={basic_info.center_name || 'Diagnostic Center'}>
       <Head>
-        <title>{seoData?.title || 'Cadabam\'s Diagnostics'}</title>
-        <meta name="description" content={seoData?.description || ''} />
-        <meta name="keywords" content={seoData?.keywords || ''} />
+        <title>{seoData.title}</title>
+        <meta name="description" content={seoData.description} />
+        <meta name="keywords" content={seoData.keywords} />
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
-        <link rel="canonical" href={`https://cadabamsdiagnostics.com/bangalore/center/${slug}`} />
+        <link rel="canonical" href={`https://cadabamsdiagnostics.com/bangalore/center/${slug || router.query.slug}`} />
         
         {/* Open Graph Tags */}
-        <meta property="og:title" content={seoData?.title || ''} />
-        <meta property="og:description" content={seoData?.description || ''} />
-        <meta property="og:type" content="medical.business" />
-        <meta property="og:url" content={seoData?.url || ''} />
-        <meta property="og:image" content={seoData?.imageUrl || ''} />
+        <meta property="og:title" content={seoData.title} />
+        <meta property="og:description" content={seoData.description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={seoData.url} />
+        <meta property="og:image" content={seoData.imageUrl} />
         <meta property="og:site_name" content="Cadabam's Diagnostics" />
-        <meta property="og:locale" content="en_IN" />
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoData?.title || ''} />
-        <meta name="twitter:description" content={seoData?.description || ''} />
-        <meta name="twitter:image" content={seoData?.imageUrl || ''} />
+        <meta name="twitter:title" content={seoData.title} />
+        <meta name="twitter:description" content={seoData.description} />
+        <meta name="twitter:image" content={seoData.imageUrl} />
         
-        {/* Schema.org JSON-LD Scripts */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": centerData.faq?.map(faqItem => ({
-                "@type": "Question",
-                "name": faqItem.question,
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": faqItem.answer?.replace(/<[^>]*>/g, '') // Strip HTML tags
-                }
-              })) || []
-            })
-          }}
-        />
+        {/* Schema.org JSON-LD */}
+        {centerData.faq && centerData.faq.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": centerData.faq.map(faqItem => ({
+                  "@type": "Question",
+                  "name": faqItem.question,
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": faqItem.answer?.replace(/<[^>]*>/g, '') || ''
+                  }
+                }))
+              })
+            }}
+          />
+        )}
 
         <script
           type="application/ld+json"
@@ -244,9 +336,10 @@ const CenterDetailPage = ({ centerData, error }) => {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "MedicalBusiness",
-              "name": basic_info.center_name,
-              "url": seoData?.url,
-              "description": basic_info.center_description,
+              "name": basic_info.center_name || "Cadabam's Diagnostics",
+              "description": basic_info.center_description || "",
+              "url": seoData.url,
+              "image": seoData.imageUrl,
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": center_info.address || "",
@@ -257,14 +350,12 @@ const CenterDetailPage = ({ centerData, error }) => {
               "contactPoint": {
                 "@type": "ContactPoint",
                 "telephone": center_info.phone || "",
-                "contactType": "Customer Service",
-                "areaServed": "IN",
-                "availableLanguage": "en"
+                "contactType": "Customer Service"
               },
-              "openingHours": [
-                `Mo-Sa ${centerData.working_hours?.weekdays?.start || '06:30'}-${centerData.working_hours?.weekdays?.end || '21:00'}`,
-                `Su ${centerData.working_hours?.sunday?.start || '06:30'}-${centerData.working_hours?.sunday?.end || '13:00'}`
-              ]
+              "openingHours": centerData.working_hours ? [
+                `Mo-Sa ${centerData.working_hours.weekdays?.start || '06:30'}-${centerData.working_hours.weekdays?.end || '21:00'}`,
+                `Su ${centerData.working_hours.sunday?.start || '06:30'}-${centerData.working_hours.sunday?.end || '13:00'}`
+              ] : []
             })
           }}
         />
