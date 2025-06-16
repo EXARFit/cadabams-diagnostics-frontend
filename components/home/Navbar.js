@@ -62,10 +62,14 @@ export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const { cart } = useContext(CartContext);
 
-  // Filter centers to only include specific locations
-  const centerLocations = BANGALORE_LOCATIONS.filter(location => 
-    ['indiranagar', 'banashankari', 'jayanagar'].includes(location.value)
-  );
+  // Updated: Include ALL available centers including Kanakapura and Kalyan Nagar
+  const centerLocations = [
+    { value: 'indiranagar', name: 'Indiranagar', path: '/bangalore/center/indiranagar' },
+    { value: 'banashankari', name: 'Banashankari', path: '/bangalore/center/banashankari' },
+    { value: 'jayanagar', name: 'Jayanagar', path: '/bangalore/center/jayanagar' },
+    { value: 'kanakapura', name: 'Kanakapura Road', path: '/bangalore/center/kanakapura' },
+    { value: 'kalyannagar', name: 'Kalyan Nagar', path: '/bangalore/center/kalyannagar' }
+  ];
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -162,6 +166,24 @@ export default function Navbar() {
       setIsAuthModalOpen(true);
     }
     setIsMobileMenuOpen(false);
+  };
+
+  // Handle center navigation with proper error handling
+  const handleCenterNavigation = (centerValue) => {
+    const centerPath = `/bangalore/center/${centerValue}`;
+    
+    // Close dropdowns first
+    setIsCentersDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    
+    // Navigate to center page
+    router.push(centerPath).catch(error => {
+      console.error('Navigation error:', error);
+      // Fallback: try with different case
+      if (centerValue === 'kanakapura') {
+        router.push('/bangalore/center/kanakapura');
+      }
+    });
   };
 
   useEffect(() => {
@@ -327,17 +349,23 @@ export default function Navbar() {
                 
                 <div className={`${styles.dropdownContent} ${isCentersDropdownOpen ? styles.visible : ''}`}>
                   {centerLocations.map((location) => (
-                    <Link
-                      key={location.path}
-                      href={`/bangalore/center/${location.value}`}
+                    <button
+                      key={location.value}
                       className={styles.dropdownItem}
-                      onClick={() => {
-                        setIsCentersDropdownOpen(false);
-                        setIsMobileMenuOpen(false);
+                      onClick={() => handleCenterNavigation(location.value)}
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        width: '100%', 
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        padding: '12px 16px',
+                        fontSize: '14px',
+                        color: 'inherit'
                       }}
                     >
                       {location.name}
-                    </Link>
+                    </button>
                   ))}
                 </div>
               </div>
