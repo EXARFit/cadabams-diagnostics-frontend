@@ -12,16 +12,21 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-prod.cadaba
 const transformCenterData = (data) => {
   if (!data) return null;
   
-  return {
-    ...data,
-    services: data.services?.map(service => ({
-      ...service,
-      image: service.image || '/placeholder.jpg',
-      tests: service.tests?.map(test =>
-        typeof test === 'object' ? test.testName : test
-      )
-    }))
-  };
+  try {
+    return {
+      ...data,
+      services: data.services?.map(service => ({
+        ...service,
+        image: service.image || '/placeholder.jpg',
+        tests: service.tests?.map(test =>
+          typeof test === 'object' ? test.testName : test
+        )
+      })) || []
+    };
+  } catch (error) {
+    console.error('Error transforming center data:', error);
+    return null;
+  }
 };
 
 // SEO data preparation function
@@ -29,14 +34,14 @@ const getSEOData = (centerData) => {
   if (!centerData) return null;
 
   const center = centerData.basic_info || {};
-  const address = centerData.address || {};
+  const centerInfo = centerData.center_info || {};
 
   return {
     title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
-    description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
-    keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${address.area || 'bangalore'}, diagnostic services`,
+    description: `Visit Cadabam's Diagnostics ${center.center_name} for comprehensive medical testing and diagnostic services. ${center.center_description || 'We offer advanced diagnostic solutions with state-of-the-art equipment and experienced professionals.'}`,
+    keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${center.area || 'bangalore'}, diagnostic services`,
     url: `https://cadabamsdiagnostics.com/bangalore/center/${center.slug || ''}`,
-    imageUrl: center.image || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+    imageUrl: center.center_image || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
   };
 };
 
@@ -60,10 +65,26 @@ export async function getServerSideProps({ params, res }) {
       'public, s-maxage=10, stale-while-revalidate=59'
     );
 
-    const response = await axios.get(`${API_BASE_URL}/center/${slug}`);
+    // Convert slug to lowercase for API consistency
+    const normalizedSlug = Array.isArray(slug) ? slug[0].toLowerCase() : slug.toLowerCase();
+    
+    console.log('Fetching data for slug:', normalizedSlug);
+    
+    const response = await axios.get(`${API_BASE_URL}/center/${normalizedSlug}`, {
+      timeout: 10000, // 10 second timeout
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('API Response status:', response.status);
+    console.log('API Response data structure:', response.data ? 'Data exists' : 'No data');
+
     const centerData = response.data?.data;
 
     if (!centerData) {
+      console.log('No center data found in response');
       return {
         redirect: {
           destination: '/bangalore',
@@ -74,6 +95,18 @@ export async function getServerSideProps({ params, res }) {
 
     const transformedData = transformCenterData(centerData);
 
+    if (!transformedData) {
+      console.log('Data transformation failed');
+      return {
+        props: {
+          centerData: null,
+          error: 'Failed to process center data'
+        }
+      };
+    }
+
+    console.log('Successfully transformed data for:', transformedData.basic_info?.center_name);
+
     return {
       props: {
         centerData: transformedData,
@@ -81,11 +114,24 @@ export async function getServerSideProps({ params, res }) {
       }
     };
   } catch (error) {
-    console.error('Error fetching center data:', error);
+    console.error('Error fetching center data:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: `${API_BASE_URL}/center/${slug}`
+    });
+    
+    // Return more specific error information
+    const errorMessage = error.response?.status === 404 
+      ? 'Center not found' 
+      : error.response?.status 
+        ? `API Error: ${error.response.status}` 
+        : 'Network connection failed';
+
     return {
       props: {
         centerData: null,
-        error: 'Failed to fetch center data'
+        error: errorMessage
       }
     };
   }
@@ -94,6 +140,18 @@ export async function getServerSideProps({ params, res }) {
 const CenterDetailPage = ({ centerData, error }) => {
   const router = useRouter();
 
+  // Loading state
+  if (router.isFallback) {
+    return (
+      <Layout title="Loading...">
+        <div className={styles.loadingContainer}>
+          <h2>Loading center information...</h2>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Error state
   if (!centerData && error) {
     return (
       <Layout title="Error">
@@ -103,17 +161,27 @@ const CenterDetailPage = ({ centerData, error }) => {
         </Head>
         <div className={styles.errorContainer}>
           <h2>Error: {error}</h2>
-          <button 
-            onClick={() => router.reload()}
-            className={styles.retryButton}
-          >
-            Try Again
-          </button>
+          <p>We're having trouble loading the center information.</p>
+          <div className={styles.errorActions}>
+            <button 
+              onClick={() => router.reload()}
+              className={styles.retryButton}
+            >
+              Try Again
+            </button>
+            <button 
+              onClick={() => router.push('/bangalore')}
+              className={styles.backButton}
+            >
+              Go Back to Centers
+            </button>
+          </div>
         </div>
       </Layout>
     );
   }
 
+  // Redirect if no data and no error (shouldn't happen, but just in case)
   if (!centerData) {
     if (typeof window !== 'undefined') {
       router.push('/bangalore');
@@ -122,34 +190,34 @@ const CenterDetailPage = ({ centerData, error }) => {
   }
 
   const seoData = getSEOData(centerData);
-  const { address = {}, basic_info = {} } = centerData;
+  const { center_info = {}, basic_info = {} } = centerData;
   const { slug } = router.query;
 
   return (
     <Layout title={basic_info.center_name || 'Diagnostic Center'}>
       <Head>
-        <title>{seoData.title}</title>
-        <meta name="description" content={seoData.description} />
-        <meta name="keywords" content={seoData.keywords} />
+        <title>{seoData?.title || 'Cadabam\'s Diagnostics'}</title>
+        <meta name="description" content={seoData?.description || ''} />
+        <meta name="keywords" content={seoData?.keywords || ''} />
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
         <link rel="canonical" href={`https://cadabamsdiagnostics.com/bangalore/center/${slug}`} />
         
         {/* Open Graph Tags */}
-        <meta property="og:title" content={seoData.title} />
-        <meta property="og:description" content={seoData.description} />
+        <meta property="og:title" content={seoData?.title || ''} />
+        <meta property="og:description" content={seoData?.description || ''} />
         <meta property="og:type" content="medical.business" />
-        <meta property="og:url" content={seoData.url} />
-        <meta property="og:image" content={seoData.imageUrl} />
+        <meta property="og:url" content={seoData?.url || ''} />
+        <meta property="og:image" content={seoData?.imageUrl || ''} />
         <meta property="og:site_name" content="Cadabam's Diagnostics" />
         <meta property="og:locale" content="en_IN" />
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoData.title} />
-        <meta name="twitter:description" content={seoData.description} />
-        <meta name="twitter:image" content={seoData.imageUrl} />
+        <meta name="twitter:title" content={seoData?.title || ''} />
+        <meta name="twitter:description" content={seoData?.description || ''} />
+        <meta name="twitter:image" content={seoData?.imageUrl || ''} />
         
         {/* Schema.org JSON-LD Scripts */}
         <script
@@ -158,28 +226,14 @@ const CenterDetailPage = ({ centerData, error }) => {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "FAQPage",
-              "mainEntity": [{
+              "mainEntity": centerData.faq?.map(faqItem => ({
                 "@type": "Question",
-                "name": "What services does Cadabam's Diagnostics offer?",
+                "name": faqItem.question,
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": `${basic_info.center_name} offers comprehensive diagnostic services including ${centerData.services?.map(s => s.name).join(', ')}.`
+                  "text": faqItem.answer?.replace(/<[^>]*>/g, '') // Strip HTML tags
                 }
-              }, {
-                "@type": "Question",
-                "name": "What are the working hours of the diagnostic center?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": `Our center is open from ${basic_info.opening_time || '00:00'} to ${basic_info.closing_time || '23:59'} every day.`
-                }
-              }, {
-                "@type": "Question",
-                "name": "Where is the diagnostic center located?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": `${basic_info.center_name} is located at ${address.street}, ${address.area}, ${address.pincode}.`
-                }
-              }]
+              })) || []
             })
           }}
         />
@@ -189,106 +243,31 @@ const CenterDetailPage = ({ centerData, error }) => {
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
+              "@type": "MedicalBusiness",
               "name": basic_info.center_name,
-              "url": seoData.url,
-              "sameAs": [
-                "https://www.instagram.com/cadabamsdiagnostics",
-                "https://www.facebook.com/CadabamsDiagnostics",
-                "https://www.youtube.com/CadabamsDiagnostics",
-                "https://www.linkedin.com/company/cadabams-diagnostics",
-                "https://cadabamsdiagnostics.com",
-                `https://www.google.com/maps?cid=${address.gmb_cid || ''}`
-              ],
+              "url": seoData?.url,
+              "description": basic_info.center_description,
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": address.street || "",
-                "addressLocality": address.area || "Bangalore",
+                "streetAddress": center_info.address || "",
+                "addressLocality": basic_info.area || "Bangalore",
                 "addressRegion": "Karnataka",
-                "postalCode": address.pincode || "",
                 "addressCountry": "IN"
               },
               "contactPoint": {
                 "@type": "ContactPoint",
-                "telephone": basic_info.phone || "",
+                "telephone": center_info.phone || "",
                 "contactType": "Customer Service",
                 "areaServed": "IN",
                 "availableLanguage": "en"
               },
-              "logo": basic_info.logo || "/images/logo.png"
+              "openingHours": [
+                `Mo-Sa ${centerData.working_hours?.weekdays?.start || '06:30'}-${centerData.working_hours?.weekdays?.end || '21:00'}`,
+                `Su ${centerData.working_hours?.sunday?.start || '06:30'}-${centerData.working_hours?.sunday?.end || '13:00'}`
+              ]
             })
           }}
         />
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "MedicalWebPage",
-              "name": seoData.title,
-              "description": seoData.description,
-              "url": seoData.url,
-              "image": seoData.imageUrl,
-              "audience": {
-                "@type": "MedicalAudience",
-                "audienceType": "Patients",
-                "healthCondition": {
-                  "@type": "MedicalCondition",
-                  "name": "Various Medical Conditions"
-                }
-              },
-              "reviewedBy": {
-                "@type": "Person",
-                "name": basic_info.doctor_name || "Medical Professional",
-                "jobTitle": basic_info.doctor_designation || "Medical Director",
-                "url": `${seoData.url}/team`,
-                "sameAs": [
-                  basic_info.doctor_linkedin || "",
-                  basic_info.doctor_profile || ""
-                ],
-                "hasOccupation": {
-                  "@type": "Occupation",
-                  "name": basic_info.doctor_designation || "Medical Director",
-                  "educationRequirements": basic_info.doctor_qualification || "MBBS, MD"
-                }
-              },
-              "specialty": centerData.services?.map(s => s.name).join(', '),
-              "about": {
-                "@type": "MedicalCondition",
-                "name": "Diagnostic Services"
-              },
-              "dateCreated": basic_info.created_at || new Date().toISOString(),
-              "dateModified": basic_info.updated_at || new Date().toISOString(),
-              "copyrightHolder": {
-                "@type": "Organization",
-                "name": "Cadabam's Diagnostics"
-              },
-              "keywords": seoData.keywords
-            })
-          }}
-        />
-
-        {basic_info.video_url && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "VideoObject",
-                "name": `${basic_info.center_name} - Virtual Tour`,
-                "description": `Take a virtual tour of ${basic_info.center_name} and explore our state-of-the-art diagnostic facilities`,
-                "thumbnailUrl": [
-                  basic_info.video_thumbnail || seoData.imageUrl
-                ],
-                "uploadDate": basic_info.video_upload_date || new Date().toISOString(),
-                "duration": basic_info.video_duration || "PT1M54S",
-                "contentUrl": basic_info.video_url,
-                "embedUrl": basic_info.video_embed_url
-              })
-            }}
-          />
-        )}
       </Head>
 
       <div className={styles.container}>
