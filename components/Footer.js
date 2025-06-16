@@ -77,7 +77,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Diagnostic Centres Column */}
+          {/* Diagnostic Centres Column - UPDATED */}
           <div className={styles.column}>
             <h3>Diagnostic Centres</h3>
             <ul>
@@ -89,6 +89,12 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/bangalore/center/jayanagar">Jayanagar</Link>
+              </li>
+              <li>
+                <Link href="/bangalore/center/kanakapura">Kanakapura Road</Link>
+              </li>
+              <li>
+                <Link href="/bangalore/center/kalyannagar">Kalyan Nagar</Link>
               </li>
             </ul>
           </div>
@@ -123,7 +129,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/lab-test//thyroid-simulation-harmone-tsh">
+                <Link href="/bangalore/lab-test/thyroid-simulation-harmone-tsh">
                   Thyroid Stimulating Test (TSH)
                 </Link>
               </li>
