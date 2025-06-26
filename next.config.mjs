@@ -29,10 +29,10 @@ const nextConfig = {
             value: "default-src 'self'; " +
                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-prod.cadabamsdiagnostics.com https://cdnjs.cloudflare.com; " +
                   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-                  "img-src 'self' data: https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com https://cadabamsdiagnostics.com; " +
+                  "img-src 'self' data: https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com https://cadabamsdiagnostics.com https://img.youtube.com; " +
                   "font-src 'self' https://fonts.gstatic.com; " +
                   "connect-src 'self' https://api-prod.cadabamsdiagnostics.com; " +
-                 "frame-src 'self' https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com; " +
+                  "frame-src 'self' https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com; " +
                   "base-uri 'self'; " +
                   "form-action 'self'; " +
                   "object-src 'none';"
@@ -62,6 +62,7 @@ const nextConfig = {
     ];
   },
   
+  // ... rest of your configuration remains the same
   async redirects() {
     // Helper function to create redirect pairs (with and without trailing slash)
     const createRedirectPair = (source, destination) => [
