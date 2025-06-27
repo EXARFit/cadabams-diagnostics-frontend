@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
-// Fixed helper function to transform center data with better error handling
+// Enhanced helper function to transform center data with comprehensive error handling
 const transformCenterData = (data) => {
   if (!data) {
     console.log('transformCenterData: No data provided');
@@ -30,25 +30,38 @@ const transformCenterData = (data) => {
             // Handle different test data formats
             if (typeof test === 'string') {
               const trimmed = test.trim();
+              console.log(`String test "${trimmed}" - valid: ${!!trimmed}`);
               return trimmed || null; // Return null for empty strings
             }
             
             if (typeof test === 'object' && test !== null) {
               // Extract testName and ensure it's a valid string
               const testName = test.testName || test.name;
+              console.log(`Object test - testName: "${testName}" - type: ${typeof testName}`);
               
+              // Check if testName exists and is a non-empty string
               if (testName && typeof testName === 'string' && testName.trim()) {
-                return testName.trim();
+                const result = testName.trim();
+                console.log(`Valid testName result: "${result}"`);
+                return result;
               }
               
-              // If no valid testName, return null to filter out later
+              // If testName is empty string or null/undefined, return null
+              console.log('Invalid or empty testName, filtering out');
               return null;
             }
             
+            console.log('Unhandled test type, filtering out');
             return null;
           })
-          .filter(test => test !== null && test !== '') // Remove null/empty entries
+          .filter(test => {
+            const isValid = test !== null && test !== '' && typeof test === 'string';
+            console.log(`Filter check - test: "${test}" - valid: ${isValid}`);
+            return isValid;
+          }) // Remove null/empty entries and ensure only strings
         : [];
+        
+        console.log(`Final processed tests for ${service.title}:`, processedTests);
         
         return {
           ...service,
@@ -129,7 +142,7 @@ export async function getServerSideProps(context) {
     
     console.log('Normalized slug:', normalizedSlug);
     
-    // Map common variations to correct slug
+    // Enhanced slug mapping with all variations
     const slugMap = {
       'kanakapura': 'kanakapura',
       'kanakpura': 'kanakapura',  // Common misspelling
@@ -138,7 +151,9 @@ export async function getServerSideProps(context) {
       'banashankari': 'banashankari',
       'indiranagar': 'indiranagar',
       'kalyan-nagar': 'kalyannagar',
-      'kalyannagar': 'kalyannagar'
+      'kalyannagar': 'kalyannagar',
+      'kalyan_nagar': 'kalyannagar',  // Handle underscore variant
+      'kalyan nagar': 'kalyannagar'   // Handle space variant
     };
     
     const finalSlug = slugMap[normalizedSlug] || normalizedSlug;
@@ -199,7 +214,7 @@ export async function getServerSideProps(context) {
       };
     }
 
-    // Transform the data with the fixed function
+    // Transform the data with the enhanced function
     const transformedData = transformCenterData(centerData);
 
     if (!transformedData) {
@@ -384,7 +399,7 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
                 `Mo-Sa ${centerData.working_hours.weekdays?.start || '06:30'}-${centerData.working_hours.weekdays?.end || '21:00'}`,
                 `Su ${centerData.working_hours.sunday?.start || '06:30'}-${centerData.working_hours.sunday?.end || '13:00'}`
               ] : [],
-              "priceRange": "$$",
+              "priceRange": "$",
               "aggregateRating": centerData.testimonials && centerData.testimonials.length > 0 ? {
                 "@type": "AggregateRating",
                 "ratingValue": (centerData.testimonials.reduce((sum, t) => sum + (t.rating || 5), 0) / centerData.testimonials.length).toFixed(1),
