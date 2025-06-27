@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
-// Helper function to transform center data with better error handling
+// Fixed helper function to transform center data with better error handling
 const transformCenterData = (data) => {
   if (!data) {
     console.log('transformCenterData: No data provided');
@@ -21,24 +21,51 @@ const transformCenterData = (data) => {
     
     const transformed = {
       ...data,
-      // Ensure services is always an array
-      services: Array.isArray(data.services) ? data.services.map(service => ({
-        ...service,
-        image: service.icon || service.image || '/placeholder.jpg', // Handle both icon and image fields
-        tests: Array.isArray(service.tests) ? service.tests.map(test => {
-          if (typeof test === 'object' && test !== null) {
-            return test.testName || test.name || test;
-          }
-          return test;
-        }) : []
-      })) : [],
+      // Ensure services is always an array with proper test handling
+      services: Array.isArray(data.services) ? data.services.map((service, serviceIndex) => {
+        console.log(`Processing service ${serviceIndex}: ${service.title}`);
+        
+        const processedTests = Array.isArray(service.tests) ? service.tests
+          .map((test, testIndex) => {
+            // Handle different test data formats
+            if (typeof test === 'string') {
+              const trimmed = test.trim();
+              return trimmed || null; // Return null for empty strings
+            }
+            
+            if (typeof test === 'object' && test !== null) {
+              // Extract testName and ensure it's a valid string
+              const testName = test.testName || test.name;
+              
+              if (testName && typeof testName === 'string' && testName.trim()) {
+                return testName.trim();
+              }
+              
+              // If no valid testName, return null to filter out later
+              return null;
+            }
+            
+            return null;
+          })
+          .filter(test => test !== null && test !== '') // Remove null/empty entries
+        : [];
+        
+        return {
+          ...service,
+          image: service.icon || service.image || '/placeholder.jpg',
+          tests: processedTests
+        };
+      }) : [],
       // Ensure other required fields exist
       basic_info: data.basic_info || {},
       center_info: data.center_info || {},
       working_hours: data.working_hours || {},
       team: Array.isArray(data.team) ? data.team : [],
       testimonials: Array.isArray(data.testimonials) ? data.testimonials : [],
-      faq: Array.isArray(data.faq) ? data.faq : []
+      faq: Array.isArray(data.faq) ? data.faq : [],
+      gallery: data.gallery || {},
+      video_gallery: data.video_gallery || {},
+      other_centers: Array.isArray(data.other_centers) ? data.other_centers : []
     };
     
     console.log('transformCenterData: Successfully transformed data');
@@ -63,8 +90,8 @@ const getSEOData = (centerData) => {
   const centerInfo = centerData.center_info || {};
 
   return {
-    title: `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
-    description: `Visit ${center.center_name} for comprehensive medical testing and diagnostic services. ${(center.center_description || '').substring(0, 150)}...`,
+    title: centerData.seo?.title || `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
+    description: centerData.seo?.description || `Visit ${center.center_name} for comprehensive medical testing and diagnostic services. ${(center.center_description || '').substring(0, 150)}...`,
     keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${center.area || 'bangalore'}, diagnostic services`,
     url: `https://cadabamsdiagnostics.com/bangalore/center/${center.location || ''}`,
     imageUrl: center.center_image || centerData.gallery?.reception || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
@@ -172,7 +199,7 @@ export async function getServerSideProps(context) {
       };
     }
 
-    // Transform the data
+    // Transform the data with the fixed function
     const transformedData = transformCenterData(centerData);
 
     if (!transformedData) {
@@ -309,7 +336,7 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
         <meta name="twitter:description" content={seoData.description} />
         <meta name="twitter:image" content={seoData.imageUrl} />
         
-        {/* Schema.org JSON-LD */}
+        {/* Schema.org JSON-LD for FAQ */}
         {centerData.faq && centerData.faq.length > 0 && (
           <script
             type="application/ld+json"
@@ -330,6 +357,7 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
           />
         )}
 
+        {/* Schema.org JSON-LD for Medical Business */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -355,7 +383,13 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
               "openingHours": centerData.working_hours ? [
                 `Mo-Sa ${centerData.working_hours.weekdays?.start || '06:30'}-${centerData.working_hours.weekdays?.end || '21:00'}`,
                 `Su ${centerData.working_hours.sunday?.start || '06:30'}-${centerData.working_hours.sunday?.end || '13:00'}`
-              ] : []
+              ] : [],
+              "priceRange": "$$",
+              "aggregateRating": centerData.testimonials && centerData.testimonials.length > 0 ? {
+                "@type": "AggregateRating",
+                "ratingValue": (centerData.testimonials.reduce((sum, t) => sum + (t.rating || 5), 0) / centerData.testimonials.length).toFixed(1),
+                "reviewCount": centerData.testimonials.length
+              } : undefined
             })
           }}
         />
