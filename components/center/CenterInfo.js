@@ -107,18 +107,20 @@ const CenterInfo = ({ info, workingHours }) => {
       </div>
 
       {/* Map Section */}
-      <div className={styles.mapContainer}>
-        <iframe
-          src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(info.map_location)}`}
-          width="100%"
-          height="300"
-          style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className={styles.map}
-          title="Center Location"
-        />
+      <div className={styles.mapSection}>
+        <h2>Find Us</h2>
+        <div className={styles.mapContainer}>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=YOUR_GOOGLE_MAPS_EMBED_URL"
+            width="100%"
+            height="450"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Center Location"
+          />
+        </div>
       </div>
     </div>
   );
