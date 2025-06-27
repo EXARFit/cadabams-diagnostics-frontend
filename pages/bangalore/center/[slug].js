@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-prod.cadabamsdiagnostics.com/api/v1/cms/component/pagetemplate';
 
-// Enhanced helper function to transform center data with comprehensive error handling
+// Completely robust helper function to transform center data
 const transformCenterData = (data) => {
   if (!data) {
     console.log('transformCenterData: No data provided');
@@ -19,105 +19,234 @@ const transformCenterData = (data) => {
   try {
     console.log('transformCenterData: Processing data for', data.basic_info?.center_name);
     
+    // Ensure all required fields exist with proper defaults
     const transformed = {
       ...data,
-      // Ensure services is always an array with proper test handling
+      basic_info: {
+        center_name: '',
+        center_image: '',
+        center_sub_title: '',
+        center_description: '',
+        location: '',
+        city: 'bangalore',
+        area: '',
+        ...data.basic_info
+      },
+      center_info: {
+        address: '',
+        phone: '',
+        whatsapp: '',
+        email: '',
+        map_location: '',
+        ...data.center_info
+      },
+      working_hours: {
+        weekdays: { start: '06:30', end: '21:00' },
+        sunday: { start: '06:30', end: '13:00' },
+        ...data.working_hours
+      },
+      gallery: {
+        reception: null,
+        collection_room: null,
+        lab_equipment: null,
+        waiting_area: null,
+        ...data.gallery
+      },
+      seo: {
+        title: '',
+        description: '',
+        ...data.seo
+      },
+      video_gallery: {
+        overview: { url: '', description: '' },
+        testing_process: { url: '', description: '' },
+        testimonials: { url: '', description: '' },
+        ...data.video_gallery
+      },
+      // Process services array with comprehensive error handling
       services: Array.isArray(data.services) ? data.services.map((service, serviceIndex) => {
-        console.log(`Processing service ${serviceIndex}: ${service.title}`);
+        console.log(`Processing service ${serviceIndex}: ${service?.title || 'Unknown'}`);
         
-        const processedTests = Array.isArray(service.tests) ? service.tests
-          .map((test, testIndex) => {
-            // Handle different test data formats
-            if (typeof test === 'string') {
-              const trimmed = test.trim();
-              console.log(`String test "${trimmed}" - valid: ${!!trimmed}`);
-              return trimmed || null; // Return null for empty strings
-            }
-            
-            if (typeof test === 'object' && test !== null) {
-              // Extract testName and ensure it's a valid string
-              const testName = test.testName || test.name;
-              console.log(`Object test - testName: "${testName}" - type: ${typeof testName}`);
+        // Ensure service has required fields
+        const processedService = {
+          _id: service._id || `service-${serviceIndex}`,
+          title: service.title || 'Service',
+          description: service.description || '',
+          icon: service.icon || '',
+          image: service.icon || service.image || '/placeholder.jpg',
+          tests: []
+        };
+        
+        // Process tests with ultra-safe handling
+        if (Array.isArray(service.tests)) {
+          const processedTests = [];
+          
+          service.tests.forEach((test, testIndex) => {
+            try {
+              let testName = null;
               
-              // Check if testName exists and is a non-empty string
-              if (testName && typeof testName === 'string' && testName.trim()) {
-                const result = testName.trim();
-                console.log(`Valid testName result: "${result}"`);
-                return result;
+              // Handle string tests
+              if (typeof test === 'string') {
+                const trimmed = test.trim();
+                if (trimmed && trimmed.length > 0) {
+                  testName = trimmed;
+                }
+              }
+              // Handle object tests
+              else if (test && typeof test === 'object') {
+                const candidateName = test.testName || test.name || test.title;
+                if (candidateName && typeof candidateName === 'string') {
+                  const trimmed = candidateName.trim();
+                  if (trimmed && trimmed.length > 0) {
+                    testName = trimmed;
+                  }
+                }
               }
               
-              // If testName is empty string or null/undefined, return null
-              console.log('Invalid or empty testName, filtering out');
-              return null;
+              // Only add valid test names
+              if (testName) {
+                console.log(`Valid test found: "${testName}"`);
+                processedTests.push(testName);
+              } else {
+                console.log(`Invalid test at index ${testIndex}, skipping`);
+              }
+            } catch (testError) {
+              console.error(`Error processing test ${testIndex}:`, testError);
             }
-            
-            console.log('Unhandled test type, filtering out');
-            return null;
-          })
-          .filter(test => {
-            const isValid = test !== null && test !== '' && typeof test === 'string';
-            console.log(`Filter check - test: "${test}" - valid: ${isValid}`);
-            return isValid;
-          }) // Remove null/empty entries and ensure only strings
-        : [];
+          });
+          
+          processedService.tests = processedTests;
+          console.log(`Final tests for ${processedService.title}:`, processedTests);
+        }
         
-        console.log(`Final processed tests for ${service.title}:`, processedTests);
-        
-        return {
-          ...service,
-          image: service.icon || service.image || '/placeholder.jpg',
-          tests: processedTests
-        };
+        return processedService;
       }) : [],
-      // Ensure other required fields exist
-      basic_info: data.basic_info || {},
-      center_info: data.center_info || {},
-      working_hours: data.working_hours || {},
-      team: Array.isArray(data.team) ? data.team : [],
-      testimonials: Array.isArray(data.testimonials) ? data.testimonials : [],
-      faq: Array.isArray(data.faq) ? data.faq : [],
-      gallery: data.gallery || {},
-      video_gallery: data.video_gallery || {},
-      other_centers: Array.isArray(data.other_centers) ? data.other_centers : []
+      
+      // Safely process other arrays
+      team: Array.isArray(data.team) ? data.team.map(member => ({
+        _id: member._id || `team-${Date.now()}`,
+        name: member.name || 'Team Member',
+        designation: member.designation || '',
+        experience: member.experience || '',
+        qualification: member.qualification || '',
+        image: member.image || null,
+        ...member
+      })) : [],
+      
+      testimonials: Array.isArray(data.testimonials) ? data.testimonials.map(testimonial => ({
+        _id: testimonial._id || `testimonial-${Date.now()}`,
+        name: testimonial.name || 'Anonymous',
+        content: testimonial.content || '',
+        location: testimonial.location || '',
+        rating: testimonial.rating || 5,
+        date: testimonial.date || new Date().toISOString(),
+        ...testimonial
+      })) : [],
+      
+      faq: Array.isArray(data.faq) ? data.faq.map(faqItem => ({
+        _id: faqItem._id || `faq-${Date.now()}`,
+        question: faqItem.question || '',
+        answer: faqItem.answer || '',
+        ...faqItem
+      })) : [],
+      
+      other_centers: Array.isArray(data.other_centers) ? data.other_centers : [],
+      health_insights: Array.isArray(data.health_insights) ? data.health_insights : [],
+      
+      // Preserve original fields
+      templateName: data.templateName || 'center',
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      __v: data.__v,
+      _id: data._id
     };
     
     console.log('transformCenterData: Successfully transformed data');
     return transformed;
   } catch (error) {
-    console.error('transformCenterData: Error transforming data:', error);
-    return null;
+    console.error('transformCenterData: Critical error:', error);
+    // Return a minimal safe structure instead of null
+    return {
+      basic_info: {
+        center_name: 'Diagnostic Center',
+        center_image: '',
+        center_sub_title: '',
+        center_description: '',
+        location: '',
+        city: 'bangalore',
+        area: ''
+      },
+      center_info: {
+        address: '',
+        phone: '',
+        whatsapp: '',
+        email: '',
+        map_location: ''
+      },
+      working_hours: {
+        weekdays: { start: '06:30', end: '21:00' },
+        sunday: { start: '06:30', end: '13:00' }
+      },
+      services: [],
+      team: [],
+      testimonials: [],
+      faq: [],
+      gallery: {},
+      seo: {},
+      video_gallery: {},
+      other_centers: [],
+      health_insights: []
+    };
   }
 };
 
-// SEO data preparation function
+// SEO data preparation function with safe fallbacks
 const getSEOData = (centerData) => {
-  if (!centerData || !centerData.basic_info) return {
-    title: 'Diagnostic Center | Cadabam\'s Diagnostics Bangalore',
-    description: 'Comprehensive diagnostic services in Bangalore',
-    keywords: 'diagnostic center bangalore, medical tests, health checkup',
-    url: 'https://cadabamsdiagnostics.com/bangalore',
-    imageUrl: 'https://cadabamsdiagnostics.com/images/center-default.jpg'
-  };
+  try {
+    if (!centerData || !centerData.basic_info) {
+      return {
+        title: 'Diagnostic Center | Cadabam\'s Diagnostics Bangalore',
+        description: 'Comprehensive diagnostic services in Bangalore',
+        keywords: 'diagnostic center bangalore, medical tests, health checkup',
+        url: 'https://cadabamsdiagnostics.com/bangalore',
+        imageUrl: 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+      };
+    }
 
-  const center = centerData.basic_info;
-  const centerInfo = centerData.center_info || {};
+    const center = centerData.basic_info;
+    const centerInfo = centerData.center_info || {};
+    const seo = centerData.seo || {};
 
-  return {
-    title: centerData.seo?.title || `${center.center_name || 'Diagnostic Center'} | Cadabam's Diagnostics Bangalore`,
-    description: centerData.seo?.description || `Visit ${center.center_name} for comprehensive medical testing and diagnostic services. ${(center.center_description || '').substring(0, 150)}...`,
-    keywords: `diagnostic center bangalore, medical tests, health checkup, ${center.center_name}, ${center.area || 'bangalore'}, diagnostic services`,
-    url: `https://cadabamsdiagnostics.com/bangalore/center/${center.location || ''}`,
-    imageUrl: center.center_image || centerData.gallery?.reception || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
-  };
+    const centerName = center.center_name || 'Diagnostic Center';
+    const description = center.center_description || '';
+    const area = center.area || center.location || 'bangalore';
+
+    return {
+      title: seo.title || `${centerName} | Cadabam's Diagnostics Bangalore`,
+      description: seo.description || `Visit ${centerName} for comprehensive medical testing and diagnostic services. ${description.substring(0, 150)}${description.length > 150 ? '...' : ''}`,
+      keywords: `diagnostic center bangalore, medical tests, health checkup, ${centerName}, ${area}, diagnostic services`,
+      url: `https://cadabamsdiagnostics.com/bangalore/center/${area.toLowerCase().replace(/\s+/g, '')}`,
+      imageUrl: center.center_image || centerData.gallery?.reception || 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+    };
+  } catch (error) {
+    console.error('getSEOData error:', error);
+    return {
+      title: 'Diagnostic Center | Cadabam\'s Diagnostics Bangalore',
+      description: 'Comprehensive diagnostic services in Bangalore',
+      keywords: 'diagnostic center bangalore, medical tests, health checkup',
+      url: 'https://cadabamsdiagnostics.com/bangalore',
+      imageUrl: 'https://cadabamsdiagnostics.com/images/center-default.jpg'
+    };
+  }
 };
 
-// Server-side props with comprehensive error handling
+// Server-side props with ultra-robust error handling
 export async function getServerSideProps(context) {
   const { params, res, req } = context;
   const { slug } = params;
 
-  // Log the incoming request
-  console.log('getServerSideProps called with slug:', slug);
+  console.log('=== getServerSideProps START ===');
+  console.log('Raw slug:', slug);
   console.log('Request URL:', req.url);
 
   if (!slug) {
@@ -137,126 +266,148 @@ export async function getServerSideProps(context) {
       'public, s-maxage=10, stale-while-revalidate=59'
     );
 
-    // Normalize slug: handle both string and array, convert to lowercase
-    const normalizedSlug = Array.isArray(slug) ? slug[0].toLowerCase().trim() : slug.toLowerCase().trim();
+    // Ultra-robust slug normalization
+    let normalizedSlug = Array.isArray(slug) ? slug[0] : slug;
+    normalizedSlug = normalizedSlug.toLowerCase().trim().replace(/[^a-z0-9\-]/g, '');
     
     console.log('Normalized slug:', normalizedSlug);
     
-    // Enhanced slug mapping with all variations
-    const slugMap = {
-      'kanakapura': 'kanakapura',
-      'kanakpura': 'kanakapura',  // Common misspelling
-      'kanakapura-road': 'kanakapura',
-      'jayanagar': 'jayanagar',
-      'banashankari': 'banashankari',
-      'indiranagar': 'indiranagar',
-      'kalyan-nagar': 'kalyannagar',
-      'kalyannagar': 'kalyannagar',
-      'kalyan_nagar': 'kalyannagar',  // Handle underscore variant
-      'kalyan nagar': 'kalyannagar'   // Handle space variant
-    };
-    
-    const finalSlug = slugMap[normalizedSlug] || normalizedSlug;
-    console.log('Final slug for API call:', finalSlug);
-    
-    const apiUrl = `${API_BASE_URL}/center/${finalSlug}`;
-    console.log('Making API call to:', apiUrl);
-    
-    // Make API request with proper error handling
-    const response = await axios.get(apiUrl, {
-      timeout: 15000, // 15 second timeout
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Next.js/Cadabams-Website'
-      },
-      validateStatus: function (status) {
-        return status < 500; // Resolve only if the status code is less than 500
+    // Comprehensive slug mapping - try multiple API endpoints
+    const slugVariations = [
+      normalizedSlug,
+      // Direct mappings
+      normalizedSlug === 'kanakapura' ? 'kanakapura' : null,
+      normalizedSlug === 'kanakpura' ? 'kanakapura' : null,
+      normalizedSlug === 'kanakapuraroad' ? 'kanakapura' : null,
+      normalizedSlug === 'kalyannagar' ? 'kalyannagar' : null,
+      normalizedSlug === 'kalyannagar' ? 'kalyan-nagar' : null,
+      normalizedSlug === 'kalyannagar' ? 'Kalyan Nagar' : null,
+      normalizedSlug === 'banashankari' ? 'banashankari' : null,
+      normalizedSlug === 'indiranagar' ? 'indiranagar' : null,
+      normalizedSlug === 'jayanagar' ? 'jayanagar' : null,
+      // Alternative spellings
+      'kanakapura',
+      'kalyannagar', 
+      'banashankari',
+      'indiranagar',
+      'jayanagar'
+    ].filter(Boolean);
+
+    let centerData = null;
+    let successfulSlug = null;
+    let lastError = null;
+
+    // Try each slug variation until one works
+    for (const trySlug of slugVariations) {
+      try {
+        console.log(`Trying API call with slug: "${trySlug}"`);
+        const apiUrl = `${API_BASE_URL}/center/${trySlug}`;
+        
+        const response = await axios.get(apiUrl, {
+          timeout: 10000,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'User-Agent': 'Next.js/Cadabams-Website'
+          },
+          validateStatus: function (status) {
+            return status < 500;
+          }
+        });
+
+        console.log(`API Response for ${trySlug}: Status ${response.status}`);
+
+        if (response.status === 200 && response.data?.data) {
+          centerData = response.data.data;
+          successfulSlug = trySlug;
+          console.log(`SUCCESS: Found data with slug "${trySlug}"`);
+          console.log('Center name:', centerData.basic_info?.center_name);
+          break;
+        }
+      } catch (error) {
+        console.log(`Failed to fetch data for slug "${trySlug}":`, error.message);
+        lastError = error;
+        continue;
       }
+    }
+
+    // Handle case where no data was found
+    if (!centerData) {
+      console.log('No data found for any slug variation');
+      
+      // If it's a 404, redirect to bangalore page
+      if (lastError?.response?.status === 404) {
+        return {
+          redirect: {
+            destination: '/bangalore',
+            permanent: false,
+          },
+        };
+      }
+      
+      // Otherwise return error props
+      return {
+        props: {
+          centerData: null,
+          error: `Center not found. Tried variations: ${slugVariations.join(', ')}`,
+          slug: normalizedSlug
+        }
+      };
+    }
+
+    // Transform the data safely
+    const transformedData = transformCenterData(centerData);
+    
+    if (!transformedData) {
+      console.error('Data transformation returned null');
+      return {
+        props: {
+          centerData: null,
+          error: 'Failed to process center data',
+          slug: normalizedSlug
+        }
+      };
+    }
+
+    console.log('=== SUCCESS ===');
+    console.log('Successfully processed center:', transformedData.basic_info?.center_name);
+    console.log('Services count:', transformedData.services?.length || 0);
+    console.log('=== getServerSideProps END ===');
+
+    return {
+      props: {
+        centerData: transformedData,
+        error: null,
+        slug: successfulSlug || normalizedSlug
+      }
+    };
+
+  } catch (error) {
+    console.error('=== CRITICAL ERROR ===');
+    console.error('Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      stack: error.stack?.split('\n').slice(0, 5)
     });
-
-    console.log('API Response status:', response.status);
-    console.log('API Response headers:', response.headers);
-
-    // Handle different response statuses
-    if (response.status === 404) {
-      console.log('Center not found (404), redirecting to bangalore');
+    
+    // Determine error message
+    let errorMessage = 'Failed to load center data';
+    
+    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      errorMessage = 'Network connection failed';
+    } else if (error.response?.status === 404) {
       return {
         redirect: {
           destination: '/bangalore',
           permanent: false,
         },
       };
-    }
-
-    if (response.status !== 200) {
-      console.log('API returned non-200 status:', response.status);
-      throw new Error(`API returned status ${response.status}: ${response.statusText}`);
-    }
-
-    const responseData = response.data;
-    console.log('API Response data structure:', {
-      hasData: !!responseData,
-      hasDataField: !!responseData?.data,
-      dataKeys: responseData ? Object.keys(responseData) : [],
-      centerName: responseData?.data?.basic_info?.center_name
-    });
-
-    const centerData = responseData?.data;
-
-    if (!centerData) {
-      console.log('No center data found in API response');
-      return {
-        props: {
-          centerData: null,
-          error: 'Center data not found'
-        }
-      };
-    }
-
-    // Transform the data with the enhanced function
-    const transformedData = transformCenterData(centerData);
-
-    if (!transformedData) {
-      console.log('Data transformation failed');
-      return {
-        props: {
-          centerData: null,
-          error: 'Failed to process center data'
-        }
-      };
-    }
-
-    console.log('Successfully processed center data for:', transformedData.basic_info?.center_name);
-
-    return {
-      props: {
-        centerData: transformedData,
-        error: null,
-        slug: finalSlug
-      }
-    };
-
-  } catch (error) {
-    console.error('getServerSideProps Error Details:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      url: error.config?.url,
-      stack: error.stack
-    });
-    
-    // Determine error type and message
-    let errorMessage = 'Failed to load center data';
-    
-    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      errorMessage = 'Network connection failed';
-    } else if (error.response?.status === 404) {
-      errorMessage = 'Center not found';
     } else if (error.response?.status === 500) {
-      errorMessage = 'Server error';
+      errorMessage = 'Server error - please try again later';
     } else if (error.code === 'ECONNABORTED') {
-      errorMessage = 'Request timeout';
+      errorMessage = 'Request timeout - please try again';
     }
 
     return {
@@ -269,6 +420,7 @@ export async function getServerSideProps(context) {
   }
 }
 
+// Main component with comprehensive error handling
 const CenterDetailPage = ({ centerData, error, slug }) => {
   const router = useRouter();
 
@@ -315,7 +467,7 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
     );
   }
 
-  // Handle case where no data and no error (shouldn't happen)
+  // Handle case where no data and no error
   if (!centerData) {
     if (typeof window !== 'undefined') {
       router.push('/bangalore');
@@ -335,7 +487,7 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
         <meta name="robots" content="index, follow" />
         
         {/* Canonical Tag */}
-        <link rel="canonical" href={`https://cadabamsdiagnostics.com/bangalore/center/${slug || router.query.slug}`} />
+        <link rel="canonical" href={`https://cadabamsdiagnostics.com/bangalore/center/${slug}`} />
         
         {/* Open Graph Tags */}
         <meta property="og:title" content={seoData.title} />
@@ -361,10 +513,10 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
                 "@type": "FAQPage",
                 "mainEntity": centerData.faq.map(faqItem => ({
                   "@type": "Question",
-                  "name": faqItem.question,
+                  "name": faqItem.question || '',
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": faqItem.answer?.replace(/<[^>]*>/g, '') || ''
+                    "text": (faqItem.answer || '').replace(/<[^>]*>/g, '')
                   }
                 }))
               })
@@ -399,7 +551,7 @@ const CenterDetailPage = ({ centerData, error, slug }) => {
                 `Mo-Sa ${centerData.working_hours.weekdays?.start || '06:30'}-${centerData.working_hours.weekdays?.end || '21:00'}`,
                 `Su ${centerData.working_hours.sunday?.start || '06:30'}-${centerData.working_hours.sunday?.end || '13:00'}`
               ] : [],
-              "priceRange": "$",
+              "priceRange": "$$",
               "aggregateRating": centerData.testimonials && centerData.testimonials.length > 0 ? {
                 "@type": "AggregateRating",
                 "ratingValue": (centerData.testimonials.reduce((sum, t) => sum + (t.rating || 5), 0) / centerData.testimonials.length).toFixed(1),
