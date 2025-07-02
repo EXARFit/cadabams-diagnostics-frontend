@@ -125,17 +125,17 @@ export default function ContactPage() {
           </div>
 
           <div className={styles.mapSection}>
-            <h2>Find Us</h2>
+            <h2>Find Our Centers</h2>
             <div className={styles.mapContainer}>
               <iframe
-                src="https://www.google.com/maps/embed?pb=YOUR_GOOGLE_MAPS_EMBED_URL"
+                src="https://www.google.com/maps/embed?pb=!1m52!1m12!1m3!1d124411.63859273836!2d77.48344772246095!3d12.971598800000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m37!3e6!4m5!1s0x3bae17d4a3d5a4b3%3A0x6e2e7b8c4d3e5f6g!2sCadabam%27s%20Megsan%20Indiranagar%2C%20Bangalore!3m2!1d12.9715987!2d77.6412!4m5!1s0x3bae11c7d6d7c9b1%3A0x4e8f6g7h5i2j3k4l!2sCadabam%27s%20Diagnostic%20Centre%20Banshankari%2C%20Bangalore!3m2!1d12.9352!2d77.5431!4m5!1s0x3bae14c8e8e8d0c2%3A0x7i3j4k5l6m7n8o9p!2sCadabam%27s%20Diagnostic%20Centre%20Jayanagar%2C%20Bangalore!3m2!1d12.9279!2d77.5831!4m14!1m4!3m2!1d12.9715987!2d77.6412!2d12.9352!4m4!3m2!1d77.5431!2d12.9279!2d77.5831!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
                 width="100%"
                 height="450"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Cadabam's Diagnostics Location"
+                title="Cadabam's Diagnostics Centers - Indiranagar, Banshankari & Jayanagar"
               />
             </div>
           </div>
