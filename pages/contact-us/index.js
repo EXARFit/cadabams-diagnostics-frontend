@@ -128,7 +128,7 @@ export default function ContactPage() {
             <h2>Find Our Centers</h2>
             <div className={styles.mapContainer}>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m52!1m12!1m3!1d124411.63859273836!2d77.48344772246095!3d12.971598800000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m37!3e6!4m5!1s0x3bae17d4a3d5a4b3%3A0x6e2e7b8c4d3e5f6g!2sCadabam%27s%20Megsan%20Indiranagar%2C%20Bangalore!3m2!1d12.9715987!2d77.6412!4m5!1s0x3bae11c7d6d7c9b1%3A0x4e8f6g7h5i2j3k4l!2sCadabam%27s%20Diagnostic%20Centre%20Banshankari%2C%20Bangalore!3m2!1d12.9352!2d77.5431!4m5!1s0x3bae14c8e8e8d0c2%3A0x7i3j4k5l6m7n8o9p!2sCadabam%27s%20Diagnostic%20Centre%20Jayanagar%2C%20Bangalore!3m2!1d12.9279!2d77.5831!4m14!1m4!3m2!1d12.9715987!2d77.6412!2d12.9352!4m4!3m2!1d77.5431!2d12.9279!2d77.5831!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m46!1m12!1m3!1d248849.886539092!2d77.49085452343747!3d12.953945600000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m31!3e6!4m5!1s0x3bae17d570e15637%3A0x7e7b8c6d2e8f1a5b!2sIndiranagar%2C%20Bengaluru%2C%20Karnataka!3m2!1d12.9715987!2d77.6412164!4m5!1s0x3bae11c7ab6be5e7%3A0x24b7c2c5a8d7f9e3!2sBanashankari%2C%20Bengaluru%2C%20Karnataka!3m2!1d12.9352!2d77.5431!4m5!1s0x3bae14c9c7d8e5f1%3A0x8e2f5d7a9b1c3e4f!2sJayanagar%2C%20Bengaluru%2C%20Karnataka!3m2!1d12.9279!2d77.5831!4m5!1s0x3bae1670c9b44e6d%3A0x2b83bcc2dadccc47!2sBengaluru%2C%20Karnataka!3m2!1d12.9715987!2d77.5945627!5e0!3m2!1sen!2sin!4v1672847891234!5m2!1sen!2sin"
                 width="100%"
                 height="450"
                 style={{ border: 0 }}
