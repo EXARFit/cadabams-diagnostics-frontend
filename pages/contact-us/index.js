@@ -128,14 +128,14 @@ export default function ContactPage() {
             <h2>Find Our Centers</h2>
             <div className={styles.mapContainer}>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m46!1m12!1m3!1d248849.886539092!2d77.49085452343747!3d12.953945600000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m31!3e6!4m5!1s0x3bae17d570e15637%3A0x7e7b8c6d2e8f1a5b!2sIndiranagar%2C%20Bengaluru%2C%20Karnataka!3m2!1d12.9715987!2d77.6412164!4m5!1s0x3bae11c7ab6be5e7%3A0x24b7c2c5a8d7f9e3!2sBanashankari%2C%20Bengaluru%2C%20Karnataka!3m2!1d12.9352!2d77.5431!4m5!1s0x3bae14c9c7d8e5f1%3A0x8e2f5d7a9b1c3e4f!2sJayanagar%2C%20Bengaluru%2C%20Karnataka!3m2!1d12.9279!2d77.5831!4m5!1s0x3bae1670c9b44e6d%3A0x2b83bcc2dadccc47!2sBengaluru%2C%20Karnataka!3m2!1d12.9715987!2d77.5945627!5e0!3m2!1sen!2sin!4v1672847891234!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124430.60158711804!2d77.4906985234375!3d12.953945814285715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0x2b83bcc2dadccc47!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1688123456789!5m2!1sen!2sin"
                 width="100%"
                 height="450"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Cadabam's Diagnostics Centers - Indiranagar, Banshankari & Jayanagar"
+                title="Cadabam's Diagnostics Centers - Bangalore"
               />
             </div>
           </div>
