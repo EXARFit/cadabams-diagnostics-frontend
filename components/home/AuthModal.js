@@ -25,7 +25,7 @@ export default function AuthModal({ isOpen, onClose }) {
     }
 
     try {
-      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/user/auth/get-otp', {
+      const response = await fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/user/auth/get-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone }),
@@ -45,7 +45,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
   const createFreshsalesContact = async () => {
     try {
-      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/freshsales/create-contact', {
+      const response = await fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/freshsales/create-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
