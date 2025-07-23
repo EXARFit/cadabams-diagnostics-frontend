@@ -65,26 +65,54 @@ const CenterInfo = ({ info, workingHours }) => {
   // Initialize Map with Marker
   useEffect(() => {
     if (mapLoaded && mapRef.current && info.address && !map) {
-      console.log('Initializing map with address:', info.address);
+      console.log('=== GEOCODING DEBUG ===');
+      console.log('Address to geocode:', info.address);
+      console.log('Address type:', typeof info.address);
+      console.log('Address length:', info.address.length);
+      
       const geocoder = new window.google.maps.Geocoder();
       
+      // Disable geolocation to prevent using user's location
+      const geocodeRequest = {
+        address: info.address.trim(), // Remove any extra whitespace
+        region: 'IN', // Specify India as region for better results
+        // Explicitly disable location bias
+        bounds: null,
+        location: null
+      };
+      
+      console.log('Geocoding request:', geocodeRequest);
+      
       // Geocode the address to get coordinates
-      geocoder.geocode({ 
-        address: info.address,
-        region: 'IN' // Specify India as region for better results
-      }, (results, status) => {
+      geocoder.geocode(geocodeRequest, (results, status) => {
+        console.log('=== GEOCODING RESPONSE ===');
         console.log('Geocoding status:', status);
-        console.log('Geocoding results:', results);
+        console.log('Number of results:', results ? results.length : 0);
+        
+        if (results && results.length > 0) {
+          console.log('First result:', results[0]);
+          console.log('Formatted address:', results[0].formatted_address);
+          console.log('Address components:', results[0].address_components);
+        }
         
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
-          console.log('Location found:', location.lat(), location.lng());
+          const lat = location.lat();
+          const lng = location.lng();
           
-          // Create map
+          console.log('=== FINAL COORDINATES ===');
+          console.log('Latitude:', lat);
+          console.log('Longitude:', lng);
+          console.log('Google Maps URL:', `https://www.google.com/maps?q=${lat},${lng}`);
+          
+          // Create map centered exactly on the geocoded address
           const googleMap = new window.google.maps.Map(mapRef.current, {
-            zoom: 16,
-            center: location,
+            zoom: 17, // Higher zoom for more precision
+            center: { lat: lat, lng: lng }, // Explicit coordinates
             mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+            disableDefaultUI: false,
+            zoomControl: true,
+            streetViewControl: true,
             styles: [
               {
                 featureType: 'poi.business',
@@ -94,12 +122,13 @@ const CenterInfo = ({ info, workingHours }) => {
             ]
           });
 
-          // Create info window
+          // Create info window with the exact address
           const infoWindow = new window.google.maps.InfoWindow({
             content: `
               <div style="padding: 12px; max-width: 280px; font-family: Arial, sans-serif;">
                 <h3 style="margin: 0 0 8px 0; color: #dc3545; font-size: 16px; font-weight: 600;">🏥 Medical Center</h3>
                 <p style="margin: 0 0 8px 0; color: #333; font-size: 13px; line-height: 1.4;"><strong>📍 Address:</strong><br/>${info.address}</p>
+                <p style="margin: 0 0 8px 0; color: #666; font-size: 12px;"><strong>Google Address:</strong><br/>${results[0].formatted_address}</p>
                 <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee;">
                   <p style="margin: 0 0 4px 0;"><a href="tel:${info.phone}" style="color: #dc3545; text-decoration: none; font-weight: 500;">📞 ${info.phone}</a></p>
                   <p style="margin: 0;"><a href="https://wa.me/${info.whatsapp}" target="_blank" style="color: #25d366; text-decoration: none; font-weight: 500;">📱 WhatsApp</a></p>
@@ -108,12 +137,13 @@ const CenterInfo = ({ info, workingHours }) => {
             `
           });
 
-          // Create marker with better visibility
+          // Create marker at the EXACT geocoded location
           const marker = new window.google.maps.Marker({
-            position: location,
+            position: { lat: lat, lng: lng }, // Use explicit coordinates
             map: googleMap,
-            title: 'Medical Center - Click for details',
+            title: `Medical Center - ${info.address}`,
             animation: window.google.maps.Animation.DROP,
+            optimized: false, // Prevent marker clustering/optimization
             icon: {
               url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                 <svg width="32" height="48" viewBox="0 0 32 48" xmlns="http://www.w3.org/2000/svg">
@@ -127,8 +157,13 @@ const CenterInfo = ({ info, workingHours }) => {
             }
           });
 
+          console.log('=== MARKER CREATED ===');
+          console.log('Marker position:', marker.getPosition().lat(), marker.getPosition().lng());
+
           // Show info window by default
-          infoWindow.open(googleMap, marker);
+          setTimeout(() => {
+            infoWindow.open(googleMap, marker);
+          }, 1000);
 
           // Add click event to marker
           marker.addListener('click', () => {
@@ -139,6 +174,12 @@ const CenterInfo = ({ info, workingHours }) => {
           googleMap.addListener('click', () => {
             infoWindow.close();
           });
+
+          // Force map to center on marker after everything loads
+          setTimeout(() => {
+            googleMap.setCenter({ lat: lat, lng: lng });
+            googleMap.setZoom(17);
+          }, 2000);
 
           setMap(googleMap);
         } else {
