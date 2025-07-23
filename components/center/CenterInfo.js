@@ -51,11 +51,26 @@ const CenterInfo = ({ info, workingHours }) => {
         return;
       }
 
+      // Block geolocation before loading maps
+      if (navigator.geolocation) {
+        const originalGetCurrentPosition = navigator.geolocation.getCurrentPosition;
+        navigator.geolocation.getCurrentPosition = function() {
+          console.log('Geolocation blocked for Maps');
+        };
+      }
+
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;
       script.async = true;
       script.onload = () => setMapLoaded(true);
       script.onerror = () => console.error('Error loading Google Maps API');
+      
+      // Add callback to window
+      window.initMap = () => {
+        console.log('Google Maps API loaded');
+        setMapLoaded(true);
+      };
+      
       document.head.appendChild(script);
     };
 
