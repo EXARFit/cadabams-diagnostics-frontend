@@ -65,95 +65,170 @@ const CenterInfo = ({ info, workingHours }) => {
   // Initialize Map with Marker
   useEffect(() => {
     if (mapLoaded && mapRef.current && info.address && !map) {
+      console.log('Initializing map with address:', info.address);
       const geocoder = new window.google.maps.Geocoder();
       
       // Geocode the address to get coordinates
-      geocoder.geocode({ address: info.address }, (results, status) => {
+      geocoder.geocode({ 
+        address: info.address,
+        region: 'IN' // Specify India as region for better results
+      }, (results, status) => {
+        console.log('Geocoding status:', status);
+        console.log('Geocoding results:', results);
+        
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
+          console.log('Location found:', location.lat(), location.lng());
           
           // Create map
           const googleMap = new window.google.maps.Map(mapRef.current, {
-            zoom: 15,
+            zoom: 16,
             center: location,
             mapTypeId: window.google.maps.MapTypeId.ROADMAP,
             styles: [
               {
-                featureType: 'poi',
+                featureType: 'poi.business',
                 elementType: 'labels',
                 stylers: [{ visibility: 'off' }]
               }
             ]
           });
 
-          // Create marker
-          new window.google.maps.Marker({
-            position: location,
-            map: googleMap,
-            title: 'Medical Center Location',
-            icon: {
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="20" cy="20" r="18" fill="#dc3545" stroke="#fff" stroke-width="2"/>
-                  <path d="M20 8l-2 2v8h-8l-2 2 2 2h8v8l2 2 2-2v-8h8l2-2-2-2h-8v-8z" fill="#fff"/>
-                </svg>
-              `),
-              scaledSize: new window.google.maps.Size(40, 40),
-              anchor: new window.google.maps.Point(20, 40)
-            }
-          });
-
           // Create info window
           const infoWindow = new window.google.maps.InfoWindow({
             content: `
-              <div style="padding: 10px; max-width: 250px;">
-                <h3 style="margin: 0 0 8px 0; color: #333; font-size: 16px;">Medical Center</h3>
-                <p style="margin: 0 0 8px 0; color: #666; font-size: 14px; line-height: 1.4;">${info.address}</p>
-                <div style="margin-top: 10px;">
-                  <a href="tel:${info.phone}" style="color: #dc3545; text-decoration: none; font-weight: 500;">📞 ${info.phone}</a>
+              <div style="padding: 12px; max-width: 280px; font-family: Arial, sans-serif;">
+                <h3 style="margin: 0 0 8px 0; color: #dc3545; font-size: 16px; font-weight: 600;">🏥 Medical Center</h3>
+                <p style="margin: 0 0 8px 0; color: #333; font-size: 13px; line-height: 1.4;"><strong>📍 Address:</strong><br/>${info.address}</p>
+                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee;">
+                  <p style="margin: 0 0 4px 0;"><a href="tel:${info.phone}" style="color: #dc3545; text-decoration: none; font-weight: 500;">📞 ${info.phone}</a></p>
+                  <p style="margin: 0;"><a href="https://wa.me/${info.whatsapp}" target="_blank" style="color: #25d366; text-decoration: none; font-weight: 500;">📱 WhatsApp</a></p>
                 </div>
               </div>
             `
           });
 
-          // Add click event to marker
+          // Create marker with better visibility
           const marker = new window.google.maps.Marker({
             position: location,
             map: googleMap,
-            title: 'Medical Center Location',
+            title: 'Medical Center - Click for details',
+            animation: window.google.maps.Animation.DROP,
             icon: {
               url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="20" cy="20" r="18" fill="#dc3545" stroke="#fff" stroke-width="2"/>
-                  <path d="M20 8l-2 2v8h-8l-2 2 2 2h8v8l2 2 2-2v-8h8l2-2-2-2h-8v-8z" fill="#fff"/>
+                <svg width="32" height="48" viewBox="0 0 32 48" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 0C7.164 0 0 7.164 0 16c0 16 16 32 16 32s16-16 16-32C32 7.164 24.836 0 16 0z" fill="#dc3545"/>
+                  <circle cx="16" cy="16" r="12" fill="#ffffff"/>
+                  <path d="M16 6l-2 2v6h-6l-2 2 2 2h6v6l2 2 2-2v-6h6l2-2-2-2h-6v-6z" fill="#dc3545"/>
                 </svg>
               `),
-              scaledSize: new window.google.maps.Size(40, 40),
-              anchor: new window.google.maps.Point(20, 40)
+              scaledSize: new window.google.maps.Size(32, 48),
+              anchor: new window.google.maps.Point(16, 48)
             }
           });
 
+          // Show info window by default
+          infoWindow.open(googleMap, marker);
+
+          // Add click event to marker
           marker.addListener('click', () => {
             infoWindow.open(googleMap, marker);
+          });
+
+          // Add click event to map to close info window
+          googleMap.addListener('click', () => {
+            infoWindow.close();
           });
 
           setMap(googleMap);
         } else {
           console.error('Geocoding failed:', status);
-          // Fallback to a default location if geocoding fails
-          const defaultLocation = { lat: 28.4595, lng: 77.0266 }; // Gurugram default
+          console.log('Trying with map_location as fallback...');
           
-          const googleMap = new window.google.maps.Map(mapRef.current, {
-            zoom: 10,
-            center: defaultLocation,
-            mapTypeId: window.google.maps.MapTypeId.ROADMAP
-          });
+          // Try with map_location if available
+          if (info.map_location && info.map_location !== info.address) {
+            geocoder.geocode({ 
+              address: info.map_location,
+              region: 'IN'
+            }, (fallbackResults, fallbackStatus) => {
+              if (fallbackStatus === 'OK' && fallbackResults[0]) {
+                const location = fallbackResults[0].geometry.location;
+                console.log('Fallback location found:', location.lat(), location.lng());
+                
+                const googleMap = new window.google.maps.Map(mapRef.current, {
+                  zoom: 16,
+                  center: location,
+                  mapTypeId: window.google.maps.MapTypeId.ROADMAP
+                });
 
-          setMap(googleMap);
+                const marker = new window.google.maps.Marker({
+                  position: location,
+                  map: googleMap,
+                  title: 'Medical Center',
+                  animation: window.google.maps.Animation.DROP,
+                  icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                      <svg width="32" height="48" viewBox="0 0 32 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 0C7.164 0 0 7.164 0 16c0 16 16 32 16 32s16-16 16-32C32 7.164 24.836 0 16 0z" fill="#dc3545"/>
+                        <circle cx="16" cy="16" r="12" fill="#ffffff"/>
+                        <path d="M16 6l-2 2v6h-6l-2 2 2 2h6v6l2 2 2-2v-6h6l2-2-2-2h-6v-6z" fill="#dc3545"/>
+                      </svg>
+                    `),
+                    scaledSize: new window.google.maps.Size(32, 48),
+                    anchor: new window.google.maps.Point(16, 48)
+                  }
+                });
+
+                setMap(googleMap);
+              } else {
+                // Final fallback to default location
+                console.log('All geocoding attempts failed, using default location');
+                const defaultLocation = { lat: 28.4595, lng: 77.0266 }; // Gurugram default
+                
+                const googleMap = new window.google.maps.Map(mapRef.current, {
+                  zoom: 12,
+                  center: defaultLocation,
+                  mapTypeId: window.google.maps.MapTypeId.ROADMAP
+                });
+
+                // Still show a marker at default location
+                new window.google.maps.Marker({
+                  position: defaultLocation,
+                  map: googleMap,
+                  title: 'Approximate Location - Please contact for exact address',
+                  icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                      <svg width="32" height="48" viewBox="0 0 32 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 0C7.164 0 0 7.164 0 16c0 16 16 32 16 32s16-16 16-32C32 7.164 24.836 0 16 0z" fill="#ffc107"/>
+                        <circle cx="16" cy="16" r="12" fill="#ffffff"/>
+                        <text x="16" y="20" text-anchor="middle" font-size="16" fill="#ffc107">?</text>
+                      </svg>
+                    `),
+                    scaledSize: new window.google.maps.Size(32, 48),
+                    anchor: new window.google.maps.Point(16, 48)
+                  }
+                });
+
+                setMap(googleMap);
+              }
+            });
+          } else {
+            // Final fallback to default location
+            console.log('No map_location available, using default location');
+            const defaultLocation = { lat: 28.4595, lng: 77.0266 }; // Gurugram default
+            
+            const googleMap = new window.google.maps.Map(mapRef.current, {
+              zoom: 12,
+              center: defaultLocation,
+              mapTypeId: window.google.maps.MapTypeId.ROADMAP
+            });
+
+            setMap(googleMap);
+          }
         }
       });
     }
-  }, [mapLoaded, info.address, map]);
+  }, [mapLoaded, info.address, info.map_location, map]);
 
   return (
     <div className={styles.infoSection}>
