@@ -197,7 +197,9 @@ export default function CommonSections() {
           {[
             { name: 'Indiranagar', route: '/bangalore/center/indiranagar' },
             { name: 'Banashankari', route: '/bangalore/center/banashankari' },
-            { name: 'Jayanagar', route: '/bangalore/center/jayanagar' }
+            { name: 'Jayanagar', route: '/bangalore/center/jayanagar' },
+            { name: 'Kanakapura Road', route: '/bangalore/center/kanakapura' },
+            { name: 'Kalyan Nagar', route: '/bangalore/center/kalyannagar' }
           ].map((center) => (
             <a key={center.route} href={center.route} className={styles.centerLink}>
               {center.name}
