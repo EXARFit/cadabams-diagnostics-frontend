@@ -72,8 +72,8 @@ export default function AuthModal({ isOpen, onClose }) {
 
     try {
       const url = isSignUp
-        ? 'https://cadabamsapi.exar.ai/api/v1/user/auth/signup'
-        : 'https://cadabamsapi.exar.ai/api/v1/user/auth/signin';
+        ? 'https://api-prod.cadabamsdiagnostics.com/api/v1/user/auth/signup'
+        : 'https://api-prod.cadabamsdiagnostics.com/api/v1/user/auth/signin';
 
       const fullName = `${firstName}${lastName ? ' ' + lastName : ''}`;
       
