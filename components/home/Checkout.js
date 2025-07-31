@@ -11,7 +11,7 @@ import ThankYouModal from './ThankYouModal';
 import axios from 'axios';
 
 // API Configuration
-const BASE_URL = 'https://cadabamsapi.exar.ai/api/v1';
+const BASE_URL = 'https://api-prod.cadabamsdiagnostics.com/api/v1';
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDt543BUtXayBsSltJ5N4b62QC-FrRIuO8';
 
 // Form validation helpers
