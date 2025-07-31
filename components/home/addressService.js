@@ -1,7 +1,7 @@
 // services/addressService.js
 import axios from 'axios';
 
-const BASE_URL = 'https://cadabamsapi.exar.ai/api/v1';
+const BASE_URL = 'https://api-prod.cadabamsdiagnostics.com/api/v1';
 
 const getAuthHeader = () => {
   const token = localStorage.getItem('accessToken');
