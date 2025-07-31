@@ -748,14 +748,14 @@ export default function Checkout() {
                 <CreditCard size={18} />
                 Cash Payment
               </button>
-              <button
-                type="button"
-                className={`${styles.paymentMethodButton} ${paymentMethod === 'phonePe' ? styles.active : ''}`}
-                onClick={() => setPaymentMethod('phonePe')}
-              >
-                <Smartphone size={18} />
-                Pay with PhonePe
-              </button>
+              // <button
+              //   type="button"
+              //   className={`${styles.paymentMethodButton} ${paymentMethod === 'phonePe' ? styles.active : ''}`}
+              //   onClick={() => setPaymentMethod('phonePe')}
+              // >
+              //   <Smartphone size={18} />
+              //   Pay with PhonePe
+              // </button>
             </div>
           </div>
 
