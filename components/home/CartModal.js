@@ -15,7 +15,7 @@ const CartModal = ({ isOpen, onClose }) => {
 
   const fetchCartItems = async () => {
     try {
-      const response = await fetch(`https://cadabamsapi.exar.ai/api/v1/user/cart/${user.id}`, {
+      const response = await fetch(`https://api-prod.cadabamsdiagnostics.com/api/v1/user/cart/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
@@ -29,7 +29,7 @@ const CartModal = ({ isOpen, onClose }) => {
 
   const updateCartItem = async (cartItemId, quantity) => {
     try {
-      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/user/cart/update', {
+      const response = await fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/user/cart/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const CartModal = ({ isOpen, onClose }) => {
 
   const removeCartItem = async (cartItemId) => {
     try {
-      const response = await fetch('https://cadabamsapi.exar.ai/api/v1/user/cart/remove', {
+      const response = await fetch('https://api-prod.cadabamsdiagnostics.com/api/v1/user/cart/remove', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
