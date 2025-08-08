@@ -39,8 +39,22 @@ export default function NonLabTestPage({ testData }) {
     breaks: true,
     gfm: true, // GitHub Flavored Markdown
     tables: true,
-    sanitize: false // We'll use DOMPurify instead
+    sanitize: false, // We'll use DOMPurify instead
+    renderer: new marked.Renderer()
   });
+
+  // Custom renderer for better table styling
+  const renderer = new marked.Renderer();
+  renderer.table = function(header, body) {
+    return `<div class="${styles.markdownTableWrapper}">
+      <table class="${styles.markdownTable}">
+        <thead>${header}</thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>`;
+  };
+  
+  marked.setOptions({ renderer });
 
   const tabs = [
     'About The Test',
@@ -87,25 +101,41 @@ export default function NonLabTestPage({ testData }) {
     // If content is in markdown format, convert it to HTML
     if (isMarkdown(content)) {
       try {
-        return marked.parse(content);
+        let processedContent = marked.parse(content);
+        
+        // Add content separators after major sections
+        processedContent = processedContent.replace(
+          /(<\/h[1-3]>)/g, 
+          '$1<div class="contentSeparator"></div>'
+        );
+        
+        return processedContent;
       } catch (error) {
         console.error('Markdown parsing error:', error);
         return content; // Return original content if parsing fails
       }
     }
     
-    // If it's plain text, convert line breaks to HTML
-    return content.replace(/\n/g, '<br>');
+    // If it's plain text, convert line breaks to HTML and add paragraph tags
+    return content
+      .split('\n\n')
+      .filter(para => para.trim())
+      .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+      .join('');
   };
 
   const sanitizeHTML = (html) => {
     if (!html || typeof html !== 'string') return { __html: '' };
     try {
       const processedContent = processContent(html);
-      return { __html: DOMPurify.sanitize(processedContent || '', {
-        ADD_TAGS: ['table', 'thead', 'tbody', 'tr', 'th', 'td'],
-        ADD_ATTR: ['colspan', 'rowspan']
-      }) };
+      return { 
+        __html: DOMPurify.sanitize(processedContent || '', {
+          ADD_TAGS: ['table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'hr'],
+          ADD_ATTR: ['colspan', 'rowspan', 'class'],
+          ALLOWED_ATTR: ['class', 'colspan', 'rowspan'],
+          FORBID_TAGS: ['script', 'style']
+        }) 
+      };
     } catch (error) {
       console.error('Sanitization error:', error);
       return { __html: '' };
