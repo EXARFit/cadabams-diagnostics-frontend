@@ -32,14 +32,25 @@ export default function NonLabTestPage({ testData }) {
   const testInterpretation = findData('interpretations');
   const faq = findData('faqs');
   const risksLimitations = findData('risks_limitations');
+  const oftenTakeTest = findData('often_take_test');
+
+  // Configure marked for better table rendering
+  marked.setOptions({
+    breaks: true,
+    gfm: true, // GitHub Flavored Markdown
+    tables: true,
+    sanitize: false // We'll use DOMPurify instead
+  });
 
   const tabs = [
     'About The Test',
     'List of Parameters',
     'Why This Test',
+    'When to Take Test',
     'Benefits',
     'Preparing for test',
     'Test Results',
+    'Risks & Limitations',
     'FAQs'
   ];
 
@@ -55,6 +66,7 @@ export default function NonLabTestPage({ testData }) {
       /^\s*\d+\.\s+/m, // Ordered lists
       /^\s*```/m,    // Code blocks
       /^\s*>/m,      // Blockquotes
+      /^\s*\|.*\|/m, // Tables
     ];
     return markdownPatterns.some(pattern => pattern.test(text));
   };
@@ -74,18 +86,26 @@ export default function NonLabTestPage({ testData }) {
     
     // If content is in markdown format, convert it to HTML
     if (isMarkdown(content)) {
-      return marked.parse(content);
+      try {
+        return marked.parse(content);
+      } catch (error) {
+        console.error('Markdown parsing error:', error);
+        return content; // Return original content if parsing fails
+      }
     }
     
-    // If it's plain text, return it as is
-    return content;
+    // If it's plain text, convert line breaks to HTML
+    return content.replace(/\n/g, '<br>');
   };
 
   const sanitizeHTML = (html) => {
     if (!html || typeof html !== 'string') return { __html: '' };
     try {
       const processedContent = processContent(html);
-      return { __html: DOMPurify.sanitize(processedContent || '') };
+      return { __html: DOMPurify.sanitize(processedContent || '', {
+        ADD_TAGS: ['table', 'thead', 'tbody', 'tr', 'th', 'td'],
+        ADD_ATTR: ['colspan', 'rowspan']
+      }) };
     } catch (error) {
       console.error('Sanitization error:', error);
       return { __html: '' };
@@ -120,6 +140,13 @@ export default function NonLabTestPage({ testData }) {
     </div>
   );
 
+  const SimpleSection = ({ title, content }) => (
+    <div className={styles.section}>
+      <h2 className={styles.sectionTitle}>{title}</h2>
+      <div className={styles.sectionText} dangerouslySetInnerHTML={sanitizeHTML(content)} />
+    </div>
+  );
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.content}>
@@ -146,6 +173,14 @@ export default function NonLabTestPage({ testData }) {
             image={whoNeedTest.imageSrc}
             imageAlt="Who needs this test"
           />
+          {/* Added the missing often_take_test section */}
+          <SectionWithImage
+            title="When to Take Test"
+            content={oftenTakeTest.desc || ''}
+            image={oftenTakeTest.imageSrc}
+            imageAlt="When to take this test"
+            isReversed
+          />
           <SectionWithImage
             title="Benefits"
             content={processCombinedContent([
@@ -154,13 +189,13 @@ export default function NonLabTestPage({ testData }) {
             ])}
             image={benifitTest.imageSrc || diseasesDiagnosed.imageSrc}
             imageAlt="Benefits of the test"
-            isReversed
           />
           <SectionWithImage
             title="Preparing for test"
             content={testPreparation.desc || ''}
             image={testPreparation.imageSrc}
             imageAlt="Test preparation"
+            isReversed
           />
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>Test Results</h2>
@@ -190,6 +225,11 @@ export default function NonLabTestPage({ testData }) {
               </div>
             )}
           </div>
+          {/* Added the missing risks_limitations section */}
+          <SimpleSection
+            title="Risks & Limitations"
+            content={risksLimitations.desc || ''}
+          />
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>FAQs</h2>
             {Array.isArray(faq) && faq.map((item, index) => (
