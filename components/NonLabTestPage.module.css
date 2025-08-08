@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .content {
@@ -11,11 +12,12 @@
 
 .section {
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+  padding: 2.5rem;
   margin-bottom: 2rem;
   width: 100%;
+  border: 1px solid #f1f3f4;
 }
 
 .sectionContent {
@@ -32,9 +34,15 @@
 
 .sectionText h3 {
   color: #2a3990;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin: 28px 0 18px 0;
+  background: #f8f9ff;
+  padding: 12px 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  border-radius: 6px;
+  border-left: 3px solid #2a3990;
 }
 
 .sectionImage {
@@ -43,24 +51,42 @@
   height: auto;
   border-radius: 8px;
   object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sectionTitle {
   color: #2a3990;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #e93b52;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid #e93b52;
+  padding-bottom: 12px;
   width: 100%;
 }
 
 .sectionText p {
   color: #333;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 18px;
+  font-size: 15px;
 }
+
+/* Enhanced header styles */
+.sectionText h1,
+.sectionText h2 {
+  color: #2a3990;
+  font-weight: 600;
+  margin: 32px 0 24px 0;
+  background: #f8f9ff;
+  padding: 16px 20px 12px 20px;
+  margin-left: -20px;
+  margin-right: -20px;
+  border-radius: 8px;
+  border-left: 4px solid #2a3990;
+}
+
+.sectionText h1 { font-size: 32px; }
+.sectionText h2 { font-size: 26px; }
 
 .descriptionTitle,
 .risksLimitationsTitle,
@@ -71,67 +97,260 @@
 .preparationTitle,
 .interpretationTitle {
   color: #2a3990;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  margin: 28px 0 18px 0;
+  background: #f8f9ff;
+  padding: 12px 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  border-radius: 6px;
+  border-left: 3px solid #2a3990;
+}
+
+/* Enhanced list styles */
+.sectionText ul,
+.sectionText ol {
+  margin: 20px 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.sectionText ul li {
+  margin-bottom: 12px;
+  color: #4b5563;
+  line-height: 1.7;
+  padding: 10px 0 10px 40px;
+  position: relative;
+  background: #f9fafb;
+  border-radius: 6px;
+  border-left: 3px solid #10b981;
+  font-size: inherit;
+}
+
+.sectionText ul li::before {
+  content: '✓';
+  position: absolute;
+  left: 15px;
+  color: #10b981;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Ordered list styling */
+.sectionText ol {
+  counter-reset: step-counter;
+  padding-left: 0;
+}
+
+.sectionText ol li {
+  counter-increment: step-counter;
+  background: #f0f9ff;
+  border-left: 3px solid #0ea5e9;
+  margin-bottom: 12px;
+  padding: 10px 0 10px 40px;
+  position: relative;
+  border-radius: 6px;
+  line-height: 1.7;
+}
+
+.sectionText ol li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 15px;
+  background: #0ea5e9;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Enhanced text styling */
+.sectionText strong {
+  color: #1f2937;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fef3c7, #fbbf24);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Markdown table styles */
+.markdownTableWrapper {
+  overflow-x: auto;
+  margin: 24px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.markdownTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: white;
+  min-width: 600px;
+}
+
+.markdownTable thead {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.markdownTable th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #1d4ed8;
+}
+
+.markdownTable td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.markdownTable tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.markdownTable tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.markdownTable tbody tr:nth-child(even):hover {
+  background-color: #f1f5f9;
 }
 
 .tableWrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -1rem;
-  padding: 0 1rem;
+  margin: 24px 0;
+  padding: 0;
   width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .interpretationTable {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 1rem;
+  border-collapse: collapse;
+  margin: 0;
   min-width: 600px;
+  background: white;
+  font-size: 14px;
 }
 
 .interpretationTable th,
 .interpretationTable td {
-  border: 1px solid #ddd;
-  padding: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 14px 20px;
   text-align: left;
   word-wrap: break-word;
+  vertical-align: top;
+  line-height: 1.5;
 }
 
 .interpretationTable th {
-  background-color: #2a3990;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   color: #ffffff;
   font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.interpretationTable td {
+  color: #374151;
 }
 
 .interpretationTable tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #fafafa;
 }
 
 .interpretationTable tr:hover {
-  background-color: #f0f0f0;
+  background-color: #fef2f2;
+}
+
+.interpretationTitle {
+  font-size: 20px;
+  color: #dc2626;
+  margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .faqItem {
-  background-color: #f8f8f8;
+  background-color: white;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0;
   margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .faqQuestion {
-  color: #2a3990;
-  font-size: 18px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #1f2937;
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  padding: 18px 24px;
+  border-bottom: 1px solid #d1d5db;
 }
 
 .faqAnswer {
-  color: #333;
-  line-height: 1.5;
+  color: #4b5563;
+  line-height: 1.6;
+  padding: 20px 24px;
+}
+
+.faqAnswer p {
+  margin: 0;
+}
+
+/* Content separators */
+.contentSeparator {
+  border-top: 2px solid #e5e7eb;
+  margin: 32px 0;
+  position: relative;
+}
+
+.contentSeparator::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+}
+
+/* Horizontal rule styling */
+.sectionText hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #10b981, #3b82f6);
+  margin: 32px 0;
+  border-radius: 1px;
+}
+
+/* Blockquote styles */
+.sectionText blockquote {
+  border-left: 4px solid #fbbf24;
+  background: #fffbeb;
+  padding: 16px 20px;
+  margin: 24px 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #92400e;
 }
 
 /* Large screens */
@@ -148,7 +367,7 @@
   }
 
   .section {
-    padding: 1.5rem;
+    padding: 2rem;
   }
 
   .sectionContent {
@@ -165,11 +384,22 @@
   }
 
   .sectionTitle {
-    font-size: 22px;
+    font-size: 24px;
   }
 
-  .sectionText h3 {
-    font-size: 18px;
+  .sectionText h1 { font-size: 28px; }
+  .sectionText h2 { font-size: 22px; }
+  .sectionText h3 { font-size: 20px; }
+
+  .descriptionTitle,
+  .risksLimitationsTitle,
+  .parameterTitle,
+  .whoNeedTestTitle,
+  .benefitTitle,
+  .diseasesDiagnosedTitle,
+  .preparationTitle,
+  .interpretationTitle {
+    font-size: 20px;
   }
 }
 
@@ -180,7 +410,7 @@
   }
 
   .section {
-    padding: 1.25rem;
+    padding: 1.5rem;
     margin-bottom: 1.5rem;
   }
 
@@ -189,12 +419,12 @@
   }
 
   .sectionTitle {
-    font-size: 20px;
+    font-size: 22px;
   }
 
-  .sectionText h3 {
-    font-size: 16px;
-  }
+  .sectionText h1 { font-size: 24px; }
+  .sectionText h2 { font-size: 20px; }
+  .sectionText h3 { font-size: 18px; }
 
   .sectionText p {
     font-size: 14px;
@@ -212,17 +442,37 @@
   }
 
   .faqQuestion {
-    font-size: 16px;
+    font-size: 15px;
+    padding: 14px 18px;
   }
 
   .faqAnswer {
     font-size: 14px;
+    padding: 16px 18px;
   }
 
   .interpretationTable th,
-  .interpretationTable td {
-    padding: 8px;
-    font-size: 14px;
+  .interpretationTable td,
+  .markdownTable th,
+  .markdownTable td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .sectionText ul li,
+  .sectionText ol li {
+    padding: 8px 0 8px 35px;
+  }
+
+  .sectionText ul li::before {
+    left: 12px;
+  }
+
+  .sectionText ol li::before {
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
   }
 }
 
@@ -233,32 +483,45 @@
   }
 
   .section {
-    padding: 1rem;
+    padding: 1.25rem;
     margin-bottom: 1rem;
   }
 
   .sectionTitle {
-    font-size: 18px;
+    font-size: 20px;
   }
 
-  .sectionText h3 {
-    font-size: 15px;
-  }
+  .sectionText h1 { font-size: 22px; }
+  .sectionText h2 { font-size: 18px; }
+  .sectionText h3 { font-size: 16px; }
 
   .sectionText p {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
-  .tableWrapper {
-    margin: 0 -0.5rem;
+  .tableWrapper,
+  .markdownTableWrapper {
+    margin: 16px -0.5rem;
     padding: 0 0.5rem;
   }
 
   .interpretationTable th,
-  .interpretationTable td {
-    padding: 6px;
+  .interpretationTable td,
+  .markdownTable th,
+  .markdownTable td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .faqQuestion {
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .faqAnswer {
     font-size: 13px;
+    padding: 14px 16px;
   }
 }
 
@@ -270,28 +533,6 @@
   }
 }
 
-/* Style for lists within section text */
-.sectionText ul,
-.sectionText ol {
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-  padding-left: 0;
-}
-
-.sectionText li {
-  margin-bottom: 0.5rem;
-  font-size: inherit;
-}
-
-/* Blockquote styles */
-.sectionText blockquote {
-  border-left: 4px solid #e93b52;
-  padding-left: 1rem;
-  margin-left: 0;
-  font-style: italic;
-  color: #555;
-}
-
 /* Additional spacing fixes */
 .section > *:last-child {
   margin-bottom: 0;
@@ -299,6 +540,34 @@
 
 .faqItem:last-child {
   margin-bottom: 0;
+}
+
+.sectionText > *:first-child {
+  margin-top: 0;
+}
+
+.sectionText > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Better paragraph spacing after headers */
+.sectionText h1 + p,
+.sectionText h2 + p,
+.sectionText h3 + p,
+.sectionText h4 + p {
+  margin-top: 16px;
+}
+
+/* Improved list spacing after headers */
+.sectionText h1 + ul,
+.sectionText h2 + ul,
+.sectionText h3 + ul,
+.sectionText h4 + ul,
+.sectionText h1 + ol,
+.sectionText h2 + ol,
+.sectionText h3 + ol,
+.sectionText h4 + ol {
+  margin-top: 16px;
 }
 
 /* Image optimizations */
@@ -309,16 +578,19 @@
 }
 
 /* Table scroll indicator */
-.tableWrapper::-webkit-scrollbar {
+.tableWrapper::-webkit-scrollbar,
+.markdownTableWrapper::-webkit-scrollbar {
   height: 6px;
 }
 
-.tableWrapper::-webkit-scrollbar-track {
+.tableWrapper::-webkit-scrollbar-track,
+.markdownTableWrapper::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
-.tableWrapper::-webkit-scrollbar-thumb {
+.tableWrapper::-webkit-scrollbar-thumb,
+.markdownTableWrapper::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 3px;
 }
@@ -330,7 +602,7 @@
   }
   
   .faqItem {
-    padding: 0.875rem;
+    padding: 0;
   }
 }
 
