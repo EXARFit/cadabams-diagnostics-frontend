@@ -34,15 +34,9 @@
 
 .sectionText h3 {
   color: #2a3990;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
-  margin: 28px 0 18px 0;
-  background: #f8f9ff;
-  padding: 12px 16px;
-  margin-left: -16px;
-  margin-right: -16px;
-  border-radius: 6px;
-  border-left: 3px solid #2a3990;
+  margin-bottom: 1rem;
 }
 
 .sectionImage {
@@ -51,42 +45,35 @@
   height: auto;
   border-radius: 8px;
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sectionTitle {
   color: #2a3990;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 1.5rem;
-  border-bottom: 3px solid #e93b52;
-  padding-bottom: 12px;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e93b52;
+  padding-bottom: 0.5rem;
   width: 100%;
 }
 
 .sectionText p {
   color: #333;
-  line-height: 1.8;
-  margin-bottom: 18px;
-  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-size: 16px;
 }
 
-/* Enhanced header styles */
+/* Simple header styles */
 .sectionText h1,
 .sectionText h2 {
   color: #2a3990;
   font-weight: 600;
-  margin: 32px 0 24px 0;
-  background: #f8f9ff;
-  padding: 16px 20px 12px 20px;
-  margin-left: -20px;
-  margin-right: -20px;
-  border-radius: 8px;
-  border-left: 4px solid #2a3990;
+  margin: 24px 0 16px 0;
 }
 
 .sectionText h1 { font-size: 32px; }
-.sectionText h2 { font-size: 26px; }
+.sectionText h2 { font-size: 28px; }
 
 .descriptionTitle,
 .risksLimitationsTitle,
@@ -97,86 +84,36 @@
 .preparationTitle,
 .interpretationTitle {
   color: #2a3990;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
-  margin: 28px 0 18px 0;
-  background: #f8f9ff;
-  padding: 12px 16px;
-  margin-left: -16px;
-  margin-right: -16px;
-  border-radius: 6px;
-  border-left: 3px solid #2a3990;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-/* Enhanced list styles */
+/* Enhanced list styles - Clean and Simple */
 .sectionText ul,
 .sectionText ol {
   margin: 20px 0;
-  padding-left: 0;
-  list-style: none;
+  padding-left: 24px;
+  list-style: disc;
 }
 
-.sectionText ul li {
-  margin-bottom: 12px;
-  color: #4b5563;
+.sectionText ol {
+  list-style: decimal;
+}
+
+.sectionText ul li,
+.sectionText ol li {
+  margin-bottom: 8px;
+  color: #333;
   line-height: 1.7;
-  padding: 10px 0 10px 40px;
-  position: relative;
-  background: #f9fafb;
-  border-radius: 6px;
-  border-left: 3px solid #10b981;
   font-size: inherit;
 }
 
-.sectionText ul li::before {
-  content: '✓';
-  position: absolute;
-  left: 15px;
-  color: #10b981;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* Ordered list styling */
-.sectionText ol {
-  counter-reset: step-counter;
-  padding-left: 0;
-}
-
-.sectionText ol li {
-  counter-increment: step-counter;
-  background: #f0f9ff;
-  border-left: 3px solid #0ea5e9;
-  margin-bottom: 12px;
-  padding: 10px 0 10px 40px;
-  position: relative;
-  border-radius: 6px;
-  line-height: 1.7;
-}
-
-.sectionText ol li::before {
-  content: counter(step-counter);
-  position: absolute;
-  left: 15px;
-  background: #0ea5e9;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-/* Enhanced text styling */
+/* Enhanced text styling - Simple */
 .sectionText strong {
-  color: #1f2937;
+  color: #2a3990;
   font-weight: 700;
-  background: linear-gradient(135deg, #fef3c7, #fbbf24);
-  padding: 2px 6px;
-  border-radius: 4px;
 }
 
 /* Markdown table styles */
@@ -197,7 +134,7 @@
 }
 
 .markdownTable thead {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: #2a3990;
   color: white;
 }
 
@@ -207,27 +144,27 @@
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid #1d4ed8;
+  border-bottom: 2px solid #1f2937;
 }
 
 .markdownTable td {
   padding: 14px 20px;
   border-bottom: 1px solid #e5e7eb;
-  color: #374151;
+  color: #333;
   vertical-align: top;
   line-height: 1.5;
 }
 
 .markdownTable tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: #f8f9ff;
 }
 
 .markdownTable tbody tr:nth-child(even) {
-  background-color: #f9fafb;
+  background-color: #f9f9f9;
 }
 
 .markdownTable tbody tr:nth-child(even):hover {
-  background-color: #f1f5f9;
+  background-color: #f8f9ff;
 }
 
 .tableWrapper {
@@ -260,14 +197,14 @@
 }
 
 .interpretationTable th {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: #2a3990;
   color: #ffffff;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
 .interpretationTable td {
-  color: #374151;
+  color: #333;
 }
 
 .interpretationTable tr:nth-child(even) {
@@ -275,12 +212,12 @@
 }
 
 .interpretationTable tr:hover {
-  background-color: #fef2f2;
+  background-color: #f8f9ff;
 }
 
 .interpretationTitle {
   font-size: 20px;
-  color: #dc2626;
+  color: #2a3990;
   margin-bottom: 16px;
   font-weight: 600;
 }
@@ -296,17 +233,23 @@
 }
 
 .faqQuestion {
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  color: #1f2937;
-  font-size: 16px;
+  background-color: #f8f8f8;
+  color: #2a3990;
+  font-size: 18px;
   font-weight: 600;
   margin: 0;
-  padding: 18px 24px;
+  padding: 1rem;
   border-bottom: 1px solid #d1d5db;
 }
 
 .faqAnswer {
-  color: #4b5563;
+  color: #333;
+  line-height: 1.5;
+  padding: 1rem;
+}
+
+.faqAnswer {
+  color: #333;
   line-height: 1.6;
   padding: 20px 24px;
 }
@@ -315,42 +258,28 @@
   margin: 0;
 }
 
-/* Content separators */
+/* Content separators - Simple */
 .contentSeparator {
-  border-top: 2px solid #e5e7eb;
-  margin: 32px 0;
-  position: relative;
+  border-top: 1px solid #e5e7eb;
+  margin: 24px 0;
 }
 
-.contentSeparator::after {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #10b981);
-}
-
-/* Horizontal rule styling */
+/* Horizontal rule styling - Simple */
 .sectionText hr {
   border: none;
-  height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #10b981, #3b82f6);
-  margin: 32px 0;
-  border-radius: 1px;
+  height: 1px;
+  background: #e5e7eb;
+  margin: 24px 0;
 }
 
-/* Blockquote styles */
+/* Blockquote styles - Simple */
 .sectionText blockquote {
-  border-left: 4px solid #fbbf24;
-  background: #fffbeb;
+  border-left: 4px solid #e93b52;
+  background: #f9f9f9;
   padding: 16px 20px;
   margin: 24px 0;
-  border-radius: 0 8px 8px 0;
   font-style: italic;
-  color: #92400e;
+  color: #666;
 }
 
 /* Large screens */
