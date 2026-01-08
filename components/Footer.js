@@ -151,7 +151,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bangalore/pregnancy-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound">
+                <Link href="/bangalore/ultrasound-scan/pregnancy-tiffa-anomaly-scan-level-2-ultrasound">
                   Pregnancy TIFFA Scan
                 </Link>
               </li>
