@@ -1,0 +1,342 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+  animation: overlayFadeIn 0.25s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px 28px 24px;
+  max-width: 460px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: modalPop 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  background-image: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #f1f5f9;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  line-height: 0;
+  border-radius: 50%;
+  color: #64748b;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: rotate(90deg);
+}
+
+.modalHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.iconWrapper {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0047ab 0%, #1e6fd9 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 20px rgba(0, 71, 171, 0.35);
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
+@keyframes pulseRing {
+  0%, 100% {
+    box-shadow: 0 8px 20px rgba(0, 71, 171, 0.35), 0 0 0 0 rgba(0, 71, 171, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 20px rgba(0, 71, 171, 0.35), 0 0 0 10px rgba(0, 71, 171, 0);
+  }
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  color: #475569;
+  font-size: 14px;
+  margin: 0 0 10px 0;
+}
+
+.subtitle strong {
+  color: #0047ab;
+  font-weight: 600;
+}
+
+.message {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.55;
+  max-width: 360px;
+}
+
+.primaryCallCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  margin: 0 0 18px 0;
+  background: linear-gradient(135deg, #0047ab 0%, #1e6fd9 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 22px rgba(0, 71, 171, 0.32);
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.primaryCallCta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0, 71, 171, 0.42);
+}
+
+.primaryCallCta:active {
+  transform: translateY(0);
+}
+
+.centersHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 10px 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.centersHeading::before,
+.centersHeading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.centersList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 18px 0;
+}
+
+.centerCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  background: #ffffff;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.centerCard:hover {
+  border-color: #0047ab;
+  background: linear-gradient(135deg, #eef4ff 0%, #f8faff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 71, 171, 0.12);
+}
+
+.centerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.centerName {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.pinIcon {
+  color: #0047ab;
+  flex-shrink: 0;
+}
+
+.centerArea {
+  font-size: 12.5px;
+  color: #64748b;
+  padding-left: 22px;
+  line-height: 1.3;
+}
+
+.viewBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #eef4ff;
+  color: #0047ab;
+  padding: 7px 12px 7px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.centerCard:hover .viewBadge {
+  background: linear-gradient(135deg, #0047ab 0%, #1e6fd9 100%);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.extraInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.infoIcon {
+  color: #0047ab;
+  flex-shrink: 0;
+}
+
+.infoRow a {
+  color: #0047ab;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.infoRow a:hover {
+  text-decoration: underline;
+}
+
+.closeCtaButton {
+  width: 100%;
+  padding: 13px 24px;
+  background: linear-gradient(135deg, #0047ab 0%, #1e6fd9 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 16px rgba(0, 71, 171, 0.28);
+}
+
+.closeCtaButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 71, 171, 0.38);
+}
+
+.closeCtaButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .modalContent {
+    padding: 26px 20px 20px;
+    border-radius: 16px;
+  }
+  .title {
+    font-size: 19px;
+  }
+  .iconWrapper {
+    width: 54px;
+    height: 54px;
+  }
+  .primaryCallCta {
+    font-size: 14.5px;
+    padding: 13px 16px;
+  }
+  .centerCard {
+    padding: 12px 14px;
+  }
+  .centerName {
+    font-size: 14px;
+  }
+  .centerArea {
+    font-size: 12px;
+    padding-left: 22px;
+  }
+  .viewBadge {
+    padding: 6px 10px 6px 12px;
+    font-size: 11px;
+  }
+}

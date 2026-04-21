@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useContext, useState } from 'react';
 import { Users, ChevronRight, Info, Check } from 'lucide-react';
 import { CartContext } from '@/contexts/CartContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import ContactDetailsModal from './home/ContactDetailsModal';
 import styles from './TestOverview.module.css';
 
 const TestOverview = ({ basicInfo, templateName }) => {
@@ -10,6 +11,7 @@ const TestOverview = ({ basicInfo, templateName }) => {
   const rightBallRef = useRef(null);
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const analytics = useAnalytics();
 
   useEffect(() => {
@@ -48,6 +50,10 @@ const TestOverview = ({ basicInfo, templateName }) => {
   }, []);
 
   const handleAddToCart = () => {
+    // Cart flow disabled — show contact-details popup instead.
+    setShowContactModal(true);
+
+    /* --- Original Add-to-Cart logic (preserved, do not delete) ---
     const cartItem = {
       route: basicInfo.route,
       title: basicInfo.name,
@@ -70,6 +76,7 @@ const TestOverview = ({ basicInfo, templateName }) => {
 
     addToCart(cartItem);
     setIsAdded(true);
+    */
   };
 
   const showDiscount = basicInfo.price !== basicInfo.discountedPrice;
@@ -172,6 +179,12 @@ const TestOverview = ({ basicInfo, templateName }) => {
           </div>
         </div>
       </div>
+
+      <ContactDetailsModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        testName={basicInfo?.name}
+      />
     </div>
   );
 };

@@ -64,3 +64,5 @@ coverage/
 # Optional: Ignore local database and tooling files
 *.sqlite
 *.log
+
+.early.coverage/

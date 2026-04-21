@@ -6,12 +6,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaShieldAlt, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import ContactDetailsModal from './ContactDetailsModal';
 import styles from './HealthCheckupSlider.module.css';
 
 const CheckupCard = ({ content, index }) => {
   const router = useRouter();
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const analytics = useAnalytics();
   const basicInfo = content?.test?.alldata?.[0]?.basic_info;
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
@@ -24,8 +26,11 @@ const CheckupCard = ({ content, index }) => {
   }, [cart, basicInfo?.route]);
 
   const handleAddToCart = () => {
+    // Cart flow disabled — show contact-details popup instead.
     if (!basicInfo) return;
+    setShowContactModal(true);
 
+    /* --- Original Add-to-Cart logic (preserved, do not delete) ---
     const currentPath = router.asPath;
     const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
     const specificLocation = locationMatch ? locationMatch[1] : null;
@@ -56,11 +61,12 @@ const CheckupCard = ({ content, index }) => {
 
     addToCart(cartItem);
     setIsAdded(true);
+    */
   };
 
   const handleRemoveFromCart = () => {
     if (!basicInfo?.route) return;
-    
+
     // Track GTM remove_from_cart event
     analytics.trackRemoveFromCart({
       _id: content.test._id,
@@ -71,7 +77,7 @@ const CheckupCard = ({ content, index }) => {
       },
       index
     });
-    
+
     removeFromCart(basicInfo.route);
     setIsAdded(false);
   };
@@ -175,6 +181,12 @@ const CheckupCard = ({ content, index }) => {
           )}
         </motion.button>
       </div>
+
+      <ContactDetailsModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        testName={basicInfo?.name}
+      />
     </motion.div>
   );
 };

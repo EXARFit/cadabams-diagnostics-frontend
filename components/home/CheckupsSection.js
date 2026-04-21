@@ -5,12 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import ContactDetailsModal from './ContactDetailsModal';
 import styles from './CheckupsSlider.module.css';
 
 const CheckupCard = ({ test }) => {
   const router = useRouter();
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const analytics = useAnalytics();
   const basicInfo = test?.alldata?.[0]?.basic_info;
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
@@ -21,6 +23,10 @@ const CheckupCard = ({ test }) => {
   }, [cart, basicInfo?.route]);
 
   const handleAddToCart = () => {
+    // Cart flow disabled — show contact-details popup instead.
+    setShowContactModal(true);
+
+    /* --- Original Add-to-Cart logic (preserved, do not delete) ---
     const currentPath = router.asPath;
     const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
     const specificLocation = locationMatch ? locationMatch[1] : null;
@@ -48,6 +54,7 @@ const CheckupCard = ({ test }) => {
 
     addToCart(cartItem);
     setIsAdded(true);
+    */
   };
 
   const handleViewDetails = () => {
@@ -131,6 +138,12 @@ const CheckupCard = ({ test }) => {
           </motion.button>
         </div>
       </div>
+
+      <ContactDetailsModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        testName={basicInfo?.name}
+      />
     </motion.div>
   );
 };

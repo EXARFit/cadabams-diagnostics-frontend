@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CartContext } from '@/contexts/CartContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import ContactDetailsModal from '../home/ContactDetailsModal';
 import styles from './MultiTestSection.module.css';
 
 const getLocationFromPath = (path) => {
@@ -31,6 +32,7 @@ const TestCard = ({ test, onViewDetails, index, listName }) => {
   const analytics = useAnalytics();
   const basicInfo = test?.alldata?.[0]?.basic_info;
   const [isAdded, setIsAdded] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
 
   useEffect(() => {
@@ -39,6 +41,10 @@ const TestCard = ({ test, onViewDetails, index, listName }) => {
   }, [cart, basicInfo?.route]);
 
   const handleAddToCart = () => {
+    // Cart flow disabled — show contact-details popup instead.
+    setShowContactModal(true);
+
+    /* --- Original Add-to-Cart logic (preserved, do not delete) ---
     const currentPath = router.asPath;
     const locationMatch = currentPath.match(/\/bangalore\/([^\/]+)/);
     const specificLocation = locationMatch ? locationMatch[1] : null;
@@ -67,6 +73,7 @@ const TestCard = ({ test, onViewDetails, index, listName }) => {
 
     addToCart(cartItem);
     setIsAdded(true);
+    */
   };
 
   const handleViewDetails = () => {
@@ -137,6 +144,12 @@ const TestCard = ({ test, onViewDetails, index, listName }) => {
           </motion.button>
         </div>
       </div>
+
+      <ContactDetailsModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        testName={basicInfo?.name}
+      />
     </motion.div>
   );
 };
