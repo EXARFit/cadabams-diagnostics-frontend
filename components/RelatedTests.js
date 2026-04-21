@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaFlask, FaClock, FaCheck } from 'react-icons/fa';
 import { CartContext } from '@/contexts/CartContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import ContactDetailsModal from './home/ContactDetailsModal';
 import DOMPurify from 'isomorphic-dompurify';
 import styles from './RelatedTests.module.css';
 
@@ -12,8 +13,9 @@ const TestCard = ({ test, currentCategory }) => {
   const router = useRouter();
   const { cart, addToCart } = useContext(CartContext);
   const [isAdded, setIsAdded] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const analytics = useAnalytics();
-  
+
   const basicInfo = test.alldata?.[0]?.basic_info || {};
   const aboutTest = test.alldata?.find(item => item.about_test)?.about_test || {};
   const showDiscount = basicInfo?.price !== basicInfo?.discountedPrice;
@@ -25,6 +27,10 @@ const TestCard = ({ test, currentCategory }) => {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
+    // Cart flow disabled — show contact-details popup instead.
+    setShowContactModal(true);
+
+    /* --- Original Add-to-Cart logic (preserved, do not delete) ---
     const cartItem = {
       route: basicInfo?.route,
       title: basicInfo?.name,
@@ -50,6 +56,7 @@ const TestCard = ({ test, currentCategory }) => {
 
     addToCart(cartItem);
     setIsAdded(true);
+    */
   };
 
   const handleViewDetails = () => {
@@ -147,6 +154,12 @@ const TestCard = ({ test, currentCategory }) => {
           </motion.button>
         </div>
       </div>
+
+      <ContactDetailsModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        testName={basicInfo?.name}
+      />
     </motion.div>
   );
 };
