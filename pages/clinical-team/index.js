@@ -177,7 +177,7 @@ const ClinicalTeam = () => {
           <meta property="og:locale" content="en_IN" />
           <meta property="og:brand" content="Cadabams Diagnostics" />
           <meta property="og:email" content="info@cadabamsdiagnostics.com" />
-          <meta property="og:phone_number" content="+918050381444" />
+          <meta property="og:phone_number" content="+919900126611" />
           <meta property="og:street-address" content="19th Main Road, HSR Layout" />
           <meta property="og:locality" content="Bangalore" />
           <meta property="og:region" content="Karnataka" />
@@ -348,7 +348,7 @@ const ClinicalTeam = () => {
               <div className={styles.contactInfo}>
                 <div className={styles.contactItem}>
                   <Phone className={styles.contactIcon} />
-                  <span>+91 99001 26611</span>
+                  <span>+91 9900126611</span>
                 </div>
                 <div className={styles.contactItem}>
                   <Mail className={styles.contactIcon} />
