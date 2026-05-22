@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { Phone, Mail, Clock, X, PhoneCall, MapPin, ChevronRight } from 'lucide-react';
 import styles from './ContactDetailsModal.module.css';
 
-const MAIN_PHONE = '+91 80503 81444';
-const MAIN_TEL = '+918050381444';
+const MAIN_PHONE = '+91 99001 26611';
+const MAIN_TEL = '+919900126611';
 
 const centers = [
   { name: 'Banashankari', slug: 'banashankari', area: 'South Bangalore' },
