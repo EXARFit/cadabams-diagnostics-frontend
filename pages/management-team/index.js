@@ -58,7 +58,7 @@ const ManagementTeam = () => {
     },
     {
       name : "Gautam Satya M",
-      qualification : "MDRD, EDIR",
+      qualification : "MD Radio Diagnosis, EDIR",
       image : "/images/Gautam-Satya-M.jpg"
     },
     {
