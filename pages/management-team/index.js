@@ -53,17 +53,17 @@ const ManagementTeam = () => {
   const clinicDoctors = [
     {
       name : "DR Rithesh A R",
-      qualification : "MBBS, MD Radio Diagnosis", 
+      qualification : "MBBS, M.D Radio Diagnosis", 
       image : "/images/DR-Ritesh-AR.jpg"
     },
     {
       name : "Gautam Satya M",
-      qualification : "MD Radio Diagnosis, EDIR",
+      qualification : "M.D Radio Diagnosis, EDIR",
       image : "/images/Gautam-Satya-M.jpg"
     },
     {
       name : "DR Naveen Subbaiah",
-      qualification : "MBBS, MD Radio Diagnosis",
+      qualification : "MBBS, M.D Radio Diagnosis",
     }
   ]
   const newteamMembers = [
