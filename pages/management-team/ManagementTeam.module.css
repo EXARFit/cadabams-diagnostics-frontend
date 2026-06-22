@@ -160,6 +160,15 @@
     color: white;
     border: 3px solid rgba(255, 255, 255, 0.2);
   }
+
+  .avatarImage {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+  }
   
   .headerInfo h3 {
     font-size: 1.25rem;

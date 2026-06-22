@@ -49,11 +49,37 @@ const ManagementTeam = () => {
       color: "#DB4B4B"
     }
   ];
-
+  const newteamMembers = [
+    {
+        "name": "Dr S Pradeep",
+        "designation": "Consultant specialist in Radiology and Fetal Medicine",
+        "experience": "25+ Years",
+        "qualification": "MBBS, MD , DNB Radiodiagnosis",
+        "image": "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1751015834972-681906815.png",
+        "_id": "683eac1216444f3c115d5b79"
+      },
+      {
+        "name": "Dr Shreyas Cadabam",
+        "designation": "Radiodiagnosis Consultant specialist in Radiology and Interventional Musculoskeletal imaging",
+        "experience": "15+ Years",
+        "qualification": "MBBS , MD ",
+        "image": "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1751015840461-721228727.png",
+        "_id": "683eac1216444f3c115d5b7a"
+      },
+      {
+        "name": "Dr Divya Cadabam",
+        "designation": " Radiodiagnosis Consultant specialist in Radiology and Fetal Medicine",
+        "experience": "15+ Years",
+        "qualification": "MBBS , MD ",
+        "image": "https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/image-1751015849177-461738400.png",
+        "_id": "683eac1216444f3c115d5b7b"
+      }
+    ]
   const teamMembers = [
     {
       name: "Cadabam M Ramesh",
       role: "CHAIRMAN, CADABAM'S GROUP",
+      image: "/images/ramesh_cadabam_004cdc76da-n.avif",
       description: "Mr. Cadabam M. Ramesh, the nucleus of the organization, envisioned Cadabams as a place for treatment and solace for any form of healthcare concerns and issues. Incepted with a vision of delivering excellence to the patients, Mr. Cadabam has provided an unparalleled service by facilitating new outcomes in the Cadabam's Group.",
       achievements: [
         "Steering board priorities",
@@ -65,6 +91,7 @@ const ManagementTeam = () => {
     {
       name: "Sudha R. Cadabam",
       role: "VICE CHAIRPERSON, CADABAM'S GROUP",
+      image: "/images/sudha_r_cadabam_465c559e60-n.avif",
       description: "Mrs. Sudha R. Cadabam's prior experience oversees the Cadabam's Group's growth and sustainability. With 20 years of expertise, she molds, structures, and enables smooth & ideal functioning at the Cadabam's Group.",
       achievements: [
         "20+ years of healthcare expertise",
@@ -76,6 +103,7 @@ const ManagementTeam = () => {
     {
       name: "M.K. Saraswathi",
       role: "VICE CHAIRPERSON, CADABAM'S GROUP",
+      image: "/images/m_k_saraswathi_f0ee2f985a-n.avif",
       description: "Ms. M. K. Saraswathi has made an immense contribution to Cadabam's with her expertise of over two decades in the field of psychology. With her administrative skills and strategies, she designed the healthcare system in structuring the operational efficiency.",
       achievements: [
         "20+ years in psychology",
@@ -87,23 +115,13 @@ const ManagementTeam = () => {
     {
       name: "Sandesh Cadabam",
       role: "DIRECTOR",
+      image: "/images/sandesh_r_cadabam_51ef19a565-n.avif",
       description: "Mr. Sandesh R. Cadabam, a promising entrepreneur of the organization, is passionate about providing healthcare with international standards. With MSc. in International Business & Management from Manchester Business School, UK, he brings innovative strategic methods and modern thought to the organization.",
       achievements: [
         "International healthcare expertise",
         "Strategic innovation",
         "Team development",
         "Quality healthcare focus"
-      ]
-    },
-    {
-      name: "Neha S. Cadabam",
-      role: "EXECUTIVE DIRECTOR & PSYCHOLOGIST",
-      description: "Neha Cadabam is a Psychologist at Cadabam's Hospitals with over 11 years of experience in mental health. She specializes in preventive and promotive mental healthcare, helping individuals improve their mental health and promoting lifestyle changes.",
-      achievements: [
-        "11+ years in mental health",
-        "Certified NLP Practitioner",
-        "Multi-lingual expertise",
-        "Specialized counseling approaches"
       ]
     }
   ];
@@ -235,12 +253,56 @@ const ManagementTeam = () => {
           </div>
 
           {/* Team Members Section */}
-          <motion.div 
+          <motion.div
             className={styles.teamSection}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
+            {/* New management profiles */}
+            {newteamMembers.map((member, index) => (
+              <motion.div
+                key={member._id || `new-${index}`}
+                variants={itemVariants}
+                className={styles.teamCard}
+              >
+                <div className={styles.teamHeader}>
+                  <div className={styles.avatarWrapper}>
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className={styles.avatarImage}
+                      />
+                    ) : (
+                      <div className={styles.avatar}>{member.name[0]}</div>
+                    )}
+                  </div>
+                  <div className={styles.headerInfo}>
+                    <h3>{member.name}</h3>
+                  </div>
+                </div>
+                <div className={styles.teamBody}>
+                  <div className={styles.achievements}>
+                    <h4>Professional Details</h4>
+                    <ul>
+                      <li>
+                        <p>{member.designation}</p>
+                      </li>
+                      <li>
+                        <Check className={styles.checkIcon} />
+                        {member.experience} of experience
+                      </li>
+                      <li>
+                        <Check className={styles.checkIcon} />
+                        {member.qualification}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
@@ -249,7 +311,15 @@ const ManagementTeam = () => {
               >
                 <div className={styles.teamHeader}>
                   <div className={styles.avatarWrapper}>
-                    <div className={styles.avatar}>{member.name[0]}</div>
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className={styles.avatarImage}
+                      />
+                    ) : (
+                      <div className={styles.avatar}>{member.name[0]}</div>
+                    )}
                   </div>
                   <div className={styles.headerInfo}>
                     <h3>{member.name}</h3>
