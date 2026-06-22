@@ -49,6 +49,23 @@ const ManagementTeam = () => {
       color: "#DB4B4B"
     }
   ];
+
+  const clinicDoctors = [
+    {
+      name : "DR Rithesh A R",
+      qualification : "MBBS, MD Radio Diagnosis", 
+      image : "/images/DR-Ritesh-AR.jpg"
+    },
+    {
+      name : "Gautam Satya M",
+      qualification : "MDRD, EDIR",
+      image : "/images/Gautam-Satya-M.jpg"
+    },
+    {
+      name : "DR Naveen Subbaiah",
+      qualification : "MBBS, MD Radio Diagnosis",
+    }
+  ]
   const newteamMembers = [
     {
         "name": "Dr S Pradeep",
@@ -350,6 +367,59 @@ const ManagementTeam = () => {
                     </button> */}
                   </div>
                 </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Clinical Team Section */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className={styles.sectionTitle}
+          >
+            Our Clinical Team
+          </motion.h2>
+          <motion.div
+            className={`${styles.teamSection} ${styles.clinicalSection}`}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {clinicDoctors.map((doctor, index) => (
+              <motion.div
+                key={`clinic-${index}`}
+                variants={itemVariants}
+                className={styles.teamCard}
+              >
+                <div className={styles.teamHeader}>
+                  <div className={styles.avatarWrapper}>
+                    {doctor.image ? (
+                      <img
+                        src={doctor.image}
+                        alt={doctor.name}
+                        className={styles.avatarImage}
+                      />
+                    ) : (
+                      <div className={styles.avatar}>{doctor.name[0]}</div>
+                    )}
+                  </div>
+                  <div className={styles.headerInfo}>
+                    <h3>{doctor.name}</h3>
+                    <p>{doctor.qualification}</p>
+                  </div>
+                </div>
+                {/* <div className={styles.teamBody}>
+                  <div className={styles.achievements}>
+                    <h4>Professional Details</h4>
+                    <ul>
+                      <li>
+                        <Check className={styles.checkIcon} />
+                        {doctor.qualification}
+                      </li>
+                    </ul>
+                  </div>
+                </div> */}
               </motion.div>
             ))}
           </motion.div>
