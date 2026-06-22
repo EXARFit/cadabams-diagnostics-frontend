@@ -482,7 +482,7 @@ const fetchCenterData = async (slug) => {
     try {
       console.log(`Trying API call with slug: ${trySlug}`);
       
-      const response = await axios.get(`${API_BASE_URL}/center/${trySlug}`, {
+      const response = await axios.get(`${API_BASE_URL}/center/kalyannagar`, {
         timeout: 10000,
         headers: {
           'Accept': 'application/json',
