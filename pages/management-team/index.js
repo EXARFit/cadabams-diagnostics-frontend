@@ -376,36 +376,6 @@ const ManagementTeam = () => {
               </div>
             </div>
           </motion.div>
-
-          {/* Floating Elements for Visual Appeal */}
-          <div className={styles.floatingElements}>
-            <motion.div
-              className={`${styles.floatingBall} ${styles.ball1}`}
-              animate={{
-                y: [0, -30, 0],
-                x: [0, 20, 0],
-                rotate: [0, 10, 0]
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-            <motion.div
-              className={`${styles.floatingBall} ${styles.ball2}`}
-              animate={{
-                y: [0, 30, 0],
-                x: [0, -20, 0],
-                rotate: [0, -10, 0]
-              }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-          </div>
         </div>
       </Layout>
     </AuthProvider>
