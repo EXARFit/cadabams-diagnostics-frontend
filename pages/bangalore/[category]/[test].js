@@ -46,6 +46,25 @@ const formatTestType = (testType) => {
     .join(' ');
 };
 
+// SEO-team-approved meta titles keyed by test slug. Used as a fallback when the
+// CMS returns an empty seo.title so these pages never ship an empty <title> tag.
+const SEO_TITLE_OVERRIDES = {
+  'x-rays': 'X Rays Preventive Health Bangalore | Cadabams Diagnostics'
+};
+
+// Build a safe, keyword-optimized meta title so a page never renders an empty
+// <title>. Prefers a curated override, then falls back to a computed title.
+const getFallbackTitle = (testData, testType, test) => {
+  const overrideTitle = SEO_TITLE_OVERRIDES[test];
+  if (overrideTitle) return overrideTitle;
+
+  const name = (testData?.testName || 'Diagnostic Test').trim();
+  const category = formatTestType(testType);
+  return category
+    ? `${name} ${category} Bangalore | Cadabams Diagnostics`
+    : `${name} Bangalore | Cadabams Diagnostics`;
+};
+
 // Helper function to clean URL path
 const cleanPath = (path) => {
   if (!path) return '';
@@ -295,7 +314,7 @@ export default function TestDetailPage({ testData, testType: initialTestType, er
     <Layout title={testData.testName || 'Test Page'}>
       <Head>
         {/* Basic Meta Tags */}
-        <title>{testData.seo?.title}</title>
+        <title>{testData.seo?.title || getFallbackTitle(testData, testType, test)}</title>
         <meta name="description" content={testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
         <meta 
           name="keywords" 
@@ -311,7 +330,7 @@ export default function TestDetailPage({ testData, testType: initialTestType, er
         
         {/* Enhanced Open Graph Tags */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={testData.seo?.title} />
+        <meta property="og:title" content={testData.seo?.title || getFallbackTitle(testData, testType, test)} />
         <meta property="og:description" content={testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
         <meta property="og:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta property="og:url" content={currentUrl} />
@@ -333,7 +352,7 @@ export default function TestDetailPage({ testData, testType: initialTestType, er
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@CadabamsDX" />
         <meta name="twitter:creator" content="@CadabamsDX" />
-        <meta name="twitter:title" content={testData.seo?.title} />
+        <meta name="twitter:title" content={testData.seo?.title || getFallbackTitle(testData, testType, test)} />
         <meta name="twitter:description" content={testData.seo?.description || `Learn about ${testData.testName} at Cadabams Diagnostics`} />
         <meta name="twitter:image" content={testData.seo?.ogImage || `https://cadabams-diagnostics-assets.s3.ap-south-1.amazonaws.com/cadabam_assets/compressed_9815643070a25aed251f2c91def2899b.png`} />
         <meta name="twitter:image:alt" content={`${testData.testName} at Cadabams Diagnostics`} />
